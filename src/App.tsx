@@ -23,9 +23,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<AppLayout />}>
               <Route index element={<HomePage />} />
-              <Route path="category/:categoryId" element={<CategoryPage />} />
-              <Route path="categories/:categoryId" element={<CategoryPage />} />
               <Route path="categories/:categoryId/:subcategoryId" element={<SubcategoryPage />} />
+              <Route path="category/:categoryId" element={<CategoryPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

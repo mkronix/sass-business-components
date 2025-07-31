@@ -1,12 +1,17 @@
-[
+import { DataTableDemo } from '@/components/DataTable/DataTableDemo';
+
+const COMPONENTS = [
     {
         "id": "data-display",
         "title": "Data Display",
         "url": "/category/data-display",
         "items": [
             {
-                "title": "DataTable",
-                "url": "/category/data-display/data-table"
+                "url": "/category/data-display/data-table",
+                "name": 'DataTable',
+                "description": 'A comprehensive table with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
+                "status": 'ready',
+                "component": <DataTableDemo />
             },
             {
                 "title": "DataGrid",
@@ -721,3 +726,5 @@
         ]
     }
 ]
+
+export default COMPONENTS

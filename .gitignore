@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+prompts_used.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
