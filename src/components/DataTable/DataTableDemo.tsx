@@ -120,11 +120,11 @@ export const DataTableDemo = () => {
       header: 'Status',
       accessorKey: 'status',
       cell: (value) => (
-        <Badge 
+        <Badge
           variant={
-            value === 'active' ? 'default' : 
-            value === 'inactive' ? 'destructive' : 
-            'secondary'
+            value === 'active' ? 'default' :
+              value === 'inactive' ? 'destructive' :
+                'secondary'
           }
         >
           {value}
@@ -205,13 +205,6 @@ export const DataTableDemo = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">DataTable Component Demo</h2>
-        <p className="text-muted-foreground mt-2">
-          A comprehensive data table with advanced features including sorting, filtering, pagination, and more.
-        </p>
-      </div>
-
       <DataTable
         data={sampleData}
         columns={columns}
@@ -228,7 +221,6 @@ export const DataTableDemo = () => {
         onRowSelect={handleRowSelect}
         onRowEdit={handleRowEdit}
         onExport={handleExport}
-        className="border rounded-lg"
       />
 
       {selectedRows.length > 0 && (

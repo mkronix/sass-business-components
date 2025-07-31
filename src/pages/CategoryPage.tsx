@@ -1,33 +1,13 @@
 
-import { useParams } from 'react-router-dom';
-import { 
-  Table, 
-  FormInput, 
-  Navigation, 
-  MessageSquare, 
-  BarChart3, 
-  FileImage, 
-  Briefcase,
-  Wrench,
-  Smartphone,
-  Building,
-  MessageCircle,
-  Plug,
-  Shield,
-  FileText,
-  User,
-  Monitor,
-  Zap,
-  Bot,
-  Users,
-  TestTube,
-  MapPin,
-  Globe,
-  Activity
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { DataTableDemo } from '@/components/DataTable/DataTableDemo';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  FormInput,
+  Navigation,
+  Table
+} from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
 const categoryConfig: Record<string, {
   title: string;
@@ -97,7 +77,7 @@ export default function CategoryPage() {
             <p className="text-muted-foreground mt-1">{category.description}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Badge variant="secondary">{category.components.length} Components</Badge>
           <Badge variant="outline">Fully Responsive</Badge>
@@ -136,7 +116,7 @@ export default function CategoryPage() {
                   </div>
                 </div>
               </CardHeader>
-              
+
               {component.component && component.status === 'ready' && (
                 <CardContent className="pt-0">
                   <div className="border rounded-lg p-4 bg-muted/20">

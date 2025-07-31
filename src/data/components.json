@@ -1,0 +1,723 @@
+[
+    {
+        "id": "data-display",
+        "title": "Data Display",
+        "url": "/category/data-display",
+        "items": [
+            {
+                "title": "DataTable",
+                "url": "/category/data-display/data-table"
+            },
+            {
+                "title": "DataGrid",
+                "url": "/category/data-display/data-grid"
+            },
+            {
+                "title": "ListView",
+                "url": "/category/data-display/list-view"
+            },
+            {
+                "title": "TreeView",
+                "url": "/category/data-display/tree-view"
+            },
+            {
+                "title": "Timeline",
+                "url": "/category/data-display/timeline"
+            },
+            {
+                "title": "CardLayout",
+                "url": "/category/data-display/card-layout"
+            }
+        ]
+    },
+    {
+        "id": "form",
+        "title": "Form Components",
+        "url": "/category/form",
+        "items": [
+            {
+                "title": "DynamicForm",
+                "url": "/category/form/dynamic-form"
+            },
+            {
+                "title": "FormField",
+                "url": "/category/form/form-field"
+            },
+            {
+                "title": "SearchBar",
+                "url": "/category/form/search-bar"
+            },
+            {
+                "title": "DatePicker",
+                "url": "/category/form/date-picker"
+            },
+            {
+                "title": "FileUpload",
+                "url": "/category/form/file-upload"
+            },
+            {
+                "title": "RichTextEditor",
+                "url": "/category/form/rich-text-editor"
+            },
+            {
+                "title": "SignaturePad",
+                "url": "/category/form/signature-pad"
+            },
+            {
+                "title": "LocationPicker",
+                "url": "/category/form/location-picker"
+            }
+        ]
+    },
+    {
+        "id": "navigation",
+        "title": "Navigation",
+        "url": "/category/navigation",
+        "items": [
+            {
+                "title": "ModularNavigation",
+                "url": "/category/navigation/modular-navigation"
+            },
+            {
+                "title": "Breadcrumb",
+                "url": "/category/navigation/breadcrumb"
+            },
+            {
+                "title": "TabNavigation",
+                "url": "/category/navigation/tab-navigation"
+            },
+            {
+                "title": "Sidebar",
+                "url": "/category/navigation/sidebar"
+            },
+            {
+                "title": "MegaMenu",
+                "url": "/category/navigation/mega-menu"
+            },
+            {
+                "title": "Pagination",
+                "url": "/category/navigation/pagination"
+            }
+        ]
+    },
+    {
+        "id": "feedback",
+        "title": "Feedback & Communication",
+        "url": "/category/feedback",
+        "items": [
+            {
+                "title": "NotificationCenter",
+                "url": "/category/feedback/notification-center"
+            },
+            {
+                "title": "Modal",
+                "url": "/category/feedback/modal"
+            },
+            {
+                "title": "StatusIndicator",
+                "url": "/category/feedback/status-indicator"
+            },
+            {
+                "title": "Toast",
+                "url": "/category/feedback/toast"
+            },
+            {
+                "title": "AlertDialog",
+                "url": "/category/feedback/alert-dialog"
+            },
+            {
+                "title": "ProgressTracker",
+                "url": "/category/feedback/progress-tracker"
+            }
+        ]
+    },
+    {
+        "id": "charts",
+        "title": "Chart & Analytics",
+        "url": "/category/charts",
+        "items": [
+            {
+                "title": "ChartWrapper",
+                "url": "/category/charts/chart-wrapper"
+            },
+            {
+                "title": "KPICard",
+                "url": "/category/charts/kpi-card"
+            },
+            {
+                "title": "Dashboard",
+                "url": "/category/charts/dashboard"
+            },
+            {
+                "title": "MetricDisplay",
+                "url": "/category/charts/metric-display"
+            },
+            {
+                "title": "ComparisonChart",
+                "url": "/category/charts/comparison-chart"
+            },
+            {
+                "title": "RealtimeChart",
+                "url": "/category/charts/realtime-chart"
+            }
+        ]
+    },
+    {
+        "id": "media",
+        "title": "Media & Document",
+        "url": "/category/media",
+        "items": [
+            {
+                "title": "ImageGallery",
+                "url": "/category/media/image-gallery"
+            },
+            {
+                "title": "DocumentViewer",
+                "url": "/category/media/document-viewer"
+            },
+            {
+                "title": "FileUpload",
+                "url": "/category/media/file-upload"
+            },
+            {
+                "title": "MediaPlayer",
+                "url": "/category/media/media-player"
+            },
+            {
+                "title": "PDFViewer",
+                "url": "/category/media/pdf-viewer"
+            },
+            {
+                "title": "ImageEditor",
+                "url": "/category/media/image-editor"
+            }
+        ]
+    },
+    {
+        "id": "business-logic",
+        "title": "Business Logic",
+        "url": "/category/business-logic",
+        "items": [
+            {
+                "title": "WorkflowBuilder",
+                "url": "/category/business-logic/workflow-builder"
+            },
+            {
+                "title": "CalendarScheduler",
+                "url": "/category/business-logic/calendar-scheduler"
+            },
+            {
+                "title": "InvoiceGenerator",
+                "url": "/category/business-logic/invoice-generator"
+            },
+            {
+                "title": "OrderManagement",
+                "url": "/category/business-logic/order-management"
+            },
+            {
+                "title": "CustomerPortal",
+                "url": "/category/business-logic/customer-portal"
+            },
+            {
+                "title": "InventoryTracker",
+                "url": "/category/business-logic/inventory-tracker"
+            }
+        ]
+    },
+    {
+        "id": "utility",
+        "title": "Utility",
+        "url": "/category/utility",
+        "items": [
+            {
+                "title": "LoadingStates",
+                "url": "/category/utility/loading-states"
+            },
+            {
+                "title": "ConfirmationDialog",
+                "url": "/category/utility/confirmation-dialog"
+            },
+            {
+                "title": "HelpTooltip",
+                "url": "/category/utility/help-tooltip"
+            },
+            {
+                "title": "ErrorBoundary",
+                "url": "/category/utility/error-boundary"
+            },
+            {
+                "title": "DataFormatter",
+                "url": "/category/utility/data-formatter"
+            },
+            {
+                "title": "ValidationEngine",
+                "url": "/category/utility/validation-engine"
+            }
+        ]
+    },
+    {
+        "id": "pwa",
+        "title": "PWA-Specific",
+        "url": "/category/pwa",
+        "items": [
+            {
+                "title": "OfflineIndicator",
+                "url": "/category/pwa/offline-indicator"
+            },
+            {
+                "title": "InstallPrompt",
+                "url": "/category/pwa/install-prompt"
+            },
+            {
+                "title": "CameraCapture",
+                "url": "/category/pwa/camera-capture"
+            },
+            {
+                "title": "PushNotifications",
+                "url": "/category/pwa/push-notifications"
+            },
+            {
+                "title": "BackgroundSync",
+                "url": "/category/pwa/background-sync"
+            },
+            {
+                "title": "ServiceWorker",
+                "url": "/category/pwa/service-worker"
+            }
+        ]
+    },
+    {
+        "id": "industry",
+        "title": "Industry-Specific",
+        "url": "/category/industry",
+        "items": [
+            {
+                "title": "POSInterface",
+                "url": "/category/industry/pos-interface"
+            },
+            {
+                "title": "AppointmentBooking",
+                "url": "/category/industry/appointment-booking"
+            },
+            {
+                "title": "InventoryTracker",
+                "url": "/category/industry/inventory-tracker"
+            },
+            {
+                "title": "RestaurantMenu",
+                "url": "/category/industry/restaurant-menu"
+            },
+            {
+                "title": "HotelBooking",
+                "url": "/category/industry/hotel-booking"
+            },
+            {
+                "title": "MedicalRecords",
+                "url": "/category/industry/medical-records"
+            }
+        ]
+    },
+    {
+        "id": "messaging",
+        "title": "Communication & Messaging",
+        "url": "/category/messaging",
+        "items": [
+            {
+                "title": "WhatsAppIntegration",
+                "url": "/category/messaging/whatsapp-integration"
+            },
+            {
+                "title": "SMSManager",
+                "url": "/category/messaging/sms-manager"
+            },
+            {
+                "title": "EmailComposer",
+                "url": "/category/messaging/email-composer"
+            },
+            {
+                "title": "ChatInterface",
+                "url": "/category/messaging/chat-interface"
+            },
+            {
+                "title": "VideoCall",
+                "url": "/category/messaging/video-call"
+            },
+            {
+                "title": "NotificationHub",
+                "url": "/category/messaging/notification-hub"
+            }
+        ]
+    },
+    {
+        "id": "integration",
+        "title": "Integration & API",
+        "url": "/category/integration",
+        "items": [
+            {
+                "title": "PaymentGateway",
+                "url": "/category/integration/payment-gateway"
+            },
+            {
+                "title": "APIConnector",
+                "url": "/category/integration/api-connector"
+            },
+            {
+                "title": "LogisticsIntegration",
+                "url": "/category/integration/logistics-integration"
+            },
+            {
+                "title": "SocialLogin",
+                "url": "/category/integration/social-login"
+            },
+            {
+                "title": "WebhookManager",
+                "url": "/category/integration/webhook-manager"
+            },
+            {
+                "title": "DataSync",
+                "url": "/category/integration/data-sync"
+            }
+        ]
+    },
+    {
+        "id": "security",
+        "title": "Security & Compliance",
+        "url": "/category/security",
+        "items": [
+            {
+                "title": "TwoFactorAuth",
+                "url": "/category/security/two-factor-auth"
+            },
+            {
+                "title": "AuditLogger",
+                "url": "/category/security/audit-logger"
+            },
+            {
+                "title": "DataEncryption",
+                "url": "/category/security/data-encryption"
+            },
+            {
+                "title": "PermissionManager",
+                "url": "/category/security/permission-manager"
+            },
+            {
+                "title": "SessionManager",
+                "url": "/category/security/session-manager"
+            },
+            {
+                "title": "ComplianceChecker",
+                "url": "/category/security/compliance-checker"
+            }
+        ]
+    },
+    {
+        "id": "reporting",
+        "title": "Reporting & Analytics",
+        "url": "/category/reporting",
+        "items": [
+            {
+                "title": "ReportBuilder",
+                "url": "/category/reporting/report-builder"
+            },
+            {
+                "title": "AdvancedAnalytics",
+                "url": "/category/reporting/advanced-analytics"
+            },
+            {
+                "title": "ExportManager",
+                "url": "/category/reporting/export-manager"
+            },
+            {
+                "title": "DataVisualization",
+                "url": "/category/reporting/data-visualization"
+            },
+            {
+                "title": "ScheduledReports",
+                "url": "/category/reporting/scheduled-reports"
+            },
+            {
+                "title": "BusinessIntelligence",
+                "url": "/category/reporting/business-intelligence"
+            }
+        ]
+    },
+    {
+        "id": "user-experience",
+        "title": "User Experience",
+        "url": "/category/user-experience",
+        "items": [
+            {
+                "title": "OnboardingWizard",
+                "url": "/category/user-experience/onboarding-wizard"
+            },
+            {
+                "title": "FeedbackCollector",
+                "url": "/category/user-experience/feedback-collector"
+            },
+            {
+                "title": "ThemeCustomizer",
+                "url": "/category/user-experience/theme-customizer"
+            },
+            {
+                "title": "UserProfile",
+                "url": "/category/user-experience/user-profile"
+            },
+            {
+                "title": "PreferenceManager",
+                "url": "/category/user-experience/preference-manager"
+            },
+            {
+                "title": "TourGuide",
+                "url": "/category/user-experience/tour-guide"
+            }
+        ]
+    },
+    {
+        "id": "mobile",
+        "title": "Mobile-Specific",
+        "url": "/category/mobile",
+        "items": [
+            {
+                "title": "PullToRefresh",
+                "url": "/category/mobile/pull-to-refresh"
+            },
+            {
+                "title": "SwipeActions",
+                "url": "/category/mobile/swipe-actions"
+            },
+            {
+                "title": "VoiceInput",
+                "url": "/category/mobile/voice-input"
+            },
+            {
+                "title": "TouchGestures",
+                "url": "/category/mobile/touch-gestures"
+            },
+            {
+                "title": "NativeIntegration",
+                "url": "/category/mobile/native-integration"
+            },
+            {
+                "title": "MobileNavigation",
+                "url": "/category/mobile/mobile-navigation"
+            }
+        ]
+    },
+    {
+        "id": "advanced-business",
+        "title": "Advanced Business",
+        "url": "/category/advanced-business",
+        "items": [
+            {
+                "title": "SubscriptionManager",
+                "url": "/category/advanced-business/subscription-manager"
+            },
+            {
+                "title": "LeadManagement",
+                "url": "/category/advanced-business/lead-management"
+            },
+            {
+                "title": "ContractManager",
+                "url": "/category/advanced-business/contract-manager"
+            },
+            {
+                "title": "CRMIntegration",
+                "url": "/category/advanced-business/crm-integration"
+            },
+            {
+                "title": "ERPConnector",
+                "url": "/category/advanced-business/erp-connector"
+            },
+            {
+                "title": "BusinessRules",
+                "url": "/category/advanced-business/business-rules"
+            }
+        ]
+    },
+    {
+        "id": "automation",
+        "title": "Automation & AI",
+        "url": "/category/automation",
+        "items": [
+            {
+                "title": "ChatbotBuilder",
+                "url": "/category/automation/chatbot-builder"
+            },
+            {
+                "title": "SmartRecommendations",
+                "url": "/category/automation/smart-recommendations"
+            },
+            {
+                "title": "DocumentAI",
+                "url": "/category/automation/document-ai"
+            },
+            {
+                "title": "WorkflowAutomation",
+                "url": "/category/automation/workflow-automation"
+            },
+            {
+                "title": "MLIntegration",
+                "url": "/category/automation/ml-integration"
+            },
+            {
+                "title": "PredictiveAnalytics",
+                "url": "/category/automation/predictive-analytics"
+            }
+        ]
+    },
+    {
+        "id": "collaboration",
+        "title": "Collaboration",
+        "url": "/category/collaboration",
+        "items": [
+            {
+                "title": "TeamCollaboration",
+                "url": "/category/collaboration/team-collaboration"
+            },
+            {
+                "title": "TaskAssignment",
+                "url": "/category/collaboration/task-assignment"
+            },
+            {
+                "title": "AnnouncementCenter",
+                "url": "/category/collaboration/announcement-center"
+            },
+            {
+                "title": "SharedWorkspace",
+                "url": "/category/collaboration/shared-workspace"
+            },
+            {
+                "title": "DocumentSharing",
+                "url": "/category/collaboration/document-sharing"
+            },
+            {
+                "title": "TeamCalendar",
+                "url": "/category/collaboration/team-calendar"
+            }
+        ]
+    },
+    {
+        "id": "quality",
+        "title": "Quality & Testing",
+        "url": "/category/quality",
+        "items": [
+            {
+                "title": "SurveyBuilder",
+                "url": "/category/quality/survey-builder"
+            },
+            {
+                "title": "A/BTesting",
+                "url": "/category/quality/ab-testing"
+            },
+            {
+                "title": "QualityAssurance",
+                "url": "/category/quality/quality-assurance"
+            },
+            {
+                "title": "TestingFramework",
+                "url": "/category/quality/testing-framework"
+            },
+            {
+                "title": "FeedbackSystem",
+                "url": "/category/quality/feedback-system"
+            },
+            {
+                "title": "QualityMetrics",
+                "url": "/category/quality/quality-metrics"
+            }
+        ]
+    },
+    {
+        "id": "location",
+        "title": "Location & Mapping",
+        "url": "/category/location",
+        "items": [
+            {
+                "title": "MapIntegration",
+                "url": "/category/location/map-integration"
+            },
+            {
+                "title": "LocationPicker",
+                "url": "/category/location/location-picker"
+            },
+            {
+                "title": "GeofenceManager",
+                "url": "/category/location/geofence-manager"
+            },
+            {
+                "title": "RouteOptimization",
+                "url": "/category/location/route-optimization"
+            },
+            {
+                "title": "LocationTracking",
+                "url": "/category/location/location-tracking"
+            },
+            {
+                "title": "StoreLocator",
+                "url": "/category/location/store-locator"
+            }
+        ]
+    },
+    {
+        "id": "accessibility",
+        "title": "Accessibility & Localization",
+        "url": "/category/accessibility",
+        "items": [
+            {
+                "title": "AccessibilityHelper",
+                "url": "/category/accessibility/accessibility-helper"
+            },
+            {
+                "title": "MultiLanguage",
+                "url": "/category/accessibility/multi-language"
+            },
+            {
+                "title": "RegionalCompliance",
+                "url": "/category/accessibility/regional-compliance"
+            },
+            {
+                "title": "CulturalAdaptation",
+                "url": "/category/accessibility/cultural-adaptation"
+            },
+            {
+                "title": "ScreenReader",
+                "url": "/category/accessibility/screen-reader"
+            },
+            {
+                "title": "KeyboardNavigation",
+                "url": "/category/accessibility/keyboard-navigation"
+            }
+        ]
+    },
+    {
+        "id": "performance",
+        "title": "Performance & Monitoring",
+        "url": "/category/performance",
+        "items": [
+            {
+                "title": "PerformanceMonitor",
+                "url": "/category/performance/performance-monitor"
+            },
+            {
+                "title": "UsageAnalytics",
+                "url": "/category/performance/usage-analytics"
+            },
+            {
+                "title": "SystemHealth",
+                "url": "/category/performance/system-health"
+            },
+            {
+                "title": "ErrorTracking",
+                "url": "/category/performance/error-tracking"
+            },
+            {
+                "title": "LoadTesting",
+                "url": "/category/performance/load-testing"
+            },
+            {
+                "title": "OptimizationTools",
+                "url": "/category/performance/optimization-tools"
+            }
+        ]
+    }
+]

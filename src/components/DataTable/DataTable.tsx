@@ -1,29 +1,26 @@
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Search, 
-  Filter, 
-  Download, 
-  ChevronLeft, 
-  ChevronRight,
-  Edit2,
+import { cn } from '@/lib/utils';
+import {
+  ArrowUpDown,
   Check,
-  X,
-  MoreHorizontal,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Edit2,
+  Filter,
+  Search,
   SortAsc,
   SortDesc,
-  ArrowUpDown
+  X
 } from 'lucide-react';
-import { DataTableProps, Column, FilterValue, SortValue } from './types';
-import { cn } from '@/lib/utils';
+import { useMemo, useState } from 'react';
+import { DataTableProps, FilterValue, SortValue } from './types';
 
 export const DataTable = <T extends Record<string, any>>({
   data,
@@ -62,7 +59,7 @@ export const DataTable = <T extends Record<string, any>>({
     // Apply search
     if (searchQuery) {
       result = result.filter(row =>
-        columns.some(col => 
+        columns.some(col =>
           String(row[col.accessorKey] || '').toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
@@ -84,7 +81,7 @@ export const DataTable = <T extends Record<string, any>>({
       result.sort((a, b) => {
         const aValue = a[sort.column];
         const bValue = b[sort.column];
-        
+
         if (aValue < bValue) return sort.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sort.direction === 'asc' ? 1 : -1;
         return 0;
@@ -96,13 +93,13 @@ export const DataTable = <T extends Record<string, any>>({
 
   // Pagination
   const totalPages = Math.ceil(filteredAndSortedData.length / currentPageSize);
-  const paginatedData = pagination 
+  const paginatedData = pagination
     ? filteredAndSortedData.slice((currentPage - 1) * currentPageSize, currentPage * currentPageSize)
     : filteredAndSortedData;
 
   const handleSort = (columnId: string) => {
     if (!sortable) return;
-    
+
     setSorts(prev => {
       const existingSort = prev.find(s => s.column === columnId);
       if (existingSort) {
@@ -133,11 +130,11 @@ export const DataTable = <T extends Record<string, any>>({
 
   const handleRowSelect = (row: T) => {
     if (!selectable) return;
-    
+
     setSelectedRows(prev => {
       if (multiSelect) {
         const isSelected = prev.some(r => JSON.stringify(r) === JSON.stringify(row));
-        const newSelection = isSelected 
+        const newSelection = isSelected
           ? prev.filter(r => JSON.stringify(r) !== JSON.stringify(row))
           : [...prev, row];
         onRowSelect?.(newSelection);
@@ -152,7 +149,7 @@ export const DataTable = <T extends Record<string, any>>({
 
   const handleSelectAll = () => {
     if (!selectable || !multiSelect) return;
-    
+
     const allSelected = selectedRows.length === paginatedData.length;
     const newSelection = allSelected ? [] : [...paginatedData];
     setSelectedRows(newSelection);
@@ -207,7 +204,7 @@ export const DataTable = <T extends Record<string, any>>({
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-4 ", className)}>
       {/* Header with search and actions */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
@@ -222,7 +219,7 @@ export const DataTable = <T extends Record<string, any>>({
               />
             </div>
           )}
-          
+
           {filterable && (
             <Button
               variant="outline"
@@ -253,7 +250,7 @@ export const DataTable = <T extends Record<string, any>>({
               Export
             </Button>
           )}
-          
+
           {pagination && (
             <Select value={String(currentPageSize)} onValueChange={(value) => setCurrentPageSize(Number(value))}>
               <SelectTrigger className="w-20">
@@ -453,7 +450,7 @@ export const DataTable = <T extends Record<string, any>>({
           <div className="text-sm text-muted-foreground">
             Showing {((currentPage - 1) * currentPageSize) + 1} to {Math.min(currentPage * currentPageSize, filteredAndSortedData.length)} of {filteredAndSortedData.length} results
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -464,7 +461,7 @@ export const DataTable = <T extends Record<string, any>>({
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
-            
+
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 const page = i + 1;
@@ -481,7 +478,7 @@ export const DataTable = <T extends Record<string, any>>({
                 );
               })}
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
