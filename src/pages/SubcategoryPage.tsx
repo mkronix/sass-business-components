@@ -1,430 +1,150 @@
-import React from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+
+import { useParams, Link } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import {
-  Copy,
-  ExternalLink,
-  ArrowLeft,
-  Code2,
-  Eye,
-  FileText,
-  Settings,
-  CheckCircle,
-  Star,
-  Download
-} from 'lucide-react';
+import { ArrowLeft, Code, FileText, Eye } from 'lucide-react';
+import { components } from '@/data/components';
 import { DataTableDemo } from '@/components/DataTable/DataTableDemo';
-import COMPONENTS from '@/data/components'; // Import from your components file
-
-// Import documentation
-import dataTableDocs from '@/data/documentation/data-display/data-table.json';
-
-const componentMap: Record<string, {
-  component: React.ComponentType;
-  documentation: any;
-}> = {
-  'data-table': {
-    component: DataTableDemo,
-    documentation: dataTableDocs
-  },
-  'datatable': {
-    component: DataTableDemo,
-    documentation: dataTableDocs
-  }
-};
 
 export default function SubcategoryPage() {
-  const { categoryId, subcategoryId } = useParams<{ categoryId: string; subcategoryId: string }>();
-  const navigate = useNavigate();
-
-  // Find the category and component from COMPONENTS data
-  const categoryData = COMPONENTS.find(cat => cat.id === categoryId);
-  const componentItem = categoryData?.items.find(item => {
-    const itemSlug = item.name?.toLowerCase().replace(/\s+/g, '-') ||
-      item.title?.toLowerCase().replace(/\s+/g, '-');
-    return itemSlug === subcategoryId || item.url?.includes(subcategoryId || '');
-  });
-
-  const componentKey = subcategoryId || '';
-  const componentInfo = componentMap[componentKey] || componentMap['data-table']; // Fallback to DataTable
-
-  if (!categoryData || !componentItem) {
+  const { categoryId, subcategoryId } = useParams<{ 
+    categoryId: string; 
+    subcategoryId: string; 
+  }>();
+  
+  if (!categoryId || !subcategoryId || !components[categoryId]?.subcategories[subcategoryId]) {
     return (
-      <div className="container mx-auto p-6 max-w-7xl">
-        <div className="text-center py-12">
-          <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
-            <Code2 className="h-10 w-10 text-muted-foreground" />
-          </div>
-          <h1 className="text-3xl font-bold mb-4">Component Not Found</h1>
-          <p className="text-muted-foreground mb-8">
-            The requested component does not exist or is not yet implemented.
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Button onClick={() => navigate(-1)} variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Go Back
+      <div className="container mx-auto px-4 py-8 bg-primary-custom min-h-full">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-primary-custom mb-4">Page Not Found</h1>
+          <p className="text-secondary-custom mb-4">The requested component page does not exist.</p>
+          <Link to="/">
+            <Button className="accent-primary-custom text-white">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
             </Button>
-            <Link to="/">
-              <Button>
-                Explore Components
-              </Button>
-            </Link>
-          </div>
+          </Link>
         </div>
       </div>
     );
   }
 
-  const { component: Component, documentation: docs } = componentInfo;
-  const isReady = componentItem.status === 'ready';
+  const category = components[categoryId];
+  const subcategory = category.subcategories[subcategoryId];
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  // For now, we'll render the DataTable demo if it's the data-table component
+  const renderComponentDemo = (componentId: string) => {
+    switch (componentId) {
+      case 'data-table':
+        return <DataTableDemo />;
+      default:
+        return (
+          <div className="text-center py-12 bg-secondary-custom rounded-lg border border-primary-custom">
+            <Code className="w-12 h-12 mx-auto text-primary-custom mb-4" />
+            <h3 className="text-lg font-semibold text-primary-custom mb-2">Component Demo</h3>
+            <p className="text-secondary-custom">Demo for {componentId} will be available soon.</p>
+          </div>
+        );
+    }
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 bg-primary-custom min-h-full">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-        <span>/</span>
-        <Link
-          to={`/category/${categoryId}`}
-          className="hover:text-foreground transition-colors"
-        >
-          {categoryData.title}
+      <div className="mb-8">
+        <Link to="/">
+          <Button variant="ghost" size="sm" className="mb-2 text-primary-custom hover-primary-custom">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Home
+          </Button>
         </Link>
-        <span>/</span>
-        <span className="text-foreground font-medium">
-          {componentItem.name || componentItem.title}
-        </span>
+        <div className="flex items-center gap-2 text-sm text-secondary-custom">
+          <Link to={`/category/${categoryId}`} className="hover:text-primary-custom">
+            {category.name}
+          </Link>
+          <span>/</span>
+          <span className="text-primary-custom">{subcategory.name}</span>
+        </div>
       </div>
 
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(-1)}
-                className="p-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl">
-                <Code2 className="h-8 w-8 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  {componentItem.name || componentItem.title}
-                </h1>
-                <p className="text-muted-foreground text-lg mt-1">
-                  {docs.description || componentItem.description || 'Professional component with modern design'}
-                </p>
-              </div>
-            </div>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 rounded-lg bg-primary-custom/10">
+            {category.icon}
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-primary-custom">{subcategory.name}</h1>
+            <p className="text-secondary-custom">{subcategory.description}</p>
           </div>
         </div>
-
-        {/* Status and Features */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          <Badge variant={isReady ? 'default' : 'secondary'} className="px-3 py-1">
-            <CheckCircle className="w-3 h-3 mr-1" />
-            {isReady ? 'Production Ready' : 'Coming Soon'}
-          </Badge>
-          <Badge variant="outline" className="px-3 py-1">
-            <Star className="w-3 h-3 mr-1" />
-            Responsive Design
-          </Badge>
-          <Badge variant="outline" className="px-3 py-1">
-            <Code2 className="w-3 h-3 mr-1" />
-            TypeScript
-          </Badge>
-          <Badge variant="outline" className="px-3 py-1">
-            <Settings className="w-3 h-3 mr-1" />
-            Fully Customizable
-          </Badge>
-        </div>
-
-        {/* Quick Actions */}
-        {isReady && (
-          <div className="flex gap-3">
-            <Button className="bg-gradient-to-r from-primary to-primary/90">
-              <Download className="mr-2 h-4 w-4" />
-              Copy Code
-            </Button>
-            <Button variant="outline">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View Source
-            </Button>
-          </div>
-        )}
       </div>
 
-      {isReady ? (
-        <Tabs defaultValue="preview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="preview" className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              Preview
-            </TabsTrigger>
-            <TabsTrigger value="code" className="flex items-center gap-2">
-              <Code2 className="h-4 w-4" />
-              Code
-            </TabsTrigger>
-            <TabsTrigger value="props" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Props
-            </TabsTrigger>
-            <TabsTrigger value="examples" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Examples
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Preview Tab */}
-          <TabsContent value="preview" className="space-y-6">
-            <Card className="border-primary/20 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10">
-                <CardTitle className="flex items-center gap-2">
-                  <Eye className="h-5 w-5 text-primary" />
-                  Live Interactive Demo
-                </CardTitle>
-                <CardDescription>
-                  Fully functional component with all features enabled. Try interacting with it below.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="border-2 border-dashed border-muted rounded-xl p-6 bg-gradient-to-br from-muted/20 to-muted/40">
-                  <Component />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Features Grid */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-primary" />
-                  Key Features
-                </CardTitle>
-                <CardDescription>
-                  Everything this component offers out of the box
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {docs.features.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                      <span className="text-sm font-medium">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Code Tab */}
-          <TabsContent value="code" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Code2 className="h-5 w-5 text-primary" />
-                  Installation & Usage
-                </CardTitle>
-                <CardDescription>
-                  Get started with this component in your project
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
+      {/* Components */}
+      <div className="space-y-8">
+        {subcategory.components.map((component) => (
+          <Card key={component.id} className="bg-secondary-custom border-primary-custom">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-semibold text-lg">Basic Implementation</h4>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(docs.usage.basic)}
-                      className="hover:bg-primary/10"
-                    >
-                      <Copy className="h-4 w-4 mr-1" />
-                      Copy
-                    </Button>
-                  </div>
-                  <div className="relative">
-                    <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                      <code>{docs.usage.basic}</code>
-                    </pre>
-                  </div>
+                  <CardTitle className="text-2xl text-primary-custom">{component.name}</CardTitle>
+                  <p className="text-secondary-custom mt-2">{component.description}</p>
                 </div>
-
-                <Separator className="my-6" />
-
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-semibold text-lg">Advanced Configuration</h4>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(docs.usage.advanced)}
-                      className="hover:bg-primary/10"
-                    >
-                      <Copy className="h-4 w-4 mr-1" />
-                      Copy
-                    </Button>
+                <Badge 
+                  variant={component.status === 'stable' ? 'default' : 'secondary'}
+                  className={component.status === 'stable' ? 'accent-primary-custom text-white' : 'bg-secondary-custom/20 text-secondary-custom'}
+                >
+                  {component.status}
+                </Badge>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {component.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" size="sm" className="border-secondary-custom text-secondary-custom">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </CardHeader>
+            
+            <CardContent>
+              <Tabs defaultValue="demo" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 bg-primary-custom/5">
+                  <TabsTrigger value="demo" className="text-primary-custom">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Demo
+                  </TabsTrigger>
+                  <TabsTrigger value="code" className="text-primary-custom">
+                    <Code className="w-4 h-4 mr-2" />
+                    Code
+                  </TabsTrigger>
+                  <TabsTrigger value="docs" className="text-primary-custom">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Documentation
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="demo" className="mt-6">
+                  {renderComponentDemo(component.id)}
+                </TabsContent>
+                
+                <TabsContent value="code" className="mt-6">
+                  <div className="bg-primary-custom/5 rounded-lg p-4 border border-primary-custom">
+                    <p className="text-secondary-custom">Code examples will be available soon.</p>
                   </div>
-                  <div className="relative">
-                    <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                      <code>{docs.usage.advanced}</code>
-                    </pre>
+                </TabsContent>
+                
+                <TabsContent value="docs" className="mt-6">
+                  <div className="bg-primary-custom/5 rounded-lg p-4 border border-primary-custom">
+                    <p className="text-secondary-custom">Documentation will be available soon.</p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Props Tab */}
-          <TabsContent value="props" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-primary" />
-                  Component Properties
-                </CardTitle>
-                <CardDescription>
-                  Complete API reference for all available props
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b-2 border-primary/20">
-                        <th className="text-left p-4 font-semibold bg-muted/30">Property</th>
-                        <th className="text-left p-4 font-semibold bg-muted/30">Type</th>
-                        <th className="text-left p-4 font-semibold bg-muted/30">Required</th>
-                        <th className="text-left p-4 font-semibold bg-muted/30">Default</th>
-                        <th className="text-left p-4 font-semibold bg-muted/30">Description</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(docs.props).map(([key, prop]: [string, any]) => (
-                        <tr key={key} className="border-b hover:bg-muted/20 transition-colors">
-                          <td className="p-4 font-mono text-sm font-medium text-primary">{key}</td>
-                          <td className="p-4 font-mono text-sm text-blue-600 dark:text-blue-400">
-                            {prop.type}
-                          </td>
-                          <td className="p-4">
-                            <Badge variant={prop.required ? 'destructive' : 'secondary'} className="text-xs">
-                              {prop.required ? 'Required' : 'Optional'}
-                            </Badge>
-                          </td>
-                          <td className="p-4 font-mono text-sm text-muted-foreground">
-                            {prop.default || '-'}
-                          </td>
-                          <td className="p-4 text-sm leading-relaxed">{prop.description}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Examples Tab */}
-          <TabsContent value="examples" className="space-y-6">
-            {docs.examples.map((example: any, index: number) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-primary" />
-                      {example.title}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(example.code)}
-                      className="hover:bg-primary/10"
-                    >
-                      <Copy className="h-4 w-4 mr-1" />
-                      Copy
-                    </Button>
-                  </CardTitle>
-                  <CardDescription>{example.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative">
-                    <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                      <code>{example.code}</code>
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
-        </Tabs>
-      ) : (
-        // Coming Soon State
-        <Card className="border-dashed border-2">
-          <CardContent className="py-16 text-center">
-            <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
-              <Code2 className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <h3 className="text-2xl font-bold mb-4">Component Coming Soon</h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-              We're working hard to bring you this amazing component with all the features you need.
-              It will include comprehensive documentation, live examples, and full TypeScript support.
-            </p>
-            <div className="flex justify-center gap-3">
-              <Button onClick={() => navigate(-1)} variant="outline">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to {categoryData.title}
-              </Button>
-              <Link to="/category/data-display">
-                <Button>
-                  View Ready Components
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Navigation Footer */}
-      <Card className="mt-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-primary/20">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-center md:text-left">
-              <h4 className="font-semibold mb-2">Explore More Components</h4>
-              <p className="text-sm text-muted-foreground">
-                Discover other professional components in our library
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Link to={`/category/${categoryId}`}>
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to {categoryData.title}
-                </Button>
-              </Link>
-              <Link to="/">
-                <Button>
-                  Explore All Categories
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

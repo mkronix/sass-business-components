@@ -1,237 +1,140 @@
-import { Link } from 'react-router-dom';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  FormInput,
-  Navigation,
-  MessageSquare,
-  BarChart3,
-  FileImage,
-  ArrowRight,
-  Code,
-  Palette,
-  Monitor,
-  Briefcase,
-  Smartphone,
-  Shield,
-  FileText,
-  Users,
-  Settings,
-  Map,
-  Eye,
-  Zap,
-  Bot,
-  Globe,
-  Activity
-} from 'lucide-react';
-import COMPONENTS from '@/data/components';
-
-// Icon mapping for categories
-const categoryIcons = {
-  'data-display': Table,
-  'form': FormInput,
-  'navigation': Navigation,
-  'feedback': MessageSquare,
-  'charts': BarChart3,
-  'media': FileImage,
-  'business-logic': Briefcase,
-  'utility': Settings,
-  'pwa': Smartphone,
-  'industry': Briefcase,
-  'messaging': MessageSquare,
-  'integration': Code,
-  'security': Shield,
-  'reporting': FileText,
-  'user-experience': Users,
-  'mobile': Smartphone,
-  'advanced-business': Briefcase,
-  'automation': Bot,
-  'collaboration': Users,
-  'quality': Settings,
-  'location': Map,
-  'accessibility': Eye,
-  'performance': Activity
-};
-
-// Generate featured categories dynamically from COMPONENTS data
-const generateFeaturedCategories = () => {
-  return COMPONENTS.map(category => {
-    // Count ready components
-    const readyComponents = category.items.filter(item => item.status === 'ready').length;
-    const totalComponents = category.items.length;
-
-    // Determine status based on ready components
-    const status = readyComponents > 0 ? 'active' : 'coming-soon';
-
-    return {
-      id: category.id,
-      title: category.title,
-      description: getCategoryDescription(category.id),
-      icon: categoryIcons[category.id] || Code,
-      componentCount: readyComponents,
-      totalComponents: totalComponents,
-      status: status,
-      url: category.url
-    };
-  });
-};
-
-// Helper function to provide descriptions for categories
-const getCategoryDescription = (categoryId) => {
-  const descriptions = {
-    'data-display': 'Tables, grids, and data visualization components',
-    'form': 'Input fields, validation, and form handling',
-    'navigation': 'Menus, breadcrumbs, and navigation elements',
-    'feedback': 'Alerts, notifications, and messaging components',
-    'charts': 'Data visualization and analytics components',
-    'media': 'File upload, media players, and document viewers',
-    'business-logic': 'Workflow, scheduling, and business process components',
-    'utility': 'Helper components for loading, dialogs, and validation',
-    'pwa': 'Progressive Web App specific functionality',
-    'industry': 'Specialized components for specific industries',
-    'messaging': 'Communication and messaging integration',
-    'integration': 'API connectors and third-party integrations',
-    'security': 'Authentication, authorization, and security features',
-    'reporting': 'Report generation and business intelligence',
-    'user-experience': 'Onboarding, themes, and user customization',
-    'mobile': 'Mobile-optimized interactions and features',
-    'advanced-business': 'Enterprise-level business management tools',
-    'automation': 'AI-powered and automated workflow components',
-    'collaboration': 'Team collaboration and shared workspace tools',
-    'quality': 'Testing, surveys, and quality assurance tools',
-    'location': 'Maps, geolocation, and location-based services',
-    'accessibility': 'Accessibility and internationalization features',
-    'performance': 'Monitoring, analytics, and optimization tools'
-  };
-
-  return descriptions[categoryId] || 'Professional components for modern applications';
-};
-
-// Get featured categories (first 6 or you can customize the selection)
-const featuredCategories = generateFeaturedCategories();
-
-// Calculate dynamic stats
-const totalCategories = COMPONENTS.length;
-const totalReadyComponents = COMPONENTS.reduce((acc, category) => {
-  return acc + category.items.filter(item => item.status === 'ready').length;
-}, 0);
+import { ArrowRight, Palette, Code, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { components } from '@/data/components';
 
 export default function HomePage() {
+  const totalComponents = Object.values(components).reduce(
+    (total, category) => total + Object.values(category.subcategories).reduce(
+      (subTotal, subcategory) => subTotal + subcategory.components.length, 0
+    ), 0
+  );
+
+  const categories = Object.entries(components);
+
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 bg-primary-custom min-h-full">
       {/* Hero Section */}
       <div className="text-center mb-12">
-        <div className="mb-6">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent">
-            Business SaaS Component Library
-          </h1>
-          <p className="text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Sophisticated, responsive, and bug-free components for enterprise applications.
-            Build modern SaaS interfaces with confidence.
-          </p>
-        </div>
-
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-primary-custom">
+          Component Library
+        </h1>
+        <p className="text-xl text-secondary-custom mb-8 max-w-2xl mx-auto">
+          A comprehensive collection of reusable UI components built with React, TypeScript, and Tailwind CSS.
+        </p>
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Code className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">TypeScript Ready</span>
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Monitor className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">Fully Responsive</span>
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Palette className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">Dark/Light Mode</span>
-          </div>
+          <Badge variant="outline" className="text-sm py-2 px-4 border-primary-custom text-primary-custom">
+            <Code className="w-4 h-4 mr-2" />
+            {totalComponents} Components
+          </Badge>
+          <Badge variant="outline" className="text-sm py-2 px-4 border-primary-custom text-primary-custom">
+            <Palette className="w-4 h-4 mr-2" />
+            Fully Customizable
+          </Badge>
+          <Badge variant="outline" className="text-sm py-2 px-4 border-primary-custom text-primary-custom">
+            <Zap className="w-4 h-4 mr-2" />
+            TypeScript Ready
+          </Badge>
         </div>
       </div>
 
-      {/* Dynamic Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">{totalCategories}</div>
-            <div className="text-sm text-muted-foreground">Categories</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">{totalReadyComponents}</div>
-            <div className="text-sm text-muted-foreground">Components Ready</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">100%</div>
-            <div className="text-sm text-muted-foreground">Responsive</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">∞</div>
-            <div className="text-sm text-muted-foreground">Customizable</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Categories Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {categories.map(([categoryId, category]) => {
+          const componentCount = Object.values(category.subcategories).reduce(
+            (total, subcategory) => total + subcategory.components.length, 0
+          );
 
-      {/* Featured Categories */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Featured Categories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredCategories.map((category) => {
-            const IconComponent = category.icon;
-            return (
-              <Card key={category.id} className="group hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                      <IconComponent className="h-5 w-5 text-primary" />
-                    </div>
-                    <Badge
-                      variant={category.status === 'active' ? 'default' : 'secondary'}
-                      className="text-xs"
+          return (
+            <Card key={categoryId} className="group hover:shadow-primary-custom transition-all duration-300 bg-secondary-custom border-primary-custom">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="p-2 rounded-lg bg-primary-custom/10">
+                    {category.icon}
+                  </div>
+                  <Badge variant="secondary" className="bg-primary-custom/20 text-primary-custom">
+                    {componentCount} components
+                  </Badge>
+                </div>
+                <CardTitle className="text-xl text-primary-custom">{category.name}</CardTitle>
+                <CardDescription className="text-secondary-custom">
+                  {category.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(category.subcategories).slice(0, 3).map(([subId, subcategory]) => (
+                      <Badge key={subId} variant="outline" className="text-xs border-secondary-custom text-secondary-custom">
+                        {subcategory.name}
+                      </Badge>
+                    ))}
+                    {Object.keys(category.subcategories).length > 3 && (
+                      <Badge variant="outline" className="text-xs border-secondary-custom text-secondary-custom">
+                        +{Object.keys(category.subcategories).length - 3} more
+                      </Badge>
+                    )}
+                  </div>
+                  <Link to={`/category/${categoryId}`}>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-between text-primary-custom hover-primary-custom group-hover:accent-primary-custom"
                     >
-                      {category.status === 'active' ? 'Active' : 'Coming Soon'}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg">{category.title}</CardTitle>
-                  <CardDescription>{category.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      {category.componentCount} of {category.totalComponents} ready
-                    </span>
-                    <Button asChild variant="ghost" size="sm" className="group-hover:bg-primary group-hover:text-primary-foreground">
-                      <Link to={category.url || `/category/${category.id}`}>
-                        Explore <ArrowRight className="h-3 w-3 ml-1" />
-                      </Link>
+                      Explore {category.name}
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Quick Start */}
-      <Card className="bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5">
-        <CardContent className="p-8 text-center">
-          <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
-          <p className="text-muted-foreground mb-4">
-            Explore our comprehensive component library and start building amazing interfaces.
-          </p>
-          <Button asChild>
-            <Link to="/category/data-display">
-              View Components <ArrowRight className="h-4 w-4 ml-1" />
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Features Section */}
+      <div className="text-center">
+        <h2 className="text-3xl font-bold mb-8 text-primary-custom">Why Choose Our Components?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="bg-secondary-custom border-primary-custom">
+            <CardHeader>
+              <Palette className="w-8 h-8 mx-auto text-primary-custom mb-2" />
+              <CardTitle className="text-primary-custom">Fully Customizable</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-secondary-custom">
+                Every component can be themed and styled to match your brand perfectly.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-secondary-custom border-primary-custom">
+            <CardHeader>
+              <Code className="w-8 h-8 mx-auto text-primary-custom mb-2" />
+              <CardTitle className="text-primary-custom">Developer Friendly</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-secondary-custom">
+                Built with TypeScript, well-documented, and easy to integrate.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-secondary-custom border-primary-custom">
+            <CardHeader>
+              <Zap className="w-8 h-8 mx-auto text-primary-custom mb-2" />
+              <CardTitle className="text-primary-custom">Production Ready</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-secondary-custom">
+                Tested, accessible, and optimized for performance in real applications.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
