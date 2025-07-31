@@ -183,7 +183,7 @@ export function AppSidebar() {
             fixed left-0 top-0 h-screen z-40
             bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 
             transition-all duration-300 ease-in-out flex flex-col shadow-sm
-            ${isExpanded ? "w-64" : "w-16"}
+            ${isExpanded ? "w-max" : "w-16"}
           `}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -235,8 +235,8 @@ export function AppSidebar() {
                         flex items-center ${isExpanded ? "gap-2" : "gap-0"} px-3 py-2 mx-2 mb-1 rounded-xl transition-all duration-200 group relative
                         ${!isExpanded ? "justify-center" : ""}
                         ${isActive
-                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 shadow-sm"
-                        : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                        ? "text-blue-700 dark:text-blue-500 shadow-sm"
+                        : "text-gray-700 dark:text-gray-300"
                       }
                       `
                     }
@@ -372,7 +372,7 @@ export function AppSidebar() {
 
         {/* Spacer div to push content */}
         <div
-          className={`transition-all duration-300 ease-in-out ${isExpanded ? "w-64" : "w-16"
+          className={`transition-all duration-300 ease-in-out ${isExpanded ? "w-max" : "w-16"
             }`}
         />
       </div>

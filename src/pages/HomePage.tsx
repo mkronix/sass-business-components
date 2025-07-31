@@ -1,71 +1,122 @@
-
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Table, 
-  FormInput, 
-  Navigation, 
-  MessageSquare, 
-  BarChart3, 
+import {
+  Table,
+  FormInput,
+  Navigation,
+  MessageSquare,
+  BarChart3,
   FileImage,
   ArrowRight,
   Code,
   Palette,
-  Monitor
+  Monitor,
+  Briefcase,
+  Smartphone,
+  Shield,
+  FileText,
+  Users,
+  Settings,
+  Map,
+  Eye,
+  Zap,
+  Bot,
+  Globe,
+  Activity
 } from 'lucide-react';
+import COMPONENTS from '@/data/components';
 
-const featuredCategories = [
-  {
-    id: 'data-display',
-    title: 'Data Display',
-    description: 'Tables, grids, and data visualization components',
-    icon: Table,
-    componentCount: 1,
-    status: 'active'
-  },
-  {
-    id: 'form',
-    title: 'Form Components',
-    description: 'Input fields, validation, and form handling',
-    icon: FormInput,
-    componentCount: 0,
-    status: 'coming-soon'
-  },
-  {
-    id: 'navigation',
-    title: 'Navigation',
-    description: 'Menus, breadcrumbs, and navigation elements',
-    icon: Navigation,
-    componentCount: 0,
-    status: 'coming-soon'
-  },
-  {
-    id: 'feedback',
-    title: 'Feedback & Communication',
-    description: 'Alerts, notifications, and messaging components',
-    icon: MessageSquare,
-    componentCount: 0,
-    status: 'coming-soon'
-  },
-  {
-    id: 'charts',
-    title: 'Chart & Analytics',
-    description: 'Data visualization and analytics components',
-    icon: BarChart3,
-    componentCount: 0,
-    status: 'coming-soon'
-  },
-  {
-    id: 'media',
-    title: 'Media & Document',
-    description: 'File upload, media players, and document viewers',
-    icon: FileImage,
-    componentCount: 0,
-    status: 'coming-soon'
-  }
-];
+// Icon mapping for categories
+const categoryIcons = {
+  'data-display': Table,
+  'form': FormInput,
+  'navigation': Navigation,
+  'feedback': MessageSquare,
+  'charts': BarChart3,
+  'media': FileImage,
+  'business-logic': Briefcase,
+  'utility': Settings,
+  'pwa': Smartphone,
+  'industry': Briefcase,
+  'messaging': MessageSquare,
+  'integration': Code,
+  'security': Shield,
+  'reporting': FileText,
+  'user-experience': Users,
+  'mobile': Smartphone,
+  'advanced-business': Briefcase,
+  'automation': Bot,
+  'collaboration': Users,
+  'quality': Settings,
+  'location': Map,
+  'accessibility': Eye,
+  'performance': Activity
+};
+
+// Generate featured categories dynamically from COMPONENTS data
+const generateFeaturedCategories = () => {
+  return COMPONENTS.map(category => {
+    // Count ready components
+    const readyComponents = category.items.filter(item => item.status === 'ready').length;
+    const totalComponents = category.items.length;
+
+    // Determine status based on ready components
+    const status = readyComponents > 0 ? 'active' : 'coming-soon';
+
+    return {
+      id: category.id,
+      title: category.title,
+      description: getCategoryDescription(category.id),
+      icon: categoryIcons[category.id] || Code,
+      componentCount: readyComponents,
+      totalComponents: totalComponents,
+      status: status,
+      url: category.url
+    };
+  });
+};
+
+// Helper function to provide descriptions for categories
+const getCategoryDescription = (categoryId) => {
+  const descriptions = {
+    'data-display': 'Tables, grids, and data visualization components',
+    'form': 'Input fields, validation, and form handling',
+    'navigation': 'Menus, breadcrumbs, and navigation elements',
+    'feedback': 'Alerts, notifications, and messaging components',
+    'charts': 'Data visualization and analytics components',
+    'media': 'File upload, media players, and document viewers',
+    'business-logic': 'Workflow, scheduling, and business process components',
+    'utility': 'Helper components for loading, dialogs, and validation',
+    'pwa': 'Progressive Web App specific functionality',
+    'industry': 'Specialized components for specific industries',
+    'messaging': 'Communication and messaging integration',
+    'integration': 'API connectors and third-party integrations',
+    'security': 'Authentication, authorization, and security features',
+    'reporting': 'Report generation and business intelligence',
+    'user-experience': 'Onboarding, themes, and user customization',
+    'mobile': 'Mobile-optimized interactions and features',
+    'advanced-business': 'Enterprise-level business management tools',
+    'automation': 'AI-powered and automated workflow components',
+    'collaboration': 'Team collaboration and shared workspace tools',
+    'quality': 'Testing, surveys, and quality assurance tools',
+    'location': 'Maps, geolocation, and location-based services',
+    'accessibility': 'Accessibility and internationalization features',
+    'performance': 'Monitoring, analytics, and optimization tools'
+  };
+
+  return descriptions[categoryId] || 'Professional components for modern applications';
+};
+
+// Get featured categories (first 6 or you can customize the selection)
+const featuredCategories = generateFeaturedCategories();
+
+// Calculate dynamic stats
+const totalCategories = COMPONENTS.length;
+const totalReadyComponents = COMPONENTS.reduce((acc, category) => {
+  return acc + category.items.filter(item => item.status === 'ready').length;
+}, 0);
 
 export default function HomePage() {
   return (
@@ -77,11 +128,11 @@ export default function HomePage() {
             Business SaaS Component Library
           </h1>
           <p className="text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Sophisticated, responsive, and bug-free components for enterprise applications. 
+            Sophisticated, responsive, and bug-free components for enterprise applications.
             Build modern SaaS interfaces with confidence.
           </p>
         </div>
-        
+
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
             <Code className="h-4 w-4 text-primary" />
@@ -98,17 +149,17 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Dynamic Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">23</div>
+            <div className="text-2xl font-bold text-primary mb-1">{totalCategories}</div>
             <div className="text-sm text-muted-foreground">Categories</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">1</div>
+            <div className="text-2xl font-bold text-primary mb-1">{totalReadyComponents}</div>
             <div className="text-sm text-muted-foreground">Components Ready</div>
           </CardContent>
         </Card>
@@ -139,7 +190,7 @@ export default function HomePage() {
                     <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
                       <IconComponent className="h-5 w-5 text-primary" />
                     </div>
-                    <Badge 
+                    <Badge
                       variant={category.status === 'active' ? 'default' : 'secondary'}
                       className="text-xs"
                     >
@@ -152,10 +203,10 @@ export default function HomePage() {
                 <CardContent className="pt-0">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      {category.componentCount} component{category.componentCount !== 1 ? 's' : ''}
+                      {category.componentCount} of {category.totalComponents} ready
                     </span>
                     <Button asChild variant="ghost" size="sm" className="group-hover:bg-primary group-hover:text-primary-foreground">
-                      <Link to={`/category/${category.id}`}>
+                      <Link to={category.url || `/category/${category.id}`}>
                         Explore <ArrowRight className="h-3 w-3 ml-1" />
                       </Link>
                     </Button>
