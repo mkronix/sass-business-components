@@ -13,7 +13,7 @@ import {
   ArrowRight,
   Code,
   Palette,
-  Responsive
+  Monitor
 } from 'lucide-react';
 
 const featuredCategories = [
@@ -88,7 +88,7 @@ export default function HomePage() {
             <span className="text-sm font-medium">TypeScript Ready</span>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Responsive className="h-4 w-4 text-primary" />
+            <Monitor className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium">Fully Responsive</span>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
