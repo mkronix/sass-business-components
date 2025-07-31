@@ -1,58 +1,47 @@
-
-import { DataTableDemo } from '@/components/DataTable/DataTableDemo';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   FormInput,
   Navigation,
-  Table
+  Table,
+  ExternalLink
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import components from '@/data/components.json';
 
 const categoryConfig: Record<string, {
   title: string;
   description: string;
   icon: any;
-  components: Array<{
-    name: string;
-    description: string;
-    status: 'ready' | 'coming-soon';
-    component?: React.ComponentType;
-  }>;
 }> = {
   'data-display': {
     title: 'Data Display Components',
     description: 'Components for displaying and organizing data in tables, lists, and other structured formats.',
     icon: Table,
-    components: [
-      {
-        name: 'DataTable',
-        description: 'A comprehensive table with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
-        status: 'ready',
-        component: DataTableDemo
-      }
-    ]
   },
   'form': {
     title: 'Form Components',
     description: 'Input fields, validation, and form handling components.',
     icon: FormInput,
-    components: []
   },
   'navigation': {
     title: 'Navigation Components',
     description: 'Menus, breadcrumbs, tabs, and other navigation elements.',
     icon: Navigation,
-    components: []
   }
-  // Add other categories as needed
+  // Other categories will be added as we implement them
 };
 
 export default function CategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const category = categoryId ? categoryConfig[categoryId] : null;
+  
+  // Find the category from the data
+  const categoryData = components.find(cat => cat.id === categoryId);
+  const categoryInfo = categoryId ? categoryConfig[categoryId] : null;
 
-  if (!category) {
+  if (!categoryData || !categoryInfo) {
     return (
       <div className="container mx-auto p-6">
         <div className="text-center py-12">
@@ -63,7 +52,7 @@ export default function CategoryPage() {
     );
   }
 
-  const IconComponent = category.icon;
+  const IconComponent = categoryInfo.icon;
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
@@ -73,19 +62,19 @@ export default function CategoryPage() {
             <IconComponent className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">{category.title}</h1>
-            <p className="text-muted-foreground mt-1">{category.description}</p>
+            <h1 className="text-3xl font-bold">{categoryInfo.title}</h1>
+            <p className="text-muted-foreground mt-1">{categoryInfo.description}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="secondary">{category.components.length} Components</Badge>
+          <Badge variant="secondary">{categoryData.items.length} Components</Badge>
           <Badge variant="outline">Fully Responsive</Badge>
           <Badge variant="outline">Dark/Light Mode</Badge>
         </div>
       </div>
 
-      {category.components.length === 0 ? (
+      {categoryData.items.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <div className="mx-auto w-12 h-12 bg-muted rounded-lg flex items-center justify-center mb-4">
@@ -98,32 +87,52 @@ export default function CategoryPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-8">
-          {category.components.map((component) => (
-            <Card key={component.name} className="overflow-hidden">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {categoryData.items.map((item) => (
+            <Card key={item.title} className="group hover:shadow-md transition-all duration-200">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      {component.name}
-                      <Badge variant={component.status === 'ready' ? 'default' : 'secondary'}>
-                        {component.status === 'ready' ? 'Ready' : 'Coming Soon'}
-                      </Badge>
-                    </CardTitle>
-                    <CardDescription className="mt-2">
-                      {component.description}
-                    </CardDescription>
-                  </div>
-                </div>
+                <CardTitle className="flex items-center justify-between">
+                  <span>{item.title}</span>
+                  <Badge variant={item.title === 'DataTable' ? 'default' : 'secondary'}>
+                    {item.title === 'DataTable' ? 'Ready' : 'Coming Soon'}
+                  </Badge>
+                </CardTitle>
+                <CardDescription>
+                  {item.title === 'DataTable' 
+                    ? 'Advanced data table with sorting, filtering, pagination, and export functionality'
+                    : 'Coming soon - Advanced component with comprehensive features'
+                  }
+                </CardDescription>
               </CardHeader>
 
-              {component.component && component.status === 'ready' && (
-                <CardContent className="pt-0">
-                  <div className="border rounded-lg p-4 bg-muted/20">
-                    <component.component />
+              <CardContent className="pt-0">
+                <div className="flex items-center justify-between">
+                  {item.title === 'DataTable' ? (
+                    <Link 
+                      to={item.url.replace('/category/', '/categories/')}
+                      className="flex-1"
+                    >
+                      <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                        View Component
+                        <ExternalLink className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button disabled className="w-full">
+                      Coming Soon
+                    </Button>
+                  )}
+                </div>
+
+                {item.title === 'DataTable' && (
+                  <div className="mt-3 flex flex-wrap gap-1">
+                    <Badge variant="outline" className="text-xs">Responsive</Badge>
+                    <Badge variant="outline" className="text-xs">Export</Badge>
+                    <Badge variant="outline" className="text-xs">Filtering</Badge>
+                    <Badge variant="outline" className="text-xs">Sorting</Badge>
                   </div>
-                </CardContent>
-              )}
+                )}
+              </CardContent>
             </Card>
           ))}
         </div>

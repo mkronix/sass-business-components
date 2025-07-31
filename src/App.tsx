@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AppLayout } from "@/components/Layout";
 import HomePage from "./pages/HomePage";
 import CategoryPage from "./pages/CategoryPage";
+import SubcategoryPage from "./pages/SubcategoryPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,8 @@ const App = () => (
             <Route path="/" element={<AppLayout />}>
               <Route index element={<HomePage />} />
               <Route path="category/:categoryId" element={<CategoryPage />} />
+              <Route path="categories/:categoryId" element={<CategoryPage />} />
+              <Route path="categories/:categoryId/:subcategoryId" element={<SubcategoryPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,0 +1,106 @@
+
+{
+  "id": "data-table",
+  "name": "DataTable",
+  "category": "data-display",
+  "subcategory": "data-table",
+  "title": "Advanced Data Table",
+  "description": "A comprehensive table component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.",
+  "status": "ready",
+  "features": [
+    "Dynamic column configuration",
+    "Advanced search with debounced input",
+    "Individual column sorting",
+    "Multi-level filtering (date, dropdown, text)",
+    "Smart pagination with dynamic page sizes",
+    "Responsive design with mobile card view",
+    "Export functionality (CSV, Excel, PDF)",
+    "Row selection with bulk actions",
+    "Inline editing capabilities",
+    "Custom cell renderers",
+    "Loading states and skeleton effects",
+    "Empty state handling"
+  ],
+  "props": {
+    "columns": {
+      "type": "Column[]",
+      "required": true,
+      "description": "Array of column definitions with key, header, cell renderer, and other properties"
+    },
+    "data": {
+      "type": "T[]",
+      "required": true,
+      "description": "Array of data objects to display in the table"
+    },
+    "searchable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable/disable global search functionality"
+    },
+    "filterable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable/disable column filtering"
+    },
+    "sortable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable/disable column sorting"
+    },
+    "paginated": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable/disable pagination"
+    },
+    "exportable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable/disable export functionality"
+    },
+    "selectable": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Enable/disable row selection"
+    },
+    "editable": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Enable/disable inline editing"
+    },
+    "loading": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show loading state with skeleton"
+    },
+    "emptyMessage": {
+      "type": "string",
+      "required": false,
+      "default": "No data available",
+      "description": "Message to show when no data is present"
+    }
+  },
+  "usage": {
+    "basic": "import { DataTable } from '@/components/DataTable';\n\nconst columns = [\n  { key: 'name', header: 'Name' },\n  { key: 'email', header: 'Email' }\n];\n\nconst data = [\n  { name: 'John Doe', email: 'john@example.com' }\n];\n\n<DataTable columns={columns} data={data} />",
+    "advanced": "import { DataTable } from '@/components/DataTable';\n\nconst columns = [\n  {\n    key: 'name',\n    header: 'Name',\n    sortable: true,\n    filterable: true\n  },\n  {\n    key: 'status',\n    header: 'Status',\n    cell: (value) => <Badge variant={value}>{value}</Badge>\n  }\n];\n\n<DataTable\n  columns={columns}\n  data={data}\n  searchable={true}\n  exportable={true}\n  selectable={true}\n  paginated={true}\n/>"
+  },
+  "examples": [
+    {
+      "title": "Basic Usage",
+      "description": "Simple table with minimal configuration",
+      "code": "const basicColumns = [{ key: 'id', header: 'ID' }, { key: 'name', header: 'Name' }];\n\n<DataTable columns={basicColumns} data={users} />"
+    },
+    {
+      "title": "With All Features",
+      "description": "Table with search, filter, sort, pagination, and export",
+      "code": "<DataTable\n  columns={advancedColumns}\n  data={users}\n  searchable={true}\n  filterable={true}\n  sortable={true}\n  paginated={true}\n  exportable={true}\n  selectable={true}\n/>"
+    }
+  ]
+}
