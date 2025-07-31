@@ -14,7 +14,7 @@ interface ThemeSelectorProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
+export function ThemeSelector({ open, onOpenChange }: Readonly<ThemeSelectorProps>) {
   const { theme, colors, setTheme, setCustomColors, presetThemes, applyPresetTheme } = useTheme()
   const [activeTab, setActiveTab] = useState("presets")
 
@@ -99,7 +99,7 @@ export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
           </p>
         </DialogHeader>
 
-        <div className="overflow-y-auto px-1 max-h-[70vh]">
+        <div className="overflow-y-auto px-1 max-h-[60vh]">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-secondary-custom border border-primary-custom rounded-xl p-1 mb-8">
               <TabsTrigger
@@ -247,35 +247,9 @@ export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
                   )}
                 </Card>
               </div>
-
-              <div className="mt-8 p-6 bg-secondary-custom border border-primary-custom rounded-2xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <Eye className="h-5 w-5 text-primary-custom" />
-                  <h3 className="text-lg font-bold text-primary-custom">Live Preview</h3>
-                </div>
-                <div className="bg-primary-custom border border-primary-custom rounded-xl p-4">
-                  <h4 className="text-primary-custom font-semibold mb-2">Sample Interface</h4>
-                  <p className="text-secondary-custom mb-4 text-sm">
-                    This preview shows how your selected theme will look across different UI elements.
-                  </p>
-                  <div className="flex gap-3">
-                    <Button className="accent-primary-custom text-secondary-custom hover-primary-custom shadow-primary-custom">
-                      Primary Action
-                    </Button>
-                    <Button variant="outline" className="border-primary-custom text-primary-custom hover-secondary-custom">
-                      Secondary
-                    </Button>
-                  </div>
-                </div>
-              </div>
             </TabsContent>
 
             <TabsContent value="presets" className="space-y-6">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-primary-custom mb-2">Curated Themes</h3>
-                <p className="text-secondary-custom opacity-80">Professional color palettes crafted by designers</p>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {presetThemes.map((preset, index) => (
                   <Card
@@ -343,11 +317,6 @@ export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
             </TabsContent>
 
             <TabsContent value="custom" className="space-y-6">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-primary-custom mb-2">Color Customization</h3>
-                <p className="text-secondary-custom opacity-80">Fine-tune every aspect of your theme</p>
-              </div>
-
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div className="bg-secondary-custom border border-primary-custom rounded-2xl p-6">
@@ -492,68 +461,6 @@ export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-8 bg-secondary-custom border border-primary-custom rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <Eye className="h-6 w-6 text-primary-custom" />
-                  <h4 className="text-xl font-bold text-primary-custom">Live Preview</h4>
-                </div>
-                <div className="bg-primary-custom border border-primary-custom rounded-xl p-6 space-y-4">
-                  <div>
-                    <h5 className="text-lg font-semibold text-primary-custom mb-2">Custom Theme Preview</h5>
-                    <p className="text-secondary-custom mb-4">
-                      Experience your custom theme in action. All colors update in real-time as you make changes.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-                    <Button className="accent-primary-custom text-secondary-custom hover-primary-custom shadow-primary-custom">
-                      Primary Button
-                    </Button>
-                    <Button className="accent-secondary-custom text-primary-custom hover-secondary-custom">
-                      Secondary Button
-                    </Button>
-                    <Button variant="outline" className="border-primary-custom text-primary-custom hover-secondary-custom">
-                      Outline Button
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div className="bg-secondary-custom border border-primary-custom rounded-lg p-4">
-                      <h6 className="font-semibold text-primary-custom mb-2">Sample Card</h6>
-                      <p className="text-secondary-custom text-sm mb-3">
-                        This demonstrates how cards will appear with your custom theme.
-                      </p>
-                      <div className="flex gap-2">
-                        <div className="w-3 h-3 accent-primary-custom rounded-full"></div>
-                        <div className="w-3 h-3 accent-secondary-custom rounded-full"></div>
-                        <div className="w-3 h-3 border-2 border-primary-custom rounded-full"></div>
-                      </div>
-                    </div>
-
-                    <div className="bg-primary-custom border border-secondary-custom rounded-lg p-4">
-                      <h6 className="font-semibold text-primary-custom mb-2">Inverted Style</h6>
-                      <p className="text-secondary-custom text-sm mb-3">
-                        Shows contrast and readability across different backgrounds.
-                      </p>
-                      <div className="flex gap-2">
-                        <Badge className="accent-primary-custom text-secondary-custom text-xs">Tag 1</Badge>
-                        <Badge variant="outline" className="border-primary-custom text-primary-custom text-xs">Tag 2</Badge>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center mt-8">
-                <Button
-                  onClick={() => setTheme('custom')}
-                  className="accent-primary-custom text-secondary-custom hover-primary-custom shadow-primary-custom px-8 py-3 text-lg font-semibold rounded-xl"
-                >
-                  <Wand2 className="h-5 w-5 mr-2" />
-                  Apply Custom Theme
-                </Button>
               </div>
             </TabsContent>
           </Tabs>

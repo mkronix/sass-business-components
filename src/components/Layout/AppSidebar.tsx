@@ -3,7 +3,11 @@ import { ChevronRight, Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  onExpandedChange?: (expanded: boolean) => void;
+}
+
+export function AppSidebar({ onExpandedChange }: Readonly<AppSidebarProps>) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
@@ -14,6 +18,11 @@ export function AppSidebar() {
   const sidebarRef = useRef(null);
   const submenuRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
+
+  // Notify parent component when expanded state changes
+  useEffect(() => {
+    onExpandedChange?.(isExpanded);
+  }, [isExpanded, onExpandedChange]);
 
   const handleMouseEnter = () => {
     if (hoverTimeoutRef.current) {
@@ -191,7 +200,7 @@ export function AppSidebar() {
                     to={`/category/${category.id}`}
                     className={({ isActive }) =>
                       `
-                        flex items-center ${isExpanded ? "gap-2" : "gap-0"} px-3 py-2 mx-2 mb-1 rounded-xl transition-all duration-200 group relative
+                        flex items-center ${isExpanded ? "gap-2" : "gap-0"} px-3 py-2 mx-2 mb-1 rounded-md transition-all duration-200 group relative hover-secondary-custom
                         ${!isExpanded ? "justify-center" : ""}
                         ${isActive
                         ? "text-primary-custom shadow-primary-custom"

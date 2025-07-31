@@ -134,15 +134,15 @@ export default function HomePage() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 accent-primary-custom rounded-full">
+          <div className="flex items-center gap-2 px-4 py-2 border border-primary-custom rounded-full">
             <Code className="h-4 w-4 text-primary-custom" />
             <span className="text-sm font-medium">TypeScript Ready</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 accent-primary-custom rounded-full">
+          <div className="flex items-center gap-2 px-4 py-2 border border-primary-custom rounded-full">
             <Monitor className="h-4 w-4 text-primary-custom" />
             <span className="text-sm font-medium">Fully Responsive</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 accent-primary-custom rounded-full">
+          <div className="flex items-center gap-2 px-4 py-2 border border-primary-custom rounded-full">
             <Palette className="h-4 w-4 text-primary-custom" />
             <span className="text-sm font-medium">Dark/Light Mode</span>
           </div>
@@ -187,7 +187,7 @@ export default function HomePage() {
               <Card key={category.id} className="group hover:shadow-lg transition-all duration-200 hover:scale-[1.02] shadow-primary-custom">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 accent-primary-custom rounded-lg hover-primary-custom transition-colors">
+                    <div className="p-2 rounded-lg bg-secondary-custom hover-primary-custom transition-colors">
                       <IconComponent className="h-5 w-5 text-primary-custom" />
                     </div>
                     <Badge
@@ -205,7 +205,7 @@ export default function HomePage() {
                     <span className="text-sm text-secondary-custom">
                       {category.componentCount} of {category.totalComponents} ready
                     </span>
-                    <Button asChild variant="ghost" size="sm" className="group-hover:bg-primary-custom group-hover:text-primary-foreground">
+                    <Button asChild variant="ghost" size="sm" className="">
                       <Link to={category.url || `/category/${category.id}`}>
                         Explore <ArrowRight className="h-3 w-3 ml-1" />
                       </Link>

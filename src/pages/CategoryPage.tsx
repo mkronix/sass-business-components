@@ -146,10 +146,7 @@ export default function CategoryPage() {
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${isReady
-                          ? 'accent-primary-custom hover-primary-custom'
-                          : 'bg-secondary-custom hover-secondary-custom'
-                          } transition-colors`}>
+                        <div className={`p-2 rounded-lg bg-secondary-custom hover-secondary-custom transition-colors`}>
                           <Code2 className={`h-5 w-5 ${isReady ? 'text-primary-custom' : 'text-secondary-custom'
                             }`} />
                         </div>
@@ -208,32 +205,6 @@ export default function CategoryPage() {
         </div>
       )}
 
-      {/* Bottom CTA */}
-      <Card className="mt-12 border-dashed border-secondary-custom shadow-primary-custom">
-        <CardContent className="p-8 text-center">
-          <h3 className="text-xl font-bold mb-3">Ready to Build Something Amazing?</h3>
-          <p className="text-secondary-custom mb-6 max-w-2xl mx-auto">
-            These components are designed to help you build professional, scalable applications faster.
-            Each component includes comprehensive documentation and live examples.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild className='accent-secondary-custom'>
-              <Link to="/">
-                <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
-                Explore More Categories
-              </Link>
-            </Button>
-            {categoryData.items.some(item => item.status === 'ready') && (
-              <Button variant="outline" asChild className='hover:bg-transparent'>
-                <Link to={categoryData.items.find(item => item.status === 'ready')?.url?.replace('/category/', '/categories/') || '#'}>
-                  Try Live Demo
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -1,106 +1,294 @@
-
 {
-  "id": "data-table",
-  "name": "DataTable",
+  "id": "enhanced-data-table",
+  "name": "EnhancedDataTable",
   "category": "data-display",
   "subcategory": "data-table",
-  "title": "Advanced Data Table",
-  "description": "A comprehensive table component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.",
+  "title": "Enhanced Data Table",
+  "description": "A fully dynamic, responsive data table component with enterprise-level functionality. Features advanced filtering, sorting, pagination, export, and inline editing capabilities.",
   "status": "ready",
+  "version": "2.0.0",
+  "lastUpdated": "2025-01-31",
   "features": [
-    "Dynamic column configuration",
-    "Advanced search with debounced input",
-    "Individual column sorting",
-    "Multi-level filtering (date, dropdown, text)",
-    "Smart pagination with dynamic page sizes",
-    "Responsive design with mobile card view",
-    "Export functionality (CSV, Excel, PDF)",
-    "Row selection with bulk actions",
-    "Inline editing capabilities",
-    "Custom cell renderers",
-    "Loading states and skeleton effects",
-    "Empty state handling"
+    "Fully responsive design with mobile card view",
+    "Dynamic column configuration with custom renderers",
+    "Advanced search with debounced input (300ms)",
+    "Multi-column sorting with visual indicators",
+    "Comprehensive filtering system (text, select, date, number)",
+    "Smart pagination with customizable page sizes",
+    "Row selection (single/multiple) with bulk actions",
+    "Inline cell editing with validation support",
+    "Export functionality (CSV, Excel, PDF, JSON)",
+    "Column visibility management and sticky columns",
+    "Density control (compact, normal, comfortable)",
+    "Loading states with skeleton animations",
+    "Empty state handling with helpful messages",
+    "Keyboard navigation and accessibility support",
+    "Server-side data processing support",
+    "Virtualization for large datasets (1000+ rows)",
+    "Custom row and cell styling",
+    "Global and row-specific action buttons",
+    "Dark/light theme support",
+    "TypeScript support with comprehensive types"
   ],
   "props": {
-    "columns": {
-      "type": "Column[]",
-      "required": true,
-      "description": "Array of column definitions with key, header, cell renderer, and other properties"
-    },
     "data": {
       "type": "T[]",
       "required": true,
       "description": "Array of data objects to display in the table"
     },
-    "searchable": {
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Enable/disable global search functionality"
-    },
-    "filterable": {
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Enable/disable column filtering"
-    },
-    "sortable": {
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Enable/disable column sorting"
-    },
-    "paginated": {
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Enable/disable pagination"
-    },
-    "exportable": {
-      "type": "boolean",
-      "required": false,
-      "default": true,
-      "description": "Enable/disable export functionality"
-    },
-    "selectable": {
-      "type": "boolean",
-      "required": false,
-      "default": false,
-      "description": "Enable/disable row selection"
-    },
-    "editable": {
-      "type": "boolean",
-      "required": false,
-      "default": false,
-      "description": "Enable/disable inline editing"
+    "columns": {
+      "type": "Column<T>[]",
+      "required": true,
+      "description": "Array of column definitions with configuration options"
     },
     "loading": {
       "type": "boolean",
       "required": false,
       "default": false,
-      "description": "Show loading state with skeleton"
+      "description": "Show loading state with skeleton animations"
+    },
+    "searchable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable global search functionality with debouncing"
+    },
+    "sortable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable column sorting with multi-column support"
+    },
+    "filterable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable advanced column filtering"
+    },
+    "selectable": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Enable row selection functionality"
+    },
+    "multiSelect": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Allow multiple row selection (requires selectable=true)"
+    },
+    "editable": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Enable inline cell editing"
+    },
+    "exportable": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Enable data export functionality"
+    },
+    "pagination": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable pagination with page size controls"
+    },
+    "pageSize": {
+      "type": "number",
+      "required": false,
+      "default": 10,
+      "description": "Default number of rows per page"
+    },
+    "pageSizeOptions": {
+      "type": "number[]",
+      "required": false,
+      "default": "[5, 10, 25, 50, 100]",
+      "description": "Available page size options"
+    },
+    "enableColumnVisibility": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Allow users to show/hide columns"
+    },
+    "enableDensity": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Allow users to change table density"
+    },
+    "stickyHeader": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Make table header sticky on scroll"
+    },
+    "zebra": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Apply alternating row colors"
+    },
+    "bordered": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Show table borders"
+    },
+    "virtualized": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Enable virtualization for large datasets"
+    },
+    "maxHeight": {
+      "type": "string",
+      "required": false,
+      "description": "Maximum height for table container (CSS value)"
     },
     "emptyMessage": {
       "type": "string",
       "required": false,
       "default": "No data available",
-      "description": "Message to show when no data is present"
+      "description": "Message displayed when no data is available"
+    },
+    "className": {
+      "type": "string",
+      "required": false,
+      "description": "Additional CSS classes for the table container"
+    },
+    "onRowSelect": {
+      "type": "(rows: T[]) => void",
+      "required": false,
+      "description": "Callback fired when row selection changes"
+    },
+    "onRowEdit": {
+      "type": "(row: T, field: string, value: any) => void",
+      "required": false,
+      "description": "Callback fired when a cell is edited"
+    },
+    "onExport": {
+      "type": "(format: ExportFormat, data: T[]) => void",
+      "required": false,
+      "description": "Callback fired when export is triggered"
+    },
+    "onRefresh": {
+      "type": "() => void",
+      "required": false,
+      "description": "Callback fired when refresh button is clicked"
+    },
+    "globalActions": {
+      "type": "ReactNode",
+      "required": false,
+      "description": "Custom action buttons displayed in the header"
+    },
+    "rowActions": {
+      "type": "(row: T, index: number) => ReactNode",
+      "required": false,
+      "description": "Function returning action buttons for each row"
+    }
+  },
+  "columnProps": {
+    "id": {
+      "type": "string",
+      "required": true,
+      "description": "Unique identifier for the column"
+    },
+    "header": {
+      "type": "string",
+      "required": true,
+      "description": "Column header text"
+    },
+    "accessorKey": {
+      "type": "string",
+      "required": true,
+      "description": "Key to access data from row object"
+    },
+    "cell": {
+      "type": "(value: any, row: T, index: number) => ReactNode",
+      "required": false,
+      "description": "Custom cell renderer function"
+    },
+    "sortable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable sorting for this column"
+    },
+    "filterable": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Enable filtering for this column"
+    },
+    "filterType": {
+      "type": "'text' | 'select' | 'date' | 'number' | 'boolean'",
+      "required": false,
+      "default": "text",
+      "description": "Type of filter input to display"
+    },
+    "filterOptions": {
+      "type": "FilterOption[]",
+      "required": false,
+      "description": "Options for select filter type"
+    },
+    "width": {
+      "type": "string",
+      "required": false,
+      "description": "Fixed column width (CSS value)"
+    },
+    "align": {
+      "type": "'left' | 'center' | 'right'",
+      "required": false,
+      "default": "left",
+      "description": "Text alignment for the column"
+    },
+    "sticky": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Make column sticky to the left"
+    },
+    "hidden": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Hide column by default"
     }
   },
   "usage": {
-    "basic": "import { DataTable } from '@/components/DataTable';\n\nconst columns = [\n  { key: 'name', header: 'Name' },\n  { key: 'email', header: 'Email' }\n];\n\nconst data = [\n  { name: 'John Doe', email: 'john@example.com' }\n];\n\n<DataTable columns={columns} data={data} />",
-    "advanced": "import { DataTable } from '@/components/DataTable';\n\nconst columns = [\n  {\n    key: 'name',\n    header: 'Name',\n    sortable: true,\n    filterable: true\n  },\n  {\n    key: 'status',\n    header: 'Status',\n    cell: (value) => <Badge variant={value}>{value}</Badge>\n  }\n];\n\n<DataTable\n  columns={columns}\n  data={data}\n  searchable={true}\n  exportable={true}\n  selectable={true}\n  paginated={true}\n/>"
+    "basic": "import { EnhancedDataTable } from '@/components/enhanced-datatable';\n\nconst columns = [\n  {\n    id: 'name',\n    header: 'Name',\n    accessorKey: 'name',\n    sortable: true,\n    filterable: true\n  },\n  {\n    id: 'email',\n    header: 'Email',\n    accessorKey: 'email',\n    sortable: true,\n    filterable: true\n  }\n];\n\nconst data = [\n  { id: 1, name: 'John Doe', email: 'john@example.com' },\n  { id: 2, name: 'Jane Smith', email: 'jane@example.com' }\n];\n\nfunction MyTable() {\n  return (\n    <EnhancedDataTable\n      data={data}\n      columns={columns}\n      searchable\n      sortable\n      filterable\n      pagination\n    />\n  );\n}",
+    "advanced": "import { EnhancedDataTable, Column } from '@/components/enhanced-datatable';\nimport { Badge } from '@/components/ui/badge';\nimport { Button } from '@/components/ui/button';\nimport { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';\nimport { Edit, Trash, Eye } from 'lucide-react';\n\ninterface User {\n  id: string;\n  name: string;\n  email: string;\n  role: 'admin' | 'user' | 'manager';\n  status: 'active' | 'inactive';\n  avatar?: string;\n}\n\nconst columns: Column<User>[] = [\n  {\n    id: 'user',\n    header: 'User',\n    accessorKey: 'name',\n    sticky: true,\n    cell: (value, row) => (\n      <div className=\"flex items-center gap-3\">\n        <Avatar className=\"h-8 w-8\">\n          <AvatarImage src={row.avatar} />\n          <AvatarFallback>\n            {row.name.split(' ').map(n => n[0]).join('')}\n          </AvatarFallback>\n        </Avatar>\n        <div>\n          <div className=\"font-medium\">{row.name}</div>\n          <div className=\"text-sm text-muted-foreground\">{row.email}</div>\n        </div>\n      </div>\n    )\n  },\n  {\n    id: 'role',\n    header: 'Role',\n    accessorKey: 'role',\n    cell: (value) => (\n      <Badge variant={value === 'admin' ? 'default' : 'secondary'}>\n        {value}\n      </Badge>\n    ),\n    filterType: 'select',\n    filterOptions: [\n      { label: 'Admin', value: 'admin' },\n      { label: 'User', value: 'user' },\n      { label: 'Manager', value: 'manager' }\n    ]\n  }\n];\n\nfunction AdvancedTable() {\n  const rowActions = (row: User) => (\n    <div className=\"flex gap-1\">\n      <Button size=\"sm\" variant=\"ghost\">\n        <Eye className=\"h-4 w-4\" />\n      </Button>\n      <Button size=\"sm\" variant=\"ghost\">\n        <Edit className=\"h-4 w-4\" />\n      </Button>\n      <Button size=\"sm\" variant=\"ghost\">\n        <Trash className=\"h-4 w-4\" />\n      </Button>\n    </div>\n  );\n\n  return (\n    <EnhancedDataTable\n      data={users}\n      columns={columns}\n      searchable\n      sortable\n      filterable\n      selectable\n      multiSelect\n      exportable\n      pagination\n      rowActions={rowActions}\n      enableColumnVisibility\n      enableDensity\n      stickyHeader\n      onRowSelect={(rows) => console.log('Selected:', rows)}\n      onExport={(format, data) => console.log('Export:', format, data.length)}\n    />\n  );\n}",
+    "customCell": "// Custom cell renderer example\nconst columns = [\n  {\n    id: 'progress',\n    header: 'Progress',\n    accessorKey: 'progress',\n    cell: (value) => (\n      <div className=\"flex items-center gap-3\">\n        <Progress value={value} className=\"flex-1\" />\n        <span className=\"text-sm font-medium\">{value}%</span>\n      </div>\n    ),\n    align: 'center'\n  },\n  {\n    id: 'status',\n    header: 'Status',\n    accessorKey: 'status',\n    cell: (value) => (\n      <Badge\n        variant={value === 'active' ? 'default' : 'destructive'}\n        className=\"font-medium\"\n      >\n        <div className={`w-2 h-2 rounded-full mr-2 ${\n          value === 'active' ? 'bg-green-500' : 'bg-red-500'\n        }`} />\n        {value}\n      </Badge>\n    ),\n    filterType: 'select',\n    filterOptions: [\n      { label: 'Active', value: 'active' },\n      { label: 'Inactive', value: 'inactive' }\n    ]\n  }\n];",
+    "serverSide": "// Server-side data processing\nfunction ServerSideTable() {\n  const [data, setData] = useState([]);\n  const [loading, setLoading] = useState(false);\n  const [totalCount, setTotalCount] = useState(0);\n\n  const handlePageChange = async (page: number, pageSize: number) => {\n    setLoading(true);\n    const response = await fetchData({ page, pageSize });\n    setData(response.data);\n    setTotalCount(response.total);\n    setLoading(false);\n  };\n\n  return (\n    <EnhancedDataTable\n      data={data}\n      columns={columns}\n      loading={loading}\n      serverSide\n      totalCount={totalCount}\n      onPageChange={handlePageChange}\n      pagination\n    />\n  );\n}"
   },
   "examples": [
     {
-      "title": "Basic Usage",
-      "description": "Simple table with minimal configuration",
-      "code": "const basicColumns = [{ key: 'id', header: 'ID' }, { key: 'name', header: 'Name' }];\n\n<DataTable columns={basicColumns} data={users} />"
+      "title": "Basic Data Table",
+      "description": "Simple table with minimal configuration for displaying tabular data",
+      "code": "const basicColumns = [\n  { id: 'id', header: 'ID', accessorKey: 'id' },\n  { id: 'name', header: 'Name', accessorKey: 'name' },\n  { id: 'email', header: 'Email', accessorKey: 'email' }\n];\n\nconst basicData = [\n  { id: 1, name: 'John Doe', email: 'john@example.com' },\n  { id: 2, name: 'Jane Smith', email: 'jane@example.com' }\n];\n\n<EnhancedDataTable\n  data={basicData}\n  columns={basicColumns}\n/>"
     },
     {
-      "title": "With All Features",
-      "description": "Table with search, filter, sort, pagination, and export",
-      "code": "<DataTable\n  columns={advancedColumns}\n  data={users}\n  searchable={true}\n  filterable={true}\n  sortable={true}\n  paginated={true}\n  exportable={true}\n  selectable={true}\n/>"
+      "title": "User Management Table",
+      "description": "Advanced table with custom renderers, filtering, and actions for user management",
+      "code": "const userColumns = [\n  {\n    id: 'user',\n    header: 'User',\n    accessorKey: 'name',\n    cell: (value, row) => (\n      <div className=\"flex items-center gap-3\">\n        <Avatar className=\"h-8 w-8\">\n          <AvatarFallback>{value.slice(0, 2)}</AvatarFallback>\n        </Avatar>\n        <div>\n          <div className=\"font-medium\">{row.name}</div>\n          <div className=\"text-sm text-muted-foreground\">{row.email}</div>\n        </div>\n      </div>\n    )\n  },\n  {\n    id: 'role',\n    header: 'Role',\n    accessorKey: 'role',\n    cell: (value) => <Badge>{value}</Badge>,\n    filterType: 'select',\n    filterOptions: [\n      { label: 'Admin', value: 'admin' },\n      { label: 'User', value: 'user' }\n    ]\n  }\n];\n\n<EnhancedDataTable\n  data={users}\n  columns={userColumns}\n  searchable\n  filterable\n  selectable\n  multiSelect\n  exportable\n/>"
+    },
+    {
+      "title": "E-commerce Product Table",
+      "description": "Product catalog with images, pricing, and inventory management",
+      "code": "const productColumns = [\n  {\n    id: 'product',\n    header: 'Product',\n    accessorKey: 'name',\n    cell: (value, row) => (\n      <div className=\"flex items-center gap-3\">\n        <img src={row.image} alt={value} className=\"w-10 h-10 rounded\" />\n        <div>\n          <div className=\"font-medium\">{value}</div>\n          <div className=\"text-sm text-muted-foreground\">SKU: {row.sku}</div>\n        </div>\n      </div>\n    )\n  },\n  {\n    id: 'price',\n    header: 'Price',\n    accessorKey: 'price',\n    cell: (value) => `$${value.toFixed(2)}`,\n    align: 'right',\n    filterType: 'number'\n  },\n  {\n    id: 'stock',\n    header: 'Stock',\n    accessorKey: 'stock',\n    cell: (value) => (\n      <Badge variant={value > 0 ? 'default' : 'destructive'}>\n        {value > 0 ? `${value} in stock` : 'Out of stock'}\n      </Badge>\n    )\n  }\n];\n\n<EnhancedDataTable\n  data={products}\n  columns={productColumns}\n  searchable\n  sortable\n  filterable\n  exportable\n  pagination\n  pageSize={25}\n/>"
+    },
+    {
+      "title": "Analytics Dashboard Table",
+      "description": "Data table with progress bars, metrics, and interactive elements",
+      "code": "const analyticsColumns = [\n  {\n    id: 'metric',\n    header: 'Metric',\n    accessorKey: 'name',\n    cell: (value, row) => (\n      <div>\n        <div className=\"font-medium\">{value}</div>\n        <div className=\"text-sm text-muted-foreground\">{row.description}</div>\n      </div>\n    )\n  },\n  {\n    id: 'value',\n    header: 'Current Value',\n    accessorKey: 'currentValue',\n    cell: (value, row) => (\n      <div className=\"text-right\">\n        <div className=\"font-bold text-lg\">{value.toLocaleString()}</div>\n        <div className={`text-sm ${\n          row.change >= 0 ? 'text-green-600' : 'text-red-600'\n        }`}>\n          {row.change >= 0 ? '+' : ''}{row.change}%\n        </div>\n      </div>\n    ),\n    align: 'right'\n  },\n  {\n    id: 'progress',\n    header: 'Goal Progress',\n    accessorKey: 'progress',\n    cell: (value) => (\n      <div className=\"flex items-center gap-3\">\n        <Progress value={value} className=\"flex-1\" />\n        <span className=\"text-sm font-medium w-12\">{value}%</span>\n      </div>\n    )\n  }\n];\n\n<EnhancedDataTable\n  data={analyticsData}\n  columns={analyticsColumns}\n  sortable\n  enableDensity\n  zebra={false}\n  className=\"analytics-table\"\n/>"
+    },
+    {
+      "title": "Financial Data Table",
+      "description": "Financial transactions with formatting, filtering by date ranges, and export",
+      "code": "const transactionColumns = [\n  {\n    id: 'date',\n    header: 'Date',\n    accessorKey: 'date',\n    cell: (value) => new Date(value).toLocaleDateString(),\n    filterType: 'date'\n  },\n  {\n    id: 'description',\n    header: 'Description',\n    accessorKey: 'description',\n    cell: (value, row) => (\n      <div>\n        <div className=\"font-medium\">{value}</div>\n        <div className=\"text-sm text-muted-foreground\">{row.category}</div>\n      </div>\n    )\n  },\n  {\n    id: 'amount',\n    header: 'Amount',\n    accessorKey: 'amount',\n    cell: (value) => (\n      <span className={`font-mono font-medium ${\n        value >= 0 ? 'text-green-600' : 'text-red-600'\n      }`}>\n        ${Math.abs(value).toFixed(2)}\n      </span>\n    ),\n    align: 'right',\n    filterType: 'number'\n  },\n  {\n    id: 'status',\n    header: 'Status',\n    accessorKey: 'status',\n    cell: (value) => (\n      <Badge variant={\n        value === 'completed' ? 'default' :\n        value === 'pending' ? 'secondary' : 'destructive'\n      }>\n        {value}\n      </Badge>\n    ),\n    filterType: 'select',\n    filterOptions: [\n      { label: 'Completed', value: 'completed' },\n      { label: 'Pending', value: 'pending' },\n      { label: 'Failed', value: 'failed' }\n    ]\n  }\n];\n\n<EnhancedDataTable\n  data={transactions}\n  columns={transactionColumns}\n  searchable\n  sortable\n  filterable\n  exportable\n  pagination\n  pageSize={50}\n  onExport={(format, data) => {\n    console.log(`Exporting ${data.length} transactions as ${format}`);\n  }}\n/>"
     }
   ]
 }
