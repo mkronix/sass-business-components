@@ -1,41 +1,39 @@
 
-import { Button } from '@/components/ui/button';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Palette } from 'lucide-react';
 import { useState } from 'react';
-import { ThemeSelector } from '@/components/ThemeSelector';
+import { Button } from '@/components/ui/button';
+import { Palette } from 'lucide-react';
+import { useTheme } from '@/components/providers/ThemeProvider';
+import { ThemeSelector } from '@/components/ThemeSelector/ThemeSelector';
+import { Link } from 'react-router-dom';
 
 export function Header() {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   return (
-    <>
-      <header className="sticky top-0 z-40 w-full border-b border-primary-custom bg-primary-custom/95 backdrop-blur supports-[backdrop-filter]:bg-primary-custom/60">
-        <div className="flex h-14 items-center px-4 lg:px-6">
-          <SidebarTrigger className="text-primary-custom" />
-          <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-            <div className="w-full flex-1 md:w-auto md:flex-none">
-              <h1 className="text-lg font-semibold text-primary-custom">Component Library</h1>
-            </div>
-            <nav className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setThemeModalOpen(true)}
-                className="text-primary-custom hover-primary-custom"
-              >
-                <Palette className="h-4 w-4" />
-                <span className="sr-only">Toggle theme</span>
-              </Button>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <header className="h-16 border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-gray-900/80 sticky top-0 z-30">
+      <div className="flex h-full items-center justify-between px-6">
+        <Link to="/">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Business SaaS Components</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Sophisticated Component Library</p>
+        </Link>
 
-      <ThemeSelector
-        open={themeModalOpen}
-        onOpenChange={setThemeModalOpen}
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setThemeModalOpen(true)}
+            className="w-10 h-10 rounded-xl"
+          >
+            <Palette className="h-4 w-4" />
+            <span className="sr-only">Open theme customizer</span>
+          </Button>
+        </div>
+      </div>
+
+      <ThemeSelector 
+        open={themeModalOpen} 
+        onOpenChange={setThemeModalOpen} 
       />
-    </>
+    </header>
   );
 }
