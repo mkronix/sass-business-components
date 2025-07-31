@@ -16,11 +16,11 @@ export default function CategoryPage() {
     return (
       <div className="container mx-auto p-6 max-w-7xl">
         <div className="text-center py-12">
-          <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+          <div className="mx-auto w-20 h-20 bg-secondary-custom rounded-full flex items-center justify-center mb-6">
             <span className="text-4xl">🔍</span>
           </div>
           <h1 className="text-3xl font-bold mb-4">Category Not Found</h1>
-          <p className="text-muted-foreground mb-8">The requested category does not exist or is not available yet.</p>
+          <p className="text-secondary-custom mb-8">The requested category does not exist or is not available yet.</p>
           <Link to="/">
             <Button>
               <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
@@ -39,14 +39,14 @@ export default function CategoryPage() {
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl">
-                <Code2 className="h-8 w-8 text-primary" />
+              <div className="p-3 bg-gradient-to-br from-primary-custom/20 to-primary-custom/10 rounded-xl">
+                <Code2 className="h-8 w-8 text-primary-custom" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-custom to-primary-custom/70 ">
                   {categoryData.title}
                 </h1>
-                <p className="text-muted-foreground text-lg mt-1">
+                <p className="text-secondary-custom text-lg mt-1">
                   Professional components for modern applications
                 </p>
               </div>
@@ -56,18 +56,18 @@ export default function CategoryPage() {
 
         {/* Stats and Badges */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
-          <Badge variant="default" className="px-3 py-1">
+          <Badge variant="outline" className="px-3 py-1 border-primary-custom">
             {categoryData.items.length} Component{categoryData.items.length !== 1 ? 's' : ''}
           </Badge>
-          <Badge variant="outline" className="px-3 py-1">
+          <Badge variant="outline" className="px-3 py-1 border-primary-custom">
             <Palette className="w-3 h-3 mr-1" />
             Dark/Light Mode
           </Badge>
-          <Badge variant="outline" className="px-3 py-1">
+          <Badge variant="outline" className="px-3 py-1 border-primary-custom">
             <Monitor className="w-3 h-3 mr-1" />
             Fully Responsive
           </Badge>
-          <Badge variant="outline" className="px-3 py-1">
+          <Badge variant="outline" className="px-3 py-1 border-primary-custom">
             <Code2 className="w-3 h-3 mr-1" />
             TypeScript Ready
           </Badge>
@@ -75,32 +75,32 @@ export default function CategoryPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="text-center">
+          <Card className="text-center shadow-primary-custom">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-primary">{categoryData.items.length}</div>
-              <div className="text-sm text-muted-foreground">Components</div>
+              <div className="text-2xl font-bold text-primary-custom">{categoryData.items.length}</div>
+              <div className="text-sm text-secondary-custom">Components</div>
             </CardContent>
           </Card>
-          <Card className="text-center">
+          <Card className="text-center shadow-primary-custom">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-green-500">
+              <div className="text-2xl font-bold text-secondary-custom">
                 {categoryData.items.filter(item => item.status === 'ready').length}
               </div>
-              <div className="text-sm text-muted-foreground">Ready</div>
+              <div className="text-sm text-secondary-custom">Ready</div>
             </CardContent>
           </Card>
-          <Card className="text-center">
+          <Card className="text-center shadow-primary-custom">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-orange-500">
+              <div className="text-2xl font-bold text-primary-custom">
                 {categoryData.items.filter(item => !item.status || item.status !== 'ready').length}
               </div>
-              <div className="text-sm text-muted-foreground">Coming Soon</div>
+              <div className="text-sm text-secondary-custom">Coming Soon</div>
             </CardContent>
           </Card>
-          <Card className="text-center">
+          <Card className="text-center shadow-primary-custom">
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-blue-500">100%</div>
-              <div className="text-sm text-muted-foreground">Responsive</div>
+              <div className="text-2xl font-bold text-secondary-custom">100%</div>
+              <div className="text-sm text-secondary-custom">Responsive</div>
             </CardContent>
           </Card>
         </div>
@@ -108,13 +108,13 @@ export default function CategoryPage() {
 
       {/* Components Grid */}
       {categoryData.items.length === 0 ? (
-        <Card className="border-dashed">
+        <Card className="border-dashed border-secondary-custom">
           <CardContent className="py-16 text-center">
-            <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-6">
-              <Code2 className="h-8 w-8 text-muted-foreground" />
+            <div className="mx-auto w-16 h-16 bg-secondary-custom rounded-full flex items-center justify-center mb-6">
+              <Code2 className="h-8 w-8 text-secondary-custom" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Components Coming Soon</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
+            <p className="text-secondary-custom max-w-md mx-auto">
               We're working hard to bring you amazing components for this category.
               Check back soon for updates!
             </p>
@@ -124,7 +124,7 @@ export default function CategoryPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">Available Components</h2>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-secondary-custom">
               Click on any component to view details and live demo
             </div>
           </div>
@@ -138,19 +138,19 @@ export default function CategoryPage() {
               return (
                 <Card
                   key={item.name || item.title || index}
-                  className={`group transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${isReady
-                      ? 'hover:shadow-primary/20 border-primary/20'
-                      : 'opacity-75 hover:opacity-100'
+                  className={`group transition-all duration-300 hover:shadow-xl hover:scale-[1.02] shadow-primary-custom ${isReady
+                    ? 'hover:shadow-primary-custom/20 border-primary-custom/20'
+                    : 'opacity-75 hover:opacity-100'
                     }`}
                 >
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className={`p-2 rounded-lg ${isReady
-                            ? 'bg-primary/10 group-hover:bg-primary/20'
-                            : 'bg-muted group-hover:bg-muted/80'
+                          ? 'accent-primary-custom hover-primary-custom'
+                          : 'bg-secondary-custom hover-secondary-custom'
                           } transition-colors`}>
-                          <Code2 className={`h-5 w-5 ${isReady ? 'text-primary' : 'text-muted-foreground'
+                          <Code2 className={`h-5 w-5 ${isReady ? 'text-primary-custom' : 'text-secondary-custom'
                             }`} />
                         </div>
                         <div>
@@ -160,8 +160,8 @@ export default function CategoryPage() {
                         </div>
                       </div>
                       <Badge
-                        variant={isReady ? 'default' : 'secondary'}
-                        className="shrink-0"
+                        variant={isReady ? 'outline' : 'secondary'}
+                        className={`${isReady ? 'bg-primary-custom' : 'bg-secondary-custom'} text-sm font-medium px-3 py-1`}
                       >
                         {isReady ? 'Ready' : 'Coming Soon'}
                       </Badge>
@@ -180,22 +180,15 @@ export default function CategoryPage() {
                     {/* Feature badges for ready components */}
                     {isReady && (
                       <div className="flex flex-wrap gap-1 mb-4">
-                        <Badge variant="outline" className="text-xs">Responsive</Badge>
-                        <Badge variant="outline" className="text-xs">Accessible</Badge>
-                        <Badge variant="outline" className="text-xs">Customizable</Badge>
-                        {item.name === 'DataTable' && (
-                          <>
-                            <Badge variant="outline" className="text-xs">Export</Badge>
-                            <Badge variant="outline" className="text-xs">Filtering</Badge>
-                          </>
-                        )}
+                        <Badge variant="outline" className="text-xs border-secondary-custom">Responsive</Badge>
+                        <Badge variant="outline" className="text-xs border-secondary-custom">Customizable</Badge>
                       </div>
                     )}
 
                     <div className="flex items-center justify-between">
                       {isReady ? (
                         <Link to={componentUrl} className="flex-1">
-                          <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                          <Button className="w-full accent-primary-custom hover-secondary-custom transition-colors">
                             View Component
                             <ExternalLink className="ml-2 h-4 w-4" />
                           </Button>
@@ -216,22 +209,22 @@ export default function CategoryPage() {
       )}
 
       {/* Bottom CTA */}
-      <Card className="mt-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-primary/20">
+      <Card className="mt-12 border-dashed border-secondary-custom shadow-primary-custom">
         <CardContent className="p-8 text-center">
           <h3 className="text-xl font-bold mb-3">Ready to Build Something Amazing?</h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+          <p className="text-secondary-custom mb-6 max-w-2xl mx-auto">
             These components are designed to help you build professional, scalable applications faster.
             Each component includes comprehensive documentation and live examples.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild>
+            <Button asChild className='accent-secondary-custom'>
               <Link to="/">
                 <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
                 Explore More Categories
               </Link>
             </Button>
             {categoryData.items.some(item => item.status === 'ready') && (
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className='hover:bg-transparent'>
                 <Link to={categoryData.items.find(item => item.status === 'ready')?.url?.replace('/category/', '/categories/') || '#'}>
                   Try Live Demo
                   <ExternalLink className="ml-2 h-4 w-4" />

@@ -124,26 +124,26 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="text-center mb-12">
         <div className="mb-6">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary-custom via-secondary-custom to-primary-custom ">
             Business SaaS Component Library
           </h1>
-          <p className="text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
+          <p className="text-xl text-secondary-custom mb-6 max-w-3xl mx-auto">
             Sophisticated, responsive, and bug-free components for enterprise applications.
             Build modern SaaS interfaces with confidence.
           </p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Code className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2 px-4 py-2 accent-primary-custom rounded-full">
+            <Code className="h-4 w-4 text-primary-custom" />
             <span className="text-sm font-medium">TypeScript Ready</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Monitor className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2 px-4 py-2 accent-primary-custom rounded-full">
+            <Monitor className="h-4 w-4 text-primary-custom" />
             <span className="text-sm font-medium">Fully Responsive</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-            <Palette className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2 px-4 py-2 accent-primary-custom rounded-full">
+            <Palette className="h-4 w-4 text-primary-custom" />
             <span className="text-sm font-medium">Dark/Light Mode</span>
           </div>
         </div>
@@ -153,26 +153,26 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">{totalCategories}</div>
-            <div className="text-sm text-muted-foreground">Categories</div>
+            <div className="text-2xl font-bold text-primary-custom mb-1">{totalCategories}</div>
+            <div className="text-sm text-secondary-custom">Categories</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">{totalReadyComponents}</div>
-            <div className="text-sm text-muted-foreground">Components Ready</div>
+            <div className="text-2xl font-bold text-primary-custom mb-1">{totalReadyComponents}</div>
+            <div className="text-sm text-secondary-custom">Components Ready</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">100%</div>
-            <div className="text-sm text-muted-foreground">Responsive</div>
+            <div className="text-2xl font-bold text-primary-custom mb-1">100%</div>
+            <div className="text-sm text-secondary-custom">Responsive</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">∞</div>
-            <div className="text-sm text-muted-foreground">Customizable</div>
+            <div className="text-2xl font-bold text-primary-custom mb-1">∞</div>
+            <div className="text-sm text-secondary-custom">Customizable</div>
           </CardContent>
         </Card>
       </div>
@@ -184,11 +184,11 @@ export default function HomePage() {
           {featuredCategories.map((category) => {
             const IconComponent = category.icon;
             return (
-              <Card key={category.id} className="group hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
+              <Card key={category.id} className="group hover:shadow-lg transition-all duration-200 hover:scale-[1.02] shadow-primary-custom">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                      <IconComponent className="h-5 w-5 text-primary" />
+                    <div className="p-2 accent-primary-custom rounded-lg hover-primary-custom transition-colors">
+                      <IconComponent className="h-5 w-5 text-primary-custom" />
                     </div>
                     <Badge
                       variant={category.status === 'active' ? 'default' : 'secondary'}
@@ -202,10 +202,10 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-secondary-custom">
                       {category.componentCount} of {category.totalComponents} ready
                     </span>
-                    <Button asChild variant="ghost" size="sm" className="group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Button asChild variant="ghost" size="sm" className="group-hover:bg-primary-custom group-hover:text-primary-foreground">
                       <Link to={category.url || `/category/${category.id}`}>
                         Explore <ArrowRight className="h-3 w-3 ml-1" />
                       </Link>
@@ -219,10 +219,10 @@ export default function HomePage() {
       </div>
 
       {/* Quick Start */}
-      <Card className="bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5">
+      <Card className="bg-gradient-to-r from-primary-custom/5 via-purple-500/5 to-primary-custom/5">
         <CardContent className="p-8 text-center">
           <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-secondary-custom mb-4">
             Explore our comprehensive component library and start building amazing interfaces.
           </p>
           <Button asChild>
