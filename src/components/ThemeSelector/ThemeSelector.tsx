@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useTheme } from '@/components/providers/ThemeProvider'
-import { Palette, Sun, Moon, Settings, Check } from 'lucide-react'
+import { Palette, Sun, Moon, Settings, Check, Monitor } from 'lucide-react'
 
 interface ThemeSelectorProps {
   open: boolean
@@ -112,7 +112,7 @@ export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
           </TabsList>
 
           <TabsContent value="basic" className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Card 
                 className={`cursor-pointer transition-all hover:scale-105 ${theme === 'light' ? 'ring-2 ring-primary' : ''}`}
                 onClick={() => setTheme('light')}
@@ -151,6 +151,28 @@ export function ThemeSelector({ open, onOpenChange }: ThemeSelectorProps) {
                   </div>
                 </CardContent>
                 {theme === 'dark' && (
+                  <div className="absolute top-2 right-2">
+                    <Check className="h-5 w-5 text-primary" />
+                  </div>
+                )}
+              </Card>
+
+              <Card 
+                className={`cursor-pointer transition-all hover:scale-105 ${theme === 'system' ? 'ring-2 ring-primary' : ''}`}
+                onClick={() => setTheme('system')}
+              >
+                <CardHeader className="text-center pb-3">
+                  <Monitor className="h-8 w-8 mx-auto text-gray-500" />
+                  <CardTitle className="text-sm">System</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3">
+                  <div className="h-20 rounded bg-gradient-to-r from-white to-gray-900 border-2 border-gray-400 p-2">
+                    <div className="h-2 bg-gradient-to-r from-gray-800 to-white rounded mb-1"></div>
+                    <div className="h-1 bg-gray-500 rounded w-3/4 mb-1"></div>
+                    <div className="h-1 bg-gray-400 rounded w-1/2"></div>
+                  </div>
+                </CardContent>
+                {theme === 'system' && (
                   <div className="absolute top-2 right-2">
                     <Check className="h-5 w-5 text-primary" />
                   </div>
