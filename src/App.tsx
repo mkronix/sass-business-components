@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,8 +22,11 @@ const App = () => (
           <Routes>
             <Route path="/" element={<AppLayout />}>
               <Route index element={<HomePage />} />
-              <Route path="categories/:categoryId/:subcategoryId" element={<SubcategoryPage />} />
+              {/* Category routes */}
               <Route path="category/:categoryId" element={<CategoryPage />} />
+              {/* Subcategory routes - supports both /category/ and /categories/ paths */}
+              <Route path="category/:categoryId/:subcategoryId" element={<SubcategoryPage />} />
+              <Route path="categories/:categoryId/:subcategoryId" element={<SubcategoryPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
