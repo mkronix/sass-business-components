@@ -31,7 +31,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import COMPONENTS from '@/data/components';
-import DataTable from '@/components/DataTable/DataTable';
+import DataTable from '@/components/data-display/DataTable/DataTable';
 import TableDocs from '@/data/documentation/data-display/data-table.json';
 
 const componentMap: Record<string, {

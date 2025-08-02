@@ -1,4 +1,5 @@
-import { DataTableDemo } from '@/components/DataTable/DataTableDemo';
+import { DataTableDemo } from '@/components/data-display/DataTable/DataTableDemo';
+import DataGridDemo from '@/components/data-display/DatGrid/DataGridDemo';
 
 const COMPONENTS = [
     {
@@ -15,7 +16,12 @@ const COMPONENTS = [
             },
             {
                 "title": "DataGrid",
-                "url": "/category/data-display/data-grid"
+                "url": "/category/data-display/data-grid",
+                "name": 'DataGrid',
+                "description": 'A data grid component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
+                "status": 'ready',
+                "component": <DataGridDemo />
+
             },
             {
                 "title": "ListView",
