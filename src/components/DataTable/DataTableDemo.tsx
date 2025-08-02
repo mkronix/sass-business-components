@@ -227,7 +227,7 @@ export const DataTableDemo = () => {
         </div>
       ),
       sortable: true,
-      align: 'center'
+      align: 'center' as const
     },
     {
       id: 'tasks',
@@ -240,7 +240,7 @@ export const DataTableDemo = () => {
         </div>
       ),
       sortable: true,
-      align: 'center'
+      align: 'center' as const
     },
     {
       id: 'salary',
@@ -254,7 +254,7 @@ export const DataTableDemo = () => {
       sortable: true,
       filterable: true,
       filterType: 'number' as const,
-      align: 'right'
+      align: 'right' as const
     },
     {
       id: 'createdAt',
