@@ -5,6 +5,47 @@ import ListViewDemo from '@/components/data-display/ListView/ListViewDemo';
 import TimeLine from '@/components/data-display/Timeline/TimeLine';
 import TreeView from '@/components/data-display/TreeView/TreeView';
 
+// Form Components
+import DynamicForm from '@/components/form/DynamicForm/DynamicForm';
+import FormField from '@/components/form/FormField/FormField';
+import SearchBar from '@/components/form/SearchBar/SearchBar';
+import DatePicker from '@/components/form/DatePicker/DatePicker';
+import FileUpload from '@/components/form/FileUpload/FileUpload';
+import RichTextEditor from '@/components/form/RichTextEditor/RichTextEditor';
+import SignaturePad from '@/components/form/SignaturePad/SignaturePad';
+import LocationPicker from '@/components/form/LocationPicker/LocationPicker';
+
+// Navigation Components
+import ModularNavigation from '@/components/navigation/ModularNavigation/ModularNavigation';
+import Breadcrumb from '@/components/navigation/Breadcrumb/Breadcrumb';
+import TabNavigation from '@/components/navigation/TabNavigation/TabNavigation';
+import Sidebar from '@/components/navigation/Sidebar/Sidebar';
+import MegaMenu from '@/components/navigation/MegaMenu/MegaMenu';
+import Pagination from '@/components/navigation/Pagination/Pagination';
+
+// Feedback Components
+import NotificationCenter from '@/components/feedback/NotificationCenter/NotificationCenter';
+import Modal from '@/components/feedback/Modal/Modal';
+import StatusIndicator from '@/components/feedback/StatusIndicator/StatusIndicator';
+import Toast from '@/components/feedback/Toast/Toast';
+import AlertDialog from '@/components/feedback/AlertDialog/AlertDialog';
+import ProgressTracker from '@/components/feedback/ProgressTracker/ProgressTracker';
+
+// Chart Components
+import ChartWrapper from '@/components/charts/ChartWrapper/ChartWrapper';
+import KPICard from '@/components/charts/KPICard/KPICard';
+import Dashboard from '@/components/charts/Dashboard/Dashboard';
+import MetricDisplay from '@/components/charts/MetricDisplay/MetricDisplay';
+import ComparisonChart from '@/components/charts/ComparisonChart/ComparisonChart';
+import RealtimeChart from '@/components/charts/RealtimeChart/RealtimeChart';
+
+// Media Components
+import ImageGallery from '@/components/media/ImageGallery/ImageGallery';
+import DocumentViewer from '@/components/media/DocumentViewer/DocumentViewer';
+import MediaPlayer from '@/components/media/MediaPlayer/MediaPlayer';
+import PDFViewer from '@/components/media/PDFViewer/PDFViewer';
+import ImageEditor from '@/components/media/ImageEditor/ImageEditor';
+
 const COMPONENTS = [
     {
         "id": "data-display",
@@ -69,35 +110,67 @@ const COMPONENTS = [
         "items": [
             {
                 "title": "DynamicForm",
-                "url": "/category/form/dynamic-form"
+                "url": "/category/form/dynamic-form",
+                "name": "DynamicForm",
+                "description": "A dynamic form component that can generate forms from configuration objects.",
+                "status": "ready",
+                "component": <DynamicForm />
             },
             {
                 "title": "FormField",
-                "url": "/category/form/form-field"
+                "url": "/category/form/form-field",
+                "name": "FormField",
+                "description": "A flexible form field component with validation and various input types.",
+                "status": "ready",
+                "component": <FormField />
             },
             {
                 "title": "SearchBar",
-                "url": "/category/form/search-bar"
+                "url": "/category/form/search-bar",
+                "name": "SearchBar",
+                "description": "An advanced search bar with autocomplete and filtering capabilities.",
+                "status": "ready",
+                "component": <SearchBar />
             },
             {
                 "title": "DatePicker",
-                "url": "/category/form/date-picker"
+                "url": "/category/form/date-picker",
+                "name": "DatePicker",
+                "description": "A comprehensive date picker with range selection and calendar view.",
+                "status": "ready",
+                "component": <DatePicker />
             },
             {
                 "title": "FileUpload",
-                "url": "/category/form/file-upload"
+                "url": "/category/form/file-upload",
+                "name": "FileUpload",
+                "description": "A drag-and-drop file upload component with progress tracking.",
+                "status": "ready",
+                "component": <FileUpload />
             },
             {
                 "title": "RichTextEditor",
-                "url": "/category/form/rich-text-editor"
+                "url": "/category/form/rich-text-editor",
+                "name": "RichTextEditor",
+                "description": "A WYSIWYG rich text editor with formatting tools and media support.",
+                "status": "ready",
+                "component": <RichTextEditor />
             },
             {
                 "title": "SignaturePad",
-                "url": "/category/form/signature-pad"
+                "url": "/category/form/signature-pad",
+                "name": "SignaturePad",
+                "description": "A digital signature pad component for capturing handwritten signatures.",
+                "status": "ready",
+                "component": <SignaturePad />
             },
             {
                 "title": "LocationPicker",
-                "url": "/category/form/location-picker"
+                "url": "/category/form/location-picker",
+                "name": "LocationPicker",
+                "description": "A location picker component with map integration and address search.",
+                "status": "ready",
+                "component": <LocationPicker />
             }
         ]
     },
@@ -108,27 +181,51 @@ const COMPONENTS = [
         "items": [
             {
                 "title": "ModularNavigation",
-                "url": "/category/navigation/modular-navigation"
+                "url": "/category/navigation/modular-navigation",
+                "name": "ModularNavigation",
+                "description": "A modular navigation system with customizable menu structures.",
+                "status": "ready",
+                "component": <ModularNavigation />
             },
             {
                 "title": "Breadcrumb",
-                "url": "/category/navigation/breadcrumb"
+                "url": "/category/navigation/breadcrumb",
+                "name": "Breadcrumb",
+                "description": "A breadcrumb navigation component for hierarchical navigation.",
+                "status": "ready",
+                "component": <Breadcrumb />
             },
             {
                 "title": "TabNavigation",
-                "url": "/category/navigation/tab-navigation"
+                "url": "/category/navigation/tab-navigation",
+                "name": "TabNavigation",
+                "description": "A tab navigation component with dynamic tab management.",
+                "status": "ready",
+                "component": <TabNavigation />
             },
             {
                 "title": "Sidebar",
-                "url": "/category/navigation/sidebar"
+                "url": "/category/navigation/sidebar",
+                "name": "Sidebar",
+                "description": "A collapsible sidebar navigation with nested menu support.",
+                "status": "ready",
+                "component": <Sidebar />
             },
             {
                 "title": "MegaMenu",
-                "url": "/category/navigation/mega-menu"
+                "url": "/category/navigation/mega-menu",
+                "name": "MegaMenu",
+                "description": "A mega menu component with multi-column layouts and rich content.",
+                "status": "ready",
+                "component": <MegaMenu />
             },
             {
                 "title": "Pagination",
-                "url": "/category/navigation/pagination"
+                "url": "/category/navigation/pagination",
+                "name": "Pagination",
+                "description": "A pagination component with page size controls and navigation.",
+                "status": "ready",
+                "component": <Pagination />
             }
         ]
     },
@@ -139,27 +236,51 @@ const COMPONENTS = [
         "items": [
             {
                 "title": "NotificationCenter",
-                "url": "/category/feedback/notification-center"
+                "url": "/category/feedback/notification-center",
+                "name": "NotificationCenter",
+                "description": "A centralized notification center with filtering and management.",
+                "status": "ready",
+                "component": <NotificationCenter />
             },
             {
                 "title": "Modal",
-                "url": "/category/feedback/modal"
+                "url": "/category/feedback/modal",
+                "name": "Modal",
+                "description": "A versatile modal dialog component with customizable content.",
+                "status": "ready",
+                "component": <Modal />
             },
             {
                 "title": "StatusIndicator",
-                "url": "/category/feedback/status-indicator"
+                "url": "/category/feedback/status-indicator",
+                "name": "StatusIndicator",
+                "description": "A status indicator component with various states and animations.",
+                "status": "ready",
+                "component": <StatusIndicator />
             },
             {
                 "title": "Toast",
-                "url": "/category/feedback/toast"
+                "url": "/category/feedback/toast",
+                "name": "Toast",
+                "description": "A toast notification system with positioning and stacking.",
+                "status": "ready",
+                "component": <Toast />
             },
             {
                 "title": "AlertDialog",
-                "url": "/category/feedback/alert-dialog"
+                "url": "/category/feedback/alert-dialog",
+                "name": "AlertDialog",
+                "description": "An alert dialog component for confirmations and warnings.",
+                "status": "ready",
+                "component": <AlertDialog />
             },
             {
                 "title": "ProgressTracker",
-                "url": "/category/feedback/progress-tracker"
+                "url": "/category/feedback/progress-tracker",
+                "name": "ProgressTracker",
+                "description": "A progress tracking component with step-by-step visualization.",
+                "status": "ready",
+                "component": <ProgressTracker />
             }
         ]
     },
@@ -170,27 +291,51 @@ const COMPONENTS = [
         "items": [
             {
                 "title": "ChartWrapper",
-                "url": "/category/charts/chart-wrapper"
+                "url": "/category/charts/chart-wrapper",
+                "name": "ChartWrapper",
+                "description": "A wrapper component for various chart types with unified API.",
+                "status": "ready",
+                "component": <ChartWrapper />
             },
             {
                 "title": "KPICard",
-                "url": "/category/charts/kpi-card"
+                "url": "/category/charts/kpi-card",
+                "name": "KPICard",
+                "description": "A KPI card component for displaying key performance indicators.",
+                "status": "ready",
+                "component": <KPICard />
             },
             {
                 "title": "Dashboard",
-                "url": "/category/charts/dashboard"
+                "url": "/category/charts/dashboard",
+                "name": "Dashboard",
+                "description": "A dashboard component with customizable widgets and layouts.",
+                "status": "ready",
+                "component": <Dashboard />
             },
             {
                 "title": "MetricDisplay",
-                "url": "/category/charts/metric-display"
+                "url": "/category/charts/metric-display",
+                "name": "MetricDisplay",
+                "description": "A metric display component with trend indicators and comparisons.",
+                "status": "ready",
+                "component": <MetricDisplay />
             },
             {
                 "title": "ComparisonChart",
-                "url": "/category/charts/comparison-chart"
+                "url": "/category/charts/comparison-chart",
+                "name": "ComparisonChart",
+                "description": "A comparison chart component for side-by-side data analysis.",
+                "status": "ready",
+                "component": <ComparisonChart />
             },
             {
                 "title": "RealtimeChart",
-                "url": "/category/charts/realtime-chart"
+                "url": "/category/charts/realtime-chart",
+                "name": "RealtimeChart",
+                "description": "A real-time chart component with live data streaming.",
+                "status": "ready",
+                "component": <RealtimeChart />
             }
         ]
     },
@@ -201,27 +346,51 @@ const COMPONENTS = [
         "items": [
             {
                 "title": "ImageGallery",
-                "url": "/category/media/image-gallery"
+                "url": "/category/media/image-gallery",
+                "name": "ImageGallery",
+                "description": "An image gallery component with lightbox and thumbnail views.",
+                "status": "ready",
+                "component": <ImageGallery />
             },
             {
                 "title": "DocumentViewer",
-                "url": "/category/media/document-viewer"
+                "url": "/category/media/document-viewer",
+                "name": "DocumentViewer",
+                "description": "A document viewer component supporting multiple file formats.",
+                "status": "ready",
+                "component": <DocumentViewer />
             },
             {
                 "title": "FileUpload",
-                "url": "/category/media/file-upload"
+                "url": "/category/media/file-upload",
+                "name": "FileUpload",
+                "description": "A file upload component with drag-and-drop and progress tracking.",
+                "status": "ready",
+                "component": <FileUpload />
             },
             {
                 "title": "MediaPlayer",
-                "url": "/category/media/media-player"
+                "url": "/category/media/media-player",
+                "name": "MediaPlayer",
+                "description": "A media player component with playback controls and streaming support.",
+                "status": "ready",
+                "component": <MediaPlayer />
             },
             {
                 "title": "PDFViewer",
-                "url": "/category/media/pdf-viewer"
+                "url": "/category/media/pdf-viewer",
+                "name": "PDFViewer",
+                "description": "A PDF viewer component with zoom, navigation, and annotation features.",
+                "status": "ready",
+                "component": <PDFViewer />
             },
             {
                 "title": "ImageEditor",
-                "url": "/category/media/image-editor"
+                "url": "/category/media/image-editor",
+                "name": "ImageEditor",
+                "description": "An image editor component with cropping, filters, and basic editing tools.",
+                "status": "ready",
+                "component": <ImageEditor />
             }
         ]
     },
