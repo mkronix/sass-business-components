@@ -1,73 +1,151 @@
-# Welcome to your Lovable project
 
-## Project info
+# Personal Component Library
 
-**URL**: https://lovable.dev/projects/66482a02-d9ca-495e-aeb0-d427fd24b83d
+A modern, accessible React component library built with TypeScript, Tailwind CSS, and shadcn/ui.
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+- **Modern Tech Stack**: React 18, TypeScript, Vite, Tailwind CSS
+- **Accessible**: Built with accessibility in mind using Radix UI primitives
+- **Responsive**: Mobile-first design with responsive components
+- **Type Safe**: Full TypeScript support with proper type definitions
+- **Theme Support**: Light/dark mode with custom theme system
+- **Component Categories**: Organized components by functionality
 
-**Use Lovable**
+## 📦 Available Components
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/66482a02-d9ca-495e-aeb0-d427fd24b83d) and start prompting.
+### Data Display
+- **DataTable**: Advanced data table with sorting, filtering, and pagination
+- **DataGrid**: Feature-rich grid component with virtual scrolling, column management, and inline editing
 
-Changes made via Lovable will be committed automatically to this repo.
+### UI Components
+- Complete set of UI components from shadcn/ui
+- Custom components built on top of Radix UI primitives
 
-**Use your preferred IDE**
+## 🛠 Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS with CSS variables for theming
+- **UI Primitives**: Radix UI
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
+- **State Management**: React Query for server state
+- **Form Handling**: React Hook Form with Zod validation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🏃‍♂️ Getting Started
 
-Follow these steps:
+### Prerequisites
+- Node.js 16+ or Bun
+- npm, yarn, or bun
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# Clone the repository
+git clone <repository-url>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Navigate to project directory
+cd component-library
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Install dependencies
+bun install
+# or
+npm install
+
+# Start development server
+bun dev
+# or
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Building for Production
 
-**Use GitHub Codespaces**
+```bash
+# Build the project
+bun run build
+# or
+npm run build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Preview the build
+bun run preview
+# or
+npm run preview
+```
 
-## What technologies are used for this project?
+## 📁 Project Structure
 
-This project is built with:
+```
+src/
+├── components/
+│   ├── data-display/     # Data display components
+│   ├── ui/              # Base UI components (shadcn/ui)
+│   ├── Layout/          # Layout components
+│   └── providers/       # Context providers
+├── data/               # Static data and configurations
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions
+├── pages/              # Page components
+└── styles/             # Global styles and CSS
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🎨 Theming
 
-## How can I deploy this project?
+The project uses a custom theme system with CSS variables for colors. Themes can be switched between light and dark modes.
 
-Simply open [Lovable](https://lovable.dev/projects/66482a02-d9ca-495e-aeb0-d427fd24b83d) and click on Share -> Publish.
+### Custom Colors
+All colors are defined as HSL values in the CSS custom properties for better theming support.
 
-## Can I connect a custom domain to my Lovable project?
+## 📖 Usage
 
-Yes, you can!
+### Adding New Components
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Create component in appropriate category folder under `src/components/`
+2. Add component export to the category's `index.ts`
+3. Register component in `src/data/components.tsx`
+4. The component will automatically appear in the UI
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Component Registration
+
+Components are registered in the `components.tsx` file with metadata:
+
+```typescript
+{
+  id: 'component-id',
+  name: 'Component Name',
+  title: 'Display Title',
+  description: 'Component description',
+  status: 'ready' | 'beta' | 'alpha',
+  url: '/category/subcategory/component-id'
+}
+```
+
+## 🤝 Development Guidelines
+
+- Follow TypeScript strict mode
+- Use Tailwind CSS for styling (avoid inline styles)
+- Implement proper accessibility features
+- Maintain responsive design
+- Write clear component interfaces
+- Use semantic HTML elements
+
+## 📝 Available Scripts
+
+- `dev` - Start development server
+- `build` - Build for production
+- `preview` - Preview production build
+- `lint` - Run ESLint
+- `type-check` - Run TypeScript type checking
+
+## 🔧 Configuration
+
+- **Vite**: `vite.config.ts`
+- **TypeScript**: `tsconfig.json`
+- **Tailwind**: `tailwind.config.ts`
+- **ESLint**: `eslint.config.js`
+
+## 📄 License
+
+This is a personal project for internal use.
