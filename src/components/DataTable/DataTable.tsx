@@ -1,3 +1,4 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,8 +31,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataTableProps, FilterValue, SortValue } from './types';
 
 const DataTable = <T extends Record<string, any>>({
-  data,
-  columns: initialColumns,
+  data = [],
+  columns: initialColumns = [],
   loading = false,
   searchable = true,
   sortable = true,
@@ -74,8 +75,9 @@ const DataTable = <T extends Record<string, any>>({
   const [density, setDensity] = useState<'compact' | 'normal' | 'comfortable'>('normal');
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
-  // Computed columns with visibility
+  // Computed columns with visibility - safely handle undefined initialColumns
   const visibleColumns = useMemo(() => {
+    if (!initialColumns || !Array.isArray(initialColumns)) return [];
     return initialColumns.filter(col => !hiddenColumns.includes(col.id) && !col.hidden);
   }, [initialColumns, hiddenColumns]);
 
@@ -89,8 +91,10 @@ const DataTable = <T extends Record<string, any>>({
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Advanced filtering and sorting
+  // Advanced filtering and sorting - safely handle undefined data
   const filteredAndSortedData = useMemo(() => {
+    if (!data || !Array.isArray(data)) return [];
+    
     let result = [...data];
 
     // Apply global search
@@ -583,7 +587,6 @@ const DataTable = <T extends Record<string, any>>({
                     {multiSelect && (
                       <Checkbox
                         checked={selectedRows.length === paginatedData.length && paginatedData.length > 0}
-                        indeterminate={selectedRows.length > 0 && selectedRows.length < paginatedData.length}
                         onCheckedChange={handleSelectAll}
                       />
                     )}
@@ -983,5 +986,4 @@ const DataTable = <T extends Record<string, any>>({
   );
 };
 
-
-export default DataTable
+export default DataTable;
