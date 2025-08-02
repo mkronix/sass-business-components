@@ -1,9 +1,9 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Check, Edit2, Eye, RefreshCw, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { DataGrid, generateSampleData, GridColumn } from ".";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { Check, Edit2, Eye, Plus, RefreshCw, Trash2, X } from "lucide-react";
 
 // Demo Component
 const DataGridDemo = () => {
@@ -214,10 +214,6 @@ const DataGridDemo = () => {
 
     const customToolbar = (
         <div className="flex items-center gap-2">
-            <Button size="sm" onClick={() => console.log('Add new employee')}>
-                <Plus className="h-4 w-4 mr-1" />
-                Add Employee
-            </Button>
             <Button size="sm" variant="outline" onClick={() => {
                 setLoading(true);
                 setTimeout(() => {
@@ -226,7 +222,6 @@ const DataGridDemo = () => {
                 }, 1000);
             }}>
                 <RefreshCw className="h-4 w-4 mr-1" />
-                Regenerate Data
             </Button>
         </div>
     );

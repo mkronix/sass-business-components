@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Eye, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Edit2, Eye, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { generateSampleData, ListViewColumn } from "./types";
 import ListView from "./ListView";
+import { generateSampleData, ListViewColumn } from "./types";
 const ListViewDemo = () => {
     const [data, setData] = useState(() => generateSampleData(100));
     const [loading, setLoading] = useState(false);
@@ -91,10 +91,6 @@ const ListViewDemo = () => {
 
     const customToolbar = (
         <div className="flex items-center gap-2">
-            <Button size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Add Employee
-            </Button>
             <Button size="sm" variant="outline" onClick={() => {
                 setLoading(true);
                 setTimeout(() => {
@@ -103,20 +99,12 @@ const ListViewDemo = () => {
                 }, 1000);
             }}>
                 <RefreshCw className="h-4 w-4 mr-1" />
-                Refresh
             </Button>
         </div>
     );
 
     return (
         <div className="space-y-6">
-            <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Enhanced ListView Demo</h2>
-                <p className="text-muted-foreground">
-                    Flexible list component with multiple view templates, advanced filtering, and comprehensive features.
-                </p>
-            </div>
-
             <ListView
                 data={data}
                 columns={columns}

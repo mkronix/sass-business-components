@@ -17,16 +17,12 @@ import {
     DollarSign,
     Download,
     Edit2,
-    Eye,
     Filter,
     FilterX,
-    Grid3X3,
-    List,
     Mail,
     MapPin,
     Package,
     Phone,
-    RefreshCw,
     Search,
     SortAsc,
     SortDesc,
@@ -70,76 +66,6 @@ const getBuiltInTemplates = <T extends ListItem>(): ListTemplate<T>[] => [
             </div>
         ),
         itemHeight: 80
-    },
-    {
-        id: 'card',
-        name: 'Card View',
-        description: 'Card layout with detailed information',
-        component: ({ item, isSelected, onSelect, onClick, customActions }) => (
-            <Card
-                className={cn(
-                    "cursor-pointer transition-all hover:shadow-md",
-                    isSelected && "ring-2 ring-primary/20 bg-primary/5"
-                )}
-                onClick={onClick}
-            >
-                <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                            <Checkbox
-                                checked={isSelected}
-                                onCheckedChange={onSelect}
-                                onClick={(e) => e.stopPropagation()}
-                            />
-                            {item.avatar && (
-                                <img
-                                    src={item.avatar}
-                                    alt={item.name}
-                                    className="w-10 h-10 rounded-full"
-                                />
-                            )}
-                            <div>
-                                <CardTitle className="text-base">{item.name}</CardTitle>
-                                <p className="text-sm text-muted-foreground">{item.position}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            {item.status && (
-                                <Badge variant={item.status === 'Active' ? 'default' : 'secondary'}>
-                                    {item.status}
-                                </Badge>
-                            )}
-                            {customActions}
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                            <Mail className="h-4 w-4 text-muted-foreground" />
-                            <span className="truncate">{item.email}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Phone className="h-4 w-4 text-muted-foreground" />
-                            <span>{item.phone}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Building className="h-4 w-4 text-muted-foreground" />
-                            <span>{item.department}</span>
-                        </div>
-                        {item.salary && (
-                            <div className="flex items-center gap-2">
-                                <DollarSign className="h-4 w-4 text-muted-foreground" />
-                                <span>${item.salary.toLocaleString()}</span>
-                            </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-        ),
-        gridCols: 2,
-        itemHeight: 200,
-        spacing: 'normal'
     },
     {
         id: 'compact',
@@ -291,48 +217,6 @@ const getBuiltInTemplates = <T extends ListItem>(): ListTemplate<T>[] => [
         ),
         itemHeight: 220,
         spacing: 'loose'
-    },
-    {
-        id: 'table',
-        name: 'Table View',
-        description: 'Traditional table layout',
-        component: ({ item, isSelected, onSelect, onClick, columns, customActions }) => (
-            <div
-                className={cn(
-                    "grid gap-4 p-3 border-b hover:bg-muted/30 transition-colors cursor-pointer",
-                    isSelected && "bg-primary/5"
-                )}
-                style={{ gridTemplateColumns: `auto ${columns.map(col => col.width || '1fr').join(' ')} auto` }}
-                onClick={onClick}
-            >
-                <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={onSelect}
-                    onClick={(e) => e.stopPropagation()}
-                />
-                {columns.map((column) => {
-                    const value = item[column.field];
-                    return (
-                        <div
-                            key={column.id}
-                            className={cn(
-                                "text-sm truncate",
-                                column.align === 'center' && 'text-center',
-                                column.align === 'right' && 'text-right'
-                            )}
-                        >
-                            {column.render ? column.render(value, item, 0) : (
-                                column.format ? column.format(value, item) : String(value || '')
-                            )}
-                        </div>
-                    );
-                })}
-                <div className="flex items-center gap-1">
-                    {customActions}
-                </div>
-            </div>
-        ),
-        itemHeight: 50
     }
 ];
 
@@ -751,57 +635,10 @@ const ListView = <T extends ListItem>({
                         </SelectContent>
                     </Select>
 
-                    {/* Layout Toggle */}
-                    <div className="flex border rounded-md">
-                        <Button
-                            variant={currentTemplate === 'table' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setCurrentTemplate('table')}
-                            className="rounded-r-none"
-                        >
-                            <List className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant={currentTemplate === 'card' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setCurrentTemplate('card')}
-                            className="rounded-none border-x-0"
-                        >
-                            <Grid3X3 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant={currentTemplate === 'detailed' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setCurrentTemplate('detailed')}
-                            className="rounded-l-none"
-                        >
-                            <Eye className="h-4 w-4" />
-                        </Button>
-                    </div>
-
-                    {/* Density Control */}
-                    <Select
-                        value={density}
-                        onValueChange={(value: 'compact' | 'normal' | 'comfortable') => {
-                            // Note: In real implementation, this would be controlled by parent
-                            console.log('Density changed to:', value);
-                        }}
-                    >
-                        <SelectTrigger className="w-32">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="compact">Compact</SelectItem>
-                            <SelectItem value="normal">Normal</SelectItem>
-                            <SelectItem value="comfortable">Comfortable</SelectItem>
-                        </SelectContent>
-                    </Select>
-
                     {exportable && (
                         <Select onValueChange={handleExport}>
-                            <SelectTrigger className="w-32">
+                            <SelectTrigger className="w-max">
                                 <Download className="h-4 w-4 mr-2" />
-                                <SelectValue placeholder="Export" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="csv">Export CSV</SelectItem>
@@ -825,19 +662,6 @@ const ListView = <T extends ListItem>({
                             }
                         </Button>
                     )}
-
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            setSearchQuery('');
-                            setFilters([]);
-                            setSorting([]);
-                            setSelectedItems(new Set());
-                        }}
-                    >
-                        <RefreshCw className="h-4 w-4" />
-                    </Button>
                 </div>
             </div>
 

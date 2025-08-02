@@ -17,7 +17,6 @@ import {
     Edit2,
     Filter,
     FilterX,
-    GripVertical,
     Pin,
     PinOff,
     RefreshCw,
@@ -37,9 +36,6 @@ const DataGrid = <T extends Record<string, any>>({
     loading = false,
     rowHeight = 48,
     headerHeight = 56,
-    enableVirtualScrolling = true,
-    enableColumnResize = true,
-    enableColumnReorder = true,
     enableColumnPinning = true,
     enableRowSelection = true,
     enableMultiSelect = true,
@@ -51,21 +47,14 @@ const DataGrid = <T extends Record<string, any>>({
     enableUndoRedo = true,
     pageSize = 100,
     pagination = true,
-    serverSide = false,
-    totalCount,
     className,
     theme = 'auto',
     density = 'standard',
     getRowId = (row) => row.id,
     onRowClick,
     onRowDoubleClick,
-    onCellClick,
     onCellEdit,
     onSelectionChange,
-    onSortChange,
-    onFilterChange,
-    onColumnStateChange,
-    onPageChange,
     customToolbar,
     customFooter
 }: DataGridProps<T>) => {
@@ -86,14 +75,9 @@ const DataGrid = <T extends Record<string, any>>({
     const [showColumnManager, setShowColumnManager] = useState(false);
     const [showFilterDialog, setShowFilterDialog] = useState(false);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number; row?: T } | null>(null);
-    const [resizingColumn, setResizingColumn] = useState<string | null>(null);
-    const [dragStartX, setDragStartX] = useState(0);
-    const [undoStack, setUndoStack] = useState<any[]>([]);
-    const [redoStack, setRedoStack] = useState<any[]>([]);
 
     // Refs
     const gridRef = useRef<HTMLDivElement>(null);
-    const headerRef = useRef<HTMLDivElement>(null);
     const bodyRef = useRef<HTMLDivElement>(null);
 
     // Get row height based on density
@@ -252,11 +236,6 @@ const DataGrid = <T extends Record<string, any>>({
             getRowId(row) === rowId ? { ...row, [field]: newValue } : row
         ));
 
-        // Add to undo stack
-        if (enableUndoRedo) {
-            setUndoStack(prev => [...prev, { type: 'edit', rowId, field, oldValue, newValue }]);
-            setRedoStack([]);
-        }
 
         return true;
     }, [gridData, onCellEdit, getRowId, enableUndoRedo]);
@@ -494,18 +473,6 @@ const DataGrid = <T extends Record<string, any>>({
                                         {pinnedColumns[column.id] === 'left' ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
                                     </Button>
                                 )}
-
-                                {enableColumnResize && (
-                                    <div
-                                        className="h-full w-1 cursor-col-resize hover:bg-primary/50 ml-1"
-                                        onMouseDown={(e) => {
-                                            setResizingColumn(column.id);
-                                            setDragStartX(e.clientX);
-                                        }}
-                                    >
-                                        <GripVertical className="h-3 w-3 opacity-50" />
-                                    </div>
-                                )}
                             </div>
                         </div>
 
@@ -603,7 +570,6 @@ const DataGrid = <T extends Record<string, any>>({
                         onClick={() => setShowFilterDialog(true)}
                     >
                         <Filter className="h-4 w-4 mr-1" />
-                        Filter
                     </Button>
 
                     <Button
@@ -612,14 +578,12 @@ const DataGrid = <T extends Record<string, any>>({
                         onClick={() => setShowColumnManager(true)}
                     >
                         <Settings className="h-4 w-4 mr-1" />
-                        Columns
                     </Button>
 
                     {enableExport && (
                         <Select onValueChange={handleExport}>
-                            <SelectTrigger className="w-32">
+                            <SelectTrigger className="w-max">
                                 <Download className="h-4 w-4 mr-2" />
-                                <SelectValue placeholder="Export" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="csv">Export CSV</SelectItem>
@@ -631,13 +595,9 @@ const DataGrid = <T extends Record<string, any>>({
 
                     {enableBulkOperations && selectedRows.size > 0 && (
                         <div className="flex gap-1">
-                            <Button size="sm" variant="outline">
-                                <Edit2 className="h-4 w-4 mr-1" />
-                                Bulk Edit
-                            </Button>
                             <Button size="sm" variant="outline" className="text-destructive">
-                                <Trash2 className="h-4 w-4 mr-1" />
-                                Delete ({selectedRows.size})
+                                <Trash2 className="h-4 w-4" />
+                                ({selectedRows.size})
                             </Button>
                         </div>
                     )}
