@@ -566,9 +566,9 @@ export default function EnhancedSubcategoryPage() {
                       {Object.entries(docs.hooks).map(([hookName, hookInfo]: [string, any]) => (
                         <div key={hookName} className="border rounded-lg p-4">
                           <h4 className="font-semibold mb-2">{hookName}</h4>
-                          <p className="text-sm text-muted-foreground mb-3">{hookInfo.description}</p>
+                          <p className="text-sm text-muted-foreground mb-3">{typeof hookInfo.description === 'string' ? hookInfo.description : ''}</p>
                           <div className="bg-muted/30 rounded p-3">
-                            <code className="text-sm">{hookInfo.usage}</code>
+                            <code className="text-sm">{typeof hookInfo.usage === 'string' ? hookInfo.usage : ''}</code>
                           </div>
                           {hookInfo.returns && (
                             <div className="mt-3">
@@ -577,7 +577,7 @@ export default function EnhancedSubcategoryPage() {
                                 {Object.entries(hookInfo.returns).map(([key, description]) => (
                                   <div key={key} className="text-sm flex gap-2">
                                     <code className="text-primary">{key}:</code>
-                                    <span className="text-muted-foreground">{description}</span>
+                                    <span className="text-muted-foreground">{typeof description === 'string' ? description : ''}</span>
                                   </div>
                                 ))}
                               </div>
@@ -758,8 +758,8 @@ export default function EnhancedSubcategoryPage() {
                           <Info className="h-4 w-4" />
                           <AlertDescription>
                             <div className="space-y-2">
-                              <p className="font-medium">{issue.issue as string}</p>
-                              <p className="text-sm text-muted-foreground">{issue.solution as string}</p>
+                              <p className="font-medium">{typeof issue.issue === 'string' ? issue.issue : ''}</p>
+                              <p className="text-sm text-muted-foreground">{typeof issue.solution === 'string' ? issue.solution : ''}</p>
                             </div>
                           </AlertDescription>
                         </Alert>
