@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -133,7 +134,7 @@ export default function CategoryPage() {
             {categoryData.items.map((item, index) => {
               const isReady = item.status === 'ready';
               const componentUrl = item.url?.replace('/category/', '/categories/') ||
-                `/categories/${categoryId}/${item.name?.toLowerCase().replace(/\s+/g, '-') || item.title?.toLowerCase().replace(/\s+/g, '-')}`;
+                `/categories/${categoryId}/${(item.name || item.title)?.toLowerCase().replace(/\s+/g, '-')}`;
 
               return (
                 <Card

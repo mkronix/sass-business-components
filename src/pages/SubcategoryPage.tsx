@@ -50,7 +50,7 @@ export default function EnhancedSubcategoryPage() {
   }
 
   const isReady = componentItem.status === 'ready';
-  const componentName = componentItem.name || componentItem.title;
+  const componentName = componentItem.name || componentItem.title || 'Component';
   const componentDescription = componentItem.description || 'Professional component with modern design';
 
   return (
