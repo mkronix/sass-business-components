@@ -285,25 +285,28 @@ export default function EnhancedSubcategoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {componentItem.features?.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
-                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                      <span className="text-sm font-medium">{feature}</span>
-                    </div>
-                  )) || [
-                    <div key="responsive" className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
-                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                      <span className="text-sm font-medium">Fully Responsive</span>
-                    </div>,
-                    <div key="accessible" className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
-                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                      <span className="text-sm font-medium">Accessible</span>
-                    </div>,
-                    <div key="typescript" className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
-                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                      <span className="text-sm font-medium">TypeScript Support</span>
-                    </div>
-                  ]}
+                  {(componentItem as any)?.features && Array.isArray((componentItem as any).features) 
+                    ? (componentItem as any).features.map((feature: string, index: number) => (
+                        <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
+                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
+                          <span className="text-sm font-medium">{feature}</span>
+                        </div>
+                      ))
+                    : [
+                        <div key="responsive" className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
+                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
+                          <span className="text-sm font-medium">Fully Responsive</span>
+                        </div>,
+                        <div key="accessible" className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
+                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
+                          <span className="text-sm font-medium">Accessible</span>
+                        </div>,
+                        <div key="typescript" className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
+                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
+                          <span className="text-sm font-medium">TypeScript Support</span>
+                        </div>
+                      ]
+                  }
                 </div>
               </CardContent>
             </Card>
