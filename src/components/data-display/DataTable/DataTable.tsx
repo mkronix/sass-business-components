@@ -94,7 +94,7 @@ const DataTable = <T extends Record<string, any>>({
   // Advanced filtering and sorting - safely handle undefined data
   const filteredAndSortedData = useMemo(() => {
     if (!data || !Array.isArray(data)) return [];
-    
+
     let result = [...data];
 
     // Apply global search
@@ -357,7 +357,6 @@ const DataTable = <T extends Record<string, any>>({
                 className="flex items-center gap-2"
               >
                 <Filter className="h-4 w-4" />
-                Filters
                 {filters.length > 0 && (
                   <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
                     {filters.length}
@@ -386,7 +385,6 @@ const DataTable = <T extends Record<string, any>>({
                 className="flex items-center gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                Refresh
               </Button>
             )}
           </div>
@@ -403,7 +401,6 @@ const DataTable = <T extends Record<string, any>>({
               className="flex items-center gap-2"
             >
               <Settings className="h-4 w-4" />
-              Columns
             </Button>
           )}
 
@@ -422,9 +419,8 @@ const DataTable = <T extends Record<string, any>>({
 
           {exportable && (
             <Select onValueChange={handleExport}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-max">
                 <Download className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Export" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="csv">Export CSV</SelectItem>
@@ -442,7 +438,7 @@ const DataTable = <T extends Record<string, any>>({
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="w-20">
+              <SelectTrigger className="w-14">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
