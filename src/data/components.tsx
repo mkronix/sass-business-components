@@ -1,5 +1,6 @@
 import { DataTableDemo } from '@/components/data-display/DataTable/DataTableDemo';
 import DataGridDemo from '@/components/data-display/DatGrid/DataGridDemo';
+import ListViewDemo from '@/components/data-display/ListView/ListViewDemo';
 
 const COMPONENTS = [
     {
@@ -25,7 +26,11 @@ const COMPONENTS = [
             },
             {
                 "title": "ListView",
-                "url": "/category/data-display/list-view"
+                "url": "/category/data-display/list-view",
+                "name": 'ListView',
+                "description": 'A list view component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
+                "status": 'ready',
+                "component": <ListViewDemo />
             },
             {
                 "title": "TreeView",
