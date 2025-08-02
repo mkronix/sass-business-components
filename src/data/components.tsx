@@ -1,6 +1,9 @@
+import CardLayout from '@/components/data-display/CardLayout/CardLayout';
 import { DataTableDemo } from '@/components/data-display/DataTable/DataTableDemo';
 import DataGridDemo from '@/components/data-display/DatGrid/DataGridDemo';
 import ListViewDemo from '@/components/data-display/ListView/ListViewDemo';
+import TimeLine from '@/components/data-display/Timeline/TimeLine';
+import TreeView from '@/components/data-display/TreeView/TreeView';
 
 const COMPONENTS = [
     {
@@ -34,15 +37,28 @@ const COMPONENTS = [
             },
             {
                 "title": "TreeView",
-                "url": "/category/data-display/tree-view"
+                "url": "/category/data-display/tree-view",
+                "name": 'TreeView',
+                "description": 'A tree view component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
+                "status": 'ready',
+                "component": <TreeView />
+
             },
             {
                 "title": "Timeline",
-                "url": "/category/data-display/timeline"
+                "url": "/category/data-display/timeline",
+                "name": 'Timeline',
+                "description": 'A timeline component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
+                "status": 'ready',
+                "component": <TimeLine />
             },
             {
                 "title": "CardLayout",
-                "url": "/category/data-display/card-layout"
+                "url": "/category/data-display/card-layout",
+                "name": 'CardLayout',
+                "description": 'A card layout component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
+                "status": 'ready',
+                "component": <CardLayout />
             }
         ]
     },

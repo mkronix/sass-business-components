@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -10,28 +9,12 @@ import {
 import React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { DataTableDemo } from '@/components/data-display/DataTable/DataTableDemo';
-import DataGridDemo from '@/components/data-display/DatGrid/DataGridDemo';
 import COMPONENTS from '@/data/components';
-import ListViewDemo from '@/components/data-display/ListView/ListViewDemo';
-
-const componentMap: Record<string, {
-  component: React.ComponentType<any>;
-}> = {
-  'data-table': {
-    component: DataTableDemo,
-  },
-  'data-grid': {
-    component: DataGridDemo,
-  },
-  'list-view': {
-    component: ListViewDemo,
-  }
-};
 
 export default function EnhancedSubcategoryPage() {
   const { categoryId, subcategoryId } = useParams<{ categoryId: string; subcategoryId: string }>();
   const navigate = useNavigate();
+
   const categoryData = COMPONENTS.find(cat => cat.id === categoryId);
   const componentItem = categoryData?.items.find(item => {
     const itemSlug = item.name?.toLowerCase().replace(/\s+/g, '-') ||
@@ -39,8 +22,7 @@ export default function EnhancedSubcategoryPage() {
     return itemSlug === subcategoryId || item.url?.includes(subcategoryId || '');
   });
 
-  const componentKey = subcategoryId || '';
-  const componentInfo = componentMap[componentKey] || componentMap['enhanced-data-table'];
+  // No need for componentMap anymore - we'll use componentItem.component directly
 
   if (!categoryData || !componentItem) {
     return (
@@ -69,9 +51,7 @@ export default function EnhancedSubcategoryPage() {
     );
   }
 
-  const { component: Component, } = componentInfo;
   const isReady = componentItem.status === 'ready';
-
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
@@ -125,11 +105,12 @@ export default function EnhancedSubcategoryPage() {
         </div>
       </div>
 
-      {isReady ? (
+      {isReady && componentItem.component ? (
         <Card className="border-primary/20 shadow-lg">
           <CardContent className="p-0">
             <div className="p-6">
-              <Component />
+              {/* Render the component directly from COMPONENTS data */}
+              {componentItem.component}
             </div>
           </CardContent>
         </Card>
