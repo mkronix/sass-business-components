@@ -126,6 +126,14 @@ export default function EnhancedSubcategoryPage() {
     });
   };
 
+  const isStringArray = (value: unknown): value is string[] => {
+    return Array.isArray(value) && value.every(item => typeof item === 'string');
+  };
+
+  const isObjectRecord = (value: unknown): value is Record<string, any> => {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  };
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Enhanced Breadcrumb */}
@@ -166,20 +174,20 @@ export default function EnhancedSubcategoryPage() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    {docs.title || componentItem.name || componentItem.title}
+                    {(docs.title as string) || componentItem.name || componentItem.title}
                   </h1>
                   {docs.version && (
                     <Badge variant="outline" className="text-xs">
-                      v{docs.version}
+                      v{docs.version as string}
                     </Badge>
                   )}
                 </div>
                 <p className="text-muted-foreground text-lg">
-                  {docs.description || componentItem.description || 'Professional component with modern design'}
+                  {(docs.description as string) || componentItem.description || 'Professional component with modern design'}
                 </p>
                 {docs.lastUpdated && (
                   <p className="text-sm text-muted-foreground mt-2">
-                    Last updated: {formatDate(docs.lastUpdated)}
+                    Last updated: {formatDate(docs.lastUpdated as string)}
                   </p>
                 )}
               </div>
@@ -205,7 +213,7 @@ export default function EnhancedSubcategoryPage() {
             <Zap className="w-3 h-3 mr-1" />
             Accessible
           </Badge>
-          {docs.dependencies?.required && (
+          {docs.dependencies?.required && isObjectRecord(docs.dependencies.required) && (
             <Badge variant="outline" className="px-3 py-1">
               <Package className="w-3 h-3 mr-1" />
               {Object.keys(docs.dependencies.required).length} Dependencies
@@ -218,7 +226,7 @@ export default function EnhancedSubcategoryPage() {
           <div className="flex gap-3">
             <Button
               className="bg-gradient-to-r from-primary to-primary/90"
-              onClick={() => copyToClipboard(docs.usage?.basic || '', 'basic-usage')}
+              onClick={() => copyToClipboard((docs.usage?.basic as string) || '', 'basic-usage')}
             >
               <Download className="mr-2 h-4 w-4" />
               {copiedCode === 'basic-usage' ? 'Copied!' : 'Copy Code'}
@@ -290,7 +298,7 @@ export default function EnhancedSubcategoryPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-primary" />
-                  Key Features ({docs.features?.length || 0})
+                  Key Features ({isStringArray(docs.features) ? docs.features.length : 0})
                 </CardTitle>
                 <CardDescription>
                   Everything this component offers out of the box
@@ -298,12 +306,12 @@ export default function EnhancedSubcategoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {docs.features?.map((feature: string, index: number) => (
+                  {isStringArray(docs.features) && docs.features.map((feature: string, index: number) => (
                     <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
                       <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
                       <span className="text-sm font-medium">{feature}</span>
                     </div>
-                  )) || []}
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -311,7 +319,7 @@ export default function EnhancedSubcategoryPage() {
             {/* Performance & Accessibility Info */}
             {(docs.performance || docs.accessibility) && (
               <div className="grid md:grid-cols-2 gap-6">
-                {docs.performance && (
+                {docs.performance && isObjectRecord(docs.performance) && (
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -321,18 +329,18 @@ export default function EnhancedSubcategoryPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {docs.performance.optimization?.map((item: string, index: number) => (
+                        {isStringArray(docs.performance.optimization) && docs.performance.optimization.map((item: string, index: number) => (
                           <div key={index} className="flex items-start gap-2 text-sm">
                             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                             {item}
                           </div>
-                        )) || []}
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
                 )}
 
-                {docs.accessibility && (
+                {docs.accessibility && isObjectRecord(docs.accessibility) && (
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -342,7 +350,7 @@ export default function EnhancedSubcategoryPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {docs.accessibility.keyboardShortcuts && (
+                        {docs.accessibility.keyboardShortcuts && isObjectRecord(docs.accessibility.keyboardShortcuts) && (
                           <div>
                             <h4 className="font-medium mb-2 flex items-center gap-2">
                               <Keyboard className="h-4 w-4" />
@@ -352,7 +360,7 @@ export default function EnhancedSubcategoryPage() {
                               {Object.entries(docs.accessibility.keyboardShortcuts).map(([key, description]) => (
                                 <div key={key} className="flex justify-between">
                                   <code className="bg-muted px-1 rounded text-xs">{key}</code>
-                                  <span className="text-muted-foreground">{description}</span>
+                                  <span className="text-muted-foreground">{description as string}</span>
                                 </div>
                               ))}
                             </div>
@@ -380,29 +388,29 @@ export default function EnhancedSubcategoryPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Dependencies */}
-                {docs.dependencies && (
+                {docs.dependencies && isObjectRecord(docs.dependencies) && (
                   <div>
                     <h4 className="font-semibold mb-3">Dependencies</h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <h5 className="text-sm font-medium text-muted-foreground mb-2">Required</h5>
                         <div className="space-y-1">
-                          {Object.entries(docs.dependencies.required || {}).map(([pkg, version]) => (
+                          {isObjectRecord(docs.dependencies.required) && Object.entries(docs.dependencies.required).map(([pkg, version]) => (
                             <div key={pkg} className="flex justify-between text-sm">
                               <code className="text-primary">{pkg}</code>
-                              <code className="text-muted-foreground">{version}</code>
+                              <code className="text-muted-foreground">{version as string}</code>
                             </div>
                           ))}
                         </div>
                       </div>
-                      {docs.dependencies.optional && (
+                      {docs.dependencies.optional && isObjectRecord(docs.dependencies.optional) && (
                         <div>
                           <h5 className="text-sm font-medium text-muted-foreground mb-2">Optional</h5>
                           <div className="space-y-1">
                             {Object.entries(docs.dependencies.optional).map(([pkg, description]) => (
                               <div key={pkg} className="text-sm">
                                 <code className="text-primary">{pkg}</code>
-                                <p className="text-xs text-muted-foreground mt-1">{description}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{description as string}</p>
                               </div>
                             ))}
                           </div>
@@ -415,7 +423,7 @@ export default function EnhancedSubcategoryPage() {
                 <Separator />
 
                 {/* Usage Examples */}
-                {Object.entries(docs.usage || {}).map(([key, code]) => (
+                {docs.usage && isObjectRecord(docs.usage) && Object.entries(docs.usage).map(([key, code]) => (
                   <div key={key}>
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-semibold text-lg capitalize">
@@ -424,7 +432,7 @@ export default function EnhancedSubcategoryPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(code, key)}
+                        onClick={() => copyToClipboard(code as string, key)}
                         className="hover:bg-primary/10"
                       >
                         <Copy className="h-4 w-4 mr-1" />
@@ -433,7 +441,7 @@ export default function EnhancedSubcategoryPage() {
                     </div>
                     <div className="relative">
                       <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                        <code>{code}</code>
+                        <code>{code as string}</code>
                       </pre>
                     </div>
                   </div>
@@ -586,42 +594,42 @@ export default function EnhancedSubcategoryPage() {
 
           {/* Enhanced Examples Tab */}
           <TabsContent value="examples" className="space-y-6">
-            {docs.examples?.map((example: any, index: number) => (
+            {Array.isArray(docs.examples) && docs.examples.map((example: any, index: number) => (
               <Card key={index}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span className="flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      {example.title}
+                      {example.title as string}
                     </span>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(example.code, `example-${index}`)}
+                      onClick={() => copyToClipboard(example.code as string, `example-${index}`)}
                       className="hover:bg-primary/10"
                     >
                       <Copy className="h-4 w-4 mr-1" />
                       {copiedCode === `example-${index}` ? 'Copied!' : 'Copy'}
                     </Button>
                   </CardTitle>
-                  <CardDescription>{example.description}</CardDescription>
+                  <CardDescription>{example.description as string}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
                     <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800 max-h-96">
-                      <code>{example.code}</code>
+                      <code>{example.code as string}</code>
                     </pre>
                   </div>
                 </CardContent>
               </Card>
-            )) || []}
+            ))}
           </TabsContent>
 
           {/* Styling Tab */}
           <TabsContent value="styling" className="space-y-6">
             <div className="grid gap-6">
               {/* CSS Variables */}
-              {docs.styling?.cssVariables && (
+              {docs.styling?.cssVariables && isObjectRecord(docs.styling.cssVariables) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -637,7 +645,7 @@ export default function EnhancedSubcategoryPage() {
                       {Object.entries(docs.styling.cssVariables).map(([variable, description]) => (
                         <div key={variable} className="flex items-center justify-between p-3 bg-muted/30 rounded">
                           <code className="text-primary font-medium">{variable}</code>
-                          <span className="text-sm text-muted-foreground">{description}</span>
+                          <span className="text-sm text-muted-foreground">{description as string}</span>
                         </div>
                       ))}
                     </div>
@@ -646,7 +654,7 @@ export default function EnhancedSubcategoryPage() {
               )}
 
               {/* Custom Classes */}
-              {docs.styling?.customClasses && (
+              {docs.styling?.customClasses && isObjectRecord(docs.styling.customClasses) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -662,7 +670,7 @@ export default function EnhancedSubcategoryPage() {
                       {Object.entries(docs.styling.customClasses).map(([className, description]) => (
                         <div key={className} className="flex items-center justify-between p-3 bg-muted/30 rounded">
                           <code className="text-primary font-medium">.{className}</code>
-                          <span className="text-sm text-muted-foreground">{description}</span>
+                          <span className="text-sm text-muted-foreground">{description as string}</span>
                         </div>
                       ))}
                     </div>
@@ -676,7 +684,7 @@ export default function EnhancedSubcategoryPage() {
           <TabsContent value="guides" className="space-y-6">
             <div className="grid gap-6">
               {/* Migration Guide */}
-              {docs.migration && (
+              {docs.migration && isObjectRecord(docs.migration) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -694,7 +702,7 @@ export default function EnhancedSubcategoryPage() {
                           {migrationKey.replace(/([A-Z])/g, ' $1').trim()}
                         </h4>
 
-                        {migrationInfo.breakingChanges && (
+                        {migrationInfo.breakingChanges && isStringArray(migrationInfo.breakingChanges) && (
                           <div>
                             <h5 className="text-sm font-medium text-destructive mb-2 flex items-center gap-2">
                               <AlertTriangle className="h-4 w-4" />
@@ -710,7 +718,7 @@ export default function EnhancedSubcategoryPage() {
                           </div>
                         )}
 
-                        {migrationInfo.newFeatures && (
+                        {migrationInfo.newFeatures && isStringArray(migrationInfo.newFeatures) && (
                           <div>
                             <h5 className="text-sm font-medium text-green-600 mb-2 flex items-center gap-2">
                               <Star className="h-4 w-4" />
@@ -732,7 +740,7 @@ export default function EnhancedSubcategoryPage() {
               )}
 
               {/* Troubleshooting */}
-              {docs.troubleshooting && (
+              {docs.troubleshooting && isObjectRecord(docs.troubleshooting) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -745,24 +753,24 @@ export default function EnhancedSubcategoryPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {docs.troubleshooting.commonIssues?.map((issue: any, index: number) => (
+                      {Array.isArray(docs.troubleshooting.commonIssues) && docs.troubleshooting.commonIssues.map((issue: any, index: number) => (
                         <Alert key={index}>
                           <Info className="h-4 w-4" />
                           <AlertDescription>
                             <div className="space-y-2">
-                              <p className="font-medium">{issue.issue}</p>
-                              <p className="text-sm text-muted-foreground">{issue.solution}</p>
+                              <p className="font-medium">{issue.issue as string}</p>
+                              <p className="text-sm text-muted-foreground">{issue.solution as string}</p>
                             </div>
                           </AlertDescription>
                         </Alert>
-                      )) || []}
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
               )}
 
               {/* Performance Recommendations */}
-              {docs.performance?.recommendations && (
+              {docs.performance?.recommendations && isStringArray(docs.performance.recommendations) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
