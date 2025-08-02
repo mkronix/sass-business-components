@@ -1,73 +1,104 @@
-# Welcome to your Lovable project
 
-## Project info
+# React Component Library
 
-**URL**: https://lovable.dev/projects/66482a02-d9ca-495e-aeb0-d427fd24b83d
+A modern, professional React component library built with TypeScript, Tailwind CSS, and shadcn/ui components.
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+- **Modern Components**: Professional-grade UI components with clean design
+- **TypeScript Support**: Full TypeScript support with proper type definitions
+- **Responsive Design**: All components are fully responsive across devices
+- **Accessibility**: WCAG compliant components with proper ARIA support
+- **Theme Support**: Light/dark theme switching with custom CSS properties
+- **Interactive Demos**: Live component previews with sample data
+- **Easy Integration**: Simple copy-paste component usage
 
-**Use Lovable**
+## 🚀 Quick Start
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/66482a02-d9ca-495e-aeb0-d427fd24b83d) and start prompting.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd react-component-library
+   ```
 
-Changes made via Lovable will be committed automatically to this repo.
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   bun install
+   ```
 
-**Use your preferred IDE**
+3. **Start development server**
+   ```bash
+   npm run dev
+   # or
+   bun dev
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+4. **Open your browser**
+   Navigate to `http://localhost:8080`
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📦 Available Components
 
-Follow these steps:
+### Data Display
+- **DataTable**: Feature-rich data table with sorting, filtering, and pagination
+- **DataGrid**: Advanced data grid with inline editing, column management, and export functionality
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### More categories coming soon...
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🛠️ Tech Stack
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **React 18** - Modern React with hooks and functional components
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - High-quality accessible components
+- **Vite** - Fast build tool and development server
+- **React Router** - Client-side routing
+- **Lucide React** - Beautiful icons
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## 📝 Component Structure
+
+Each component includes:
+- **Live Preview**: Interactive demo with sample data
+- **Usage Examples**: Copy-paste code snippets
+- **Props Documentation**: Complete API reference
+- **TypeScript Support**: Full type definitions
+
+## 🎨 Customization
+
+Components use CSS custom properties for theming:
+- Customize colors, spacing, and typography
+- Full dark/light theme support
+- Responsive design tokens
+
+## 🔧 Development
+
+### Adding New Components
+
+1. Create component in appropriate category folder
+2. Add to `src/data/components.tsx` registry
+3. Update `SubcategoryPage.tsx` component mapping
+4. Components automatically appear in the UI
+
+### Project Structure
+```
+src/
+├── components/          # Reusable UI components
+│   ├── data-display/   # Data visualization components
+│   └── ui/             # Base UI components (shadcn/ui)
+├── pages/              # Main application pages
+├── data/               # Component registry and data
+└── hooks/              # Custom React hooks
 ```
 
-**Edit a file directly in GitHub**
+## 📄 License
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+MIT License - feel free to use in your projects.
 
-**Use GitHub Codespaces**
+## 🤝 Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Contributions welcome! Please read our contributing guidelines and submit pull requests.
 
-## What technologies are used for this project?
+---
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/66482a02-d9ca-495e-aeb0-d427fd24b83d) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Built with ❤️ for modern React development

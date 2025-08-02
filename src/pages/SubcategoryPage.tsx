@@ -1,3 +1,4 @@
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,10 +33,28 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import COMPONENTS from '@/data/components';
 import DataTable from '@/components/data-display/DataTable/DataTable';
+import DataGrid from '@/components/data-display/DatGrid/DataGrid';
 import TableDocs from '@/data/documentation/data-display/data-table.json';
 
+// Sample data for demo purposes
+const sampleData = [
+  { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', lastLogin: '2024-01-15' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', lastLogin: '2024-01-14' },
+  { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Editor', status: 'Inactive', lastLogin: '2024-01-10' },
+  { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'User', status: 'Active', lastLogin: '2024-01-16' },
+  { id: 5, name: 'Charlie Wilson', email: 'charlie@example.com', role: 'Admin', status: 'Active', lastLogin: '2024-01-13' },
+];
+
+const sampleColumns = [
+  { id: 'name', field: 'name', title: 'Name', width: 150, sortable: true, filterable: true },
+  { id: 'email', field: 'email', title: 'Email', width: 200, sortable: true, filterable: true },
+  { id: 'role', field: 'role', title: 'Role', width: 100, sortable: true, filterable: true },
+  { id: 'status', field: 'status', title: 'Status', width: 100, sortable: true, filterable: true },
+  { id: 'lastLogin', field: 'lastLogin', title: 'Last Login', width: 150, sortable: true, filterable: true, type: 'date' as const },
+];
+
 const componentMap: Record<string, {
-  component: React.ComponentType;
+  component: React.ComponentType<any>;
   documentation: any;
 }> = {
   'enhanced-data-table': {
@@ -48,6 +67,18 @@ const componentMap: Record<string, {
   },
   'datatable': {
     component: DataTable,
+    documentation: TableDocs
+  },
+  'data-grid': {
+    component: () => <DataGrid data={sampleData} columns={sampleColumns} />,
+    documentation: TableDocs
+  },
+  'datagrid': {
+    component: () => <DataGrid data={sampleData} columns={sampleColumns} />,
+    documentation: TableDocs
+  },
+  'enhanced-data-grid': {
+    component: () => <DataGrid data={sampleData} columns={sampleColumns} />,
     documentation: TableDocs
   }
 };
@@ -134,6 +165,61 @@ export default function EnhancedSubcategoryPage() {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
   };
 
+  // Sample usage code for components
+  const getUsageCode = (componentName: string) => {
+    switch (componentName) {
+      case 'data-grid':
+      case 'datagrid':
+      case 'enhanced-data-grid':
+        return `import DataGrid from '@/components/data-display/DatGrid/DataGrid';
+
+const columns = [
+  { id: 'name', field: 'name', title: 'Name', width: 150, sortable: true },
+  { id: 'email', field: 'email', title: 'Email', width: 200, sortable: true },
+  { id: 'role', field: 'role', title: 'Role', width: 100, sortable: true },
+];
+
+const data = [
+  { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+];
+
+<DataGrid 
+  data={data} 
+  columns={columns}
+  enableRowSelection={true}
+  enableColumnResize={true}
+  pagination={true}
+/>`;
+      default:
+        return `import ${componentItem.name} from '@/components/...';
+
+<${componentItem.name} />`;
+    }
+  };
+
+  // Sample props for components
+  const getComponentProps = (componentName: string) => {
+    switch (componentName) {
+      case 'data-grid':
+      case 'datagrid':
+      case 'enhanced-data-grid':
+        return {
+          data: { type: 'T[]', required: true, default: '[]', description: 'Array of data objects to display' },
+          columns: { type: 'GridColumn<T>[]', required: true, default: '[]', description: 'Column definitions' },
+          loading: { type: 'boolean', required: false, default: 'false', description: 'Shows loading state' },
+          enableRowSelection: { type: 'boolean', required: false, default: 'true', description: 'Enables row selection' },
+          enableColumnResize: { type: 'boolean', required: false, default: 'true', description: 'Enables column resizing' },
+          pagination: { type: 'boolean', required: false, default: 'true', description: 'Enables pagination' },
+          pageSize: { type: 'number', required: false, default: '100', description: 'Number of rows per page' },
+          onRowClick: { type: '(row: T) => void', required: false, default: 'undefined', description: 'Row click handler' },
+          onSelectionChange: { type: '(rows: T[]) => void', required: false, default: 'undefined', description: 'Selection change handler' },
+        };
+      default:
+        return {};
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Enhanced Breadcrumb */}
@@ -174,22 +260,15 @@ export default function EnhancedSubcategoryPage() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    {(docs.title as string) || componentItem.name || componentItem.title}
+                    {componentItem.name || componentItem.title}
                   </h1>
-                  {docs.version && (
-                    <Badge variant="outline" className="text-xs">
-                      v{docs.version as string}
-                    </Badge>
-                  )}
+                  <Badge variant="outline" className="text-xs">
+                    v1.0
+                  </Badge>
                 </div>
                 <p className="text-muted-foreground text-lg">
-                  {(docs.description as string) || componentItem.description || 'Professional component with modern design'}
+                  {componentItem.description || 'Professional component with modern design'}
                 </p>
-                {docs.lastUpdated && (
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Last updated: {formatDate(docs.lastUpdated as string)}
-                  </p>
-                )}
               </div>
             </div>
           </div>
@@ -213,12 +292,6 @@ export default function EnhancedSubcategoryPage() {
             <Zap className="w-3 h-3 mr-1" />
             Accessible
           </Badge>
-          {docs.dependencies?.required && isObjectRecord(docs.dependencies.required) && (
-            <Badge variant="outline" className="px-3 py-1">
-              <Package className="w-3 h-3 mr-1" />
-              {Object.keys(docs.dependencies.required).length} Dependencies
-            </Badge>
-          )}
         </div>
 
         {/* Quick Actions */}
@@ -226,7 +299,7 @@ export default function EnhancedSubcategoryPage() {
           <div className="flex gap-3">
             <Button
               className="bg-gradient-to-r from-primary to-primary/90"
-              onClick={() => copyToClipboard((docs.usage?.basic as string) || '', 'basic-usage')}
+              onClick={() => copyToClipboard(getUsageCode(componentKey), 'basic-usage')}
             >
               <Download className="mr-2 h-4 w-4" />
               {copiedCode === 'basic-usage' ? 'Copied!' : 'Copy Code'}
@@ -235,42 +308,24 @@ export default function EnhancedSubcategoryPage() {
               <ExternalLink className="mr-2 h-4 w-4" />
               View Source
             </Button>
-            {docs.migration && (
-              <Button variant="outline">
-                <GitBranch className="mr-2 h-4 w-4" />
-                Migration Guide
-              </Button>
-            )}
           </div>
         )}
       </div>
 
       {isReady ? (
         <Tabs defaultValue="preview" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="preview" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               Preview
             </TabsTrigger>
-            <TabsTrigger value="code" className="flex items-center gap-2">
+            <TabsTrigger value="usage" className="flex items-center gap-2">
               <Code2 className="h-4 w-4" />
-              Code
+              Usage
             </TabsTrigger>
             <TabsTrigger value="props" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              API
-            </TabsTrigger>
-            <TabsTrigger value="examples" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Examples
-            </TabsTrigger>
-            <TabsTrigger value="styling" className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              Styling
-            </TabsTrigger>
-            <TabsTrigger value="guides" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Guides
+              Properties
             </TabsTrigger>
           </TabsList>
 
@@ -292,508 +347,89 @@ export default function EnhancedSubcategoryPage() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Enhanced Features Grid */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-primary" />
-                  Key Features ({isStringArray(docs.features) ? docs.features.length : 0})
-                </CardTitle>
-                <CardDescription>
-                  Everything this component offers out of the box
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {isStringArray(docs.features) && docs.features.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border">
-                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2" />
-                      <span className="text-sm font-medium">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Performance & Accessibility Info */}
-            {(docs.performance || docs.accessibility) && (
-              <div className="grid md:grid-cols-2 gap-6">
-                {docs.performance && isObjectRecord(docs.performance) && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Zap className="h-5 w-5 text-primary" />
-                        Performance
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {isStringArray(docs.performance.optimization) && docs.performance.optimization.map((item: string, index: number) => (
-                          <div key={index} className="flex items-start gap-2 text-sm">
-                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
-                            {item}
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {docs.accessibility && isObjectRecord(docs.accessibility) && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-primary" />
-                        Accessibility
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {docs.accessibility.keyboardShortcuts && isObjectRecord(docs.accessibility.keyboardShortcuts) && (
-                          <div>
-                            <h4 className="font-medium mb-2 flex items-center gap-2">
-                              <Keyboard className="h-4 w-4" />
-                              Keyboard Shortcuts
-                            </h4>
-                            <div className="space-y-1 text-sm">
-                              {Object.entries(docs.accessibility.keyboardShortcuts).map(([key, description]) => (
-                                <div key={key} className="flex justify-between">
-                                  <code className="bg-muted px-1 rounded text-xs">{key}</code>
-                                  <span className="text-muted-foreground">{description as string}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
           </TabsContent>
 
-          {/* Enhanced Code Tab */}
-          <TabsContent value="code" className="space-y-6">
+          {/* Usage Tab */}
+          <TabsContent value="usage" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Package className="h-5 w-5 text-primary" />
-                  Installation
+                  <Code2 className="h-5 w-5 text-primary" />
+                  Basic Usage
                 </CardTitle>
                 <CardDescription>
-                  Get started with this component in your project
+                  Copy and paste this code to get started
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Dependencies */}
-                {docs.dependencies && isObjectRecord(docs.dependencies) && (
-                  <div>
-                    <h4 className="font-semibold mb-3">Dependencies</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <h5 className="text-sm font-medium text-muted-foreground mb-2">Required</h5>
-                        <div className="space-y-1">
-                          {isObjectRecord(docs.dependencies.required) && Object.entries(docs.dependencies.required).map(([pkg, version]) => (
-                            <div key={pkg} className="flex justify-between text-sm">
-                              <code className="text-primary">{pkg}</code>
-                              <code className="text-muted-foreground">{version as string}</code>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      {docs.dependencies.optional && isObjectRecord(docs.dependencies.optional) && (
-                        <div>
-                          <h5 className="text-sm font-medium text-muted-foreground mb-2">Optional</h5>
-                          <div className="space-y-1">
-                            {Object.entries(docs.dependencies.optional).map(([pkg, description]) => (
-                              <div key={pkg} className="text-sm">
-                                <code className="text-primary">{pkg}</code>
-                                <p className="text-xs text-muted-foreground mt-1">{description as string}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <Separator />
-
-                {/* Usage Examples */}
-                {docs.usage && isObjectRecord(docs.usage) && Object.entries(docs.usage).map(([key, code]) => (
-                  <div key={key}>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-lg capitalize">
-                        {key.replace(/([A-Z])/g, ' $1').trim()} Usage
-                      </h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(code as string, key)}
-                        className="hover:bg-primary/10"
-                      >
-                        <Copy className="h-4 w-4 mr-1" />
-                        {copiedCode === key ? 'Copied!' : 'Copy'}
-                      </Button>
-                    </div>
-                    <div className="relative">
-                      <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                        <code>{code as string}</code>
-                      </pre>
-                    </div>
-                  </div>
-                ))}
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-semibold text-lg">Import and Usage</h4>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(getUsageCode(componentKey), 'usage')}
+                    className="hover:bg-primary/10"
+                  >
+                    <Copy className="h-4 w-4 mr-1" />
+                    {copiedCode === 'usage' ? 'Copied!' : 'Copy'}
+                  </Button>
+                </div>
+                <div className="relative">
+                  <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                    <code>{getUsageCode(componentKey)}</code>
+                  </pre>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Enhanced Props Tab */}
+          {/* Props Tab */}
           <TabsContent value="props" className="space-y-6">
-            <div className="grid gap-6">
-              {/* Main Props */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5 text-primary" />
-                    Component Properties
-                  </CardTitle>
-                  <CardDescription>
-                    Main configuration options for the component
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="border-b-2 border-primary/20">
-                          <th className="text-left p-4 font-semibold bg-muted/30">Property</th>
-                          <th className="text-left p-4 font-semibold bg-muted/30">Type</th>
-                          <th className="text-left p-4 font-semibold bg-muted/30">Required</th>
-                          <th className="text-left p-4 font-semibold bg-muted/30">Default</th>
-                          <th className="text-left p-4 font-semibold bg-muted/30">Description</th>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-primary" />
+                  Component Properties
+                </CardTitle>
+                <CardDescription>
+                  Configuration options for the component
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b-2 border-primary/20">
+                        <th className="text-left p-4 font-semibold bg-muted/30">Property</th>
+                        <th className="text-left p-4 font-semibold bg-muted/30">Type</th>
+                        <th className="text-left p-4 font-semibold bg-muted/30">Required</th>
+                        <th className="text-left p-4 font-semibold bg-muted/30">Default</th>
+                        <th className="text-left p-4 font-semibold bg-muted/30">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(getComponentProps(componentKey)).map(([key, prop]) => (
+                        <tr key={key} className="border-b hover:bg-muted/20 transition-colors">
+                          <td className="p-4 font-mono text-sm font-medium text-primary">{key}</td>
+                          <td className="p-4 font-mono text-sm text-blue-600 dark:text-blue-400">
+                            {prop.type}
+                          </td>
+                          <td className="p-4">
+                            <Badge variant={prop.required ? 'destructive' : 'secondary'} className="text-xs">
+                              {prop.required ? 'Required' : 'Optional'}
+                            </Badge>
+                          </td>
+                          <td className="p-4 font-mono text-sm text-muted-foreground">
+                            {prop.default || '-'}
+                          </td>
+                          <td className="p-4 text-sm leading-relaxed">{prop.description}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {Object.entries(docs.props || {}).map(([key, prop]: [string, any]) => (
-                          <tr key={key} className="border-b hover:bg-muted/20 transition-colors">
-                            <td className="p-4 font-mono text-sm font-medium text-primary">{key}</td>
-                            <td className="p-4 font-mono text-sm text-blue-600 dark:text-blue-400">
-                              {prop.type}
-                            </td>
-                            <td className="p-4">
-                              <Badge variant={prop.required ? 'destructive' : 'secondary'} className="text-xs">
-                                {prop.required ? 'Required' : 'Optional'}
-                              </Badge>
-                            </td>
-                            <td className="p-4 font-mono text-sm text-muted-foreground">
-                              {prop.default || '-'}
-                            </td>
-                            <td className="p-4 text-sm leading-relaxed">{prop.description}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Column Props (if exists) */}
-              {docs.columnProps && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-primary" />
-                      Column Configuration
-                    </CardTitle>
-                    <CardDescription>
-                      Properties for configuring table columns
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full border-collapse">
-                        <thead>
-                          <tr className="border-b-2 border-primary/20">
-                            <th className="text-left p-4 font-semibold bg-muted/30">Property</th>
-                            <th className="text-left p-4 font-semibold bg-muted/30">Type</th>
-                            <th className="text-left p-4 font-semibold bg-muted/30">Required</th>
-                            <th className="text-left p-4 font-semibold bg-muted/30">Default</th>
-                            <th className="text-left p-4 font-semibold bg-muted/30">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.entries(docs.columnProps).map(([key, prop]: [string, any]) => (
-                            <tr key={key} className="border-b hover:bg-muted/20 transition-colors">
-                              <td className="p-4 font-mono text-sm font-medium text-primary">{key}</td>
-                              <td className="p-4 font-mono text-sm text-blue-600 dark:text-blue-400">
-                                {prop.type}
-                              </td>
-                              <td className="p-4">
-                                <Badge variant={prop.required ? 'destructive' : 'secondary'} className="text-xs">
-                                  {prop.required ? 'Required' : 'Optional'}
-                                </Badge>
-                              </td>
-                              <td className="p-4 font-mono text-sm text-muted-foreground">
-                                {prop.default || '-'}
-                              </td>
-                              <td className="p-4 text-sm leading-relaxed">{prop.description}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Hooks (if exists) */}
-              {docs.hooks && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Code2 className="h-5 w-5 text-primary" />
-                      Related Hooks
-                    </CardTitle>
-                    <CardDescription>
-                      Custom hooks that work with this component
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {Object.entries(docs.hooks).map(([hookName, hookInfo]: [string, any]) => (
-                        <div key={hookName} className="border rounded-lg p-4">
-                          <h4 className="font-semibold mb-2">{hookName}</h4>
-                          <p className="text-sm text-muted-foreground mb-3">{typeof hookInfo.description === 'string' ? hookInfo.description : ''}</p>
-                          <div className="bg-muted/30 rounded p-3">
-                            <code className="text-sm">{typeof hookInfo.usage === 'string' ? hookInfo.usage : ''}</code>
-                          </div>
-                          {hookInfo.returns && (
-                            <div className="mt-3">
-                              <h5 className="text-sm font-medium mb-2">Returns:</h5>
-                              <div className="space-y-1">
-                                {Object.entries(hookInfo.returns).map(([key, description]) => (
-                                  <div key={key} className="text-sm flex gap-2">
-                                    <code className="text-primary">{key}:</code>
-                                    <span className="text-muted-foreground">{typeof description === 'string' ? description : ''}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
                       ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-
-          {/* Enhanced Examples Tab */}
-          <TabsContent value="examples" className="space-y-6">
-            {Array.isArray(docs.examples) && docs.examples.map((example: any, index: number) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-primary" />
-                      {example.title as string}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(example.code as string, `example-${index}`)}
-                      className="hover:bg-primary/10"
-                    >
-                      <Copy className="h-4 w-4 mr-1" />
-                      {copiedCode === `example-${index}` ? 'Copied!' : 'Copy'}
-                    </Button>
-                  </CardTitle>
-                  <CardDescription>{example.description as string}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative">
-                    <pre className="bg-slate-950 text-slate-50 p-6 rounded-xl overflow-x-auto text-sm border border-slate-800 max-h-96">
-                      <code>{example.code as string}</code>
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
-
-          {/* Styling Tab */}
-          <TabsContent value="styling" className="space-y-6">
-            <div className="grid gap-6">
-              {/* CSS Variables */}
-              {docs.styling?.cssVariables && isObjectRecord(docs.styling.cssVariables) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Palette className="h-5 w-5 text-primary" />
-                      CSS Custom Properties
-                    </CardTitle>
-                    <CardDescription>
-                      Customize the component appearance using CSS variables
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {Object.entries(docs.styling.cssVariables).map(([variable, description]) => (
-                        <div key={variable} className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                          <code className="text-primary font-medium">{variable}</code>
-                          <span className="text-sm text-muted-foreground">{description as string}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Custom Classes */}
-              {docs.styling?.customClasses && isObjectRecord(docs.styling.customClasses) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Code2 className="h-5 w-5 text-primary" />
-                      Utility Classes
-                    </CardTitle>
-                    <CardDescription>
-                      Pre-built classes for quick styling
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {Object.entries(docs.styling.customClasses).map(([className, description]) => (
-                        <div key={className} className="flex items-center justify-between p-3 bg-muted/30 rounded">
-                          <code className="text-primary font-medium">.{className}</code>
-                          <span className="text-sm text-muted-foreground">{description as string}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-
-          {/* Guides Tab */}
-          <TabsContent value="guides" className="space-y-6">
-            <div className="grid gap-6">
-              {/* Migration Guide */}
-              {docs.migration && isObjectRecord(docs.migration) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <GitBranch className="h-5 w-5 text-primary" />
-                      Migration Guide
-                    </CardTitle>
-                    <CardDescription>
-                      How to migrate from previous versions or similar components
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {Object.entries(docs.migration).map(([migrationKey, migrationInfo]: [string, any]) => (
-                      <div key={migrationKey} className="space-y-4">
-                        <h4 className="font-semibold capitalize">
-                          {migrationKey.replace(/([A-Z])/g, ' $1').trim()}
-                        </h4>
-
-                        {migrationInfo.breakingChanges && isStringArray(migrationInfo.breakingChanges) && (
-                          <div>
-                            <h5 className="text-sm font-medium text-destructive mb-2 flex items-center gap-2">
-                              <AlertTriangle className="h-4 w-4" />
-                              Breaking Changes
-                            </h5>
-                            <ul className="space-y-1 ml-4">
-                              {migrationInfo.breakingChanges.map((change: string, index: number) => (
-                                <li key={index} className="text-sm text-muted-foreground list-disc">
-                                  {change}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {migrationInfo.newFeatures && isStringArray(migrationInfo.newFeatures) && (
-                          <div>
-                            <h5 className="text-sm font-medium text-green-600 mb-2 flex items-center gap-2">
-                              <Star className="h-4 w-4" />
-                              New Features
-                            </h5>
-                            <ul className="space-y-1 ml-4">
-                              {migrationInfo.newFeatures.map((feature: string, index: number) => (
-                                <li key={index} className="text-sm text-muted-foreground list-disc">
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Troubleshooting */}
-              {docs.troubleshooting && isObjectRecord(docs.troubleshooting) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Lightbulb className="h-5 w-5 text-primary" />
-                      Troubleshooting
-                    </CardTitle>
-                    <CardDescription>
-                      Common issues and their solutions
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {Array.isArray(docs.troubleshooting.commonIssues) && docs.troubleshooting.commonIssues.map((issue: any, index: number) => (
-                        <Alert key={index}>
-                          <Info className="h-4 w-4" />
-                          <AlertDescription>
-                            <div className="space-y-2">
-                              <p className="font-medium">{typeof issue.issue === 'string' ? issue.issue : ''}</p>
-                              <p className="text-sm text-muted-foreground">{typeof issue.solution === 'string' ? issue.solution : ''}</p>
-                            </div>
-                          </AlertDescription>
-                        </Alert>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Performance Recommendations */}
-              {docs.performance?.recommendations && isStringArray(docs.performance.recommendations) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-primary" />
-                      Performance Tips
-                    </CardTitle>
-                    <CardDescription>
-                      Best practices for optimal performance
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {docs.performance.recommendations.map((tip: string, index: number) => (
-                        <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                          <Lightbulb className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{tip}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       ) : (
@@ -809,17 +445,6 @@ export default function EnhancedSubcategoryPage() {
               It will include comprehensive documentation, live examples, and full TypeScript support.
             </p>
 
-            {/* Progress Indicator */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                <span>Development Progress</span>
-                <span>25%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full w-1/4 transition-all duration-300"></div>
-              </div>
-            </div>
-
             <div className="flex justify-center gap-3 flex-wrap">
               <Button onClick={() => navigate(-1)} variant="outline">
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -830,91 +455,10 @@ export default function EnhancedSubcategoryPage() {
                   View Ready Components
                 </Button>
               </Link>
-              <Button variant="outline">
-                <Star className="mr-2 h-4 w-4" />
-                Get Notified
-              </Button>
             </div>
           </CardContent>
         </Card>
       )}
-
-      {/* Enhanced Navigation Footer */}
-      <Card className="mt-12 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-primary/20">
-        <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div>
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                Explore More Components
-              </h4>
-              <p className="text-sm text-muted-foreground mb-4">
-                Discover other professional components in our library
-              </p>
-
-              {/* Quick Stats */}
-              <div className="flex gap-6 text-sm">
-                <div className="flex items-center gap-1">
-                  <Package className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">50+</span>
-                  <span className="text-muted-foreground">Components</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Code2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">TypeScript</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Shield className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Accessible</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 flex-wrap">
-              <Link to={`/category/${categoryId}`}>
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to {categoryData.title}
-                </Button>
-              </Link>
-              <Link to="/">
-                <Button>
-                  Explore All Categories
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Button variant="outline">
-                <Download className="mr-2 h-4 w-4" />
-                Download Collection
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Feedback Section */}
-      <Card className="mt-6 border-dashed">
-        <CardContent className="p-6 text-center">
-          <h4 className="font-semibold mb-2">Help Us Improve</h4>
-          <p className="text-sm text-muted-foreground mb-4">
-            Found an issue or have suggestions? We'd love to hear from you.
-          </p>
-          <div className="flex justify-center gap-3">
-            <Button variant="outline" size="sm">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Report Issue
-            </Button>
-            <Button variant="outline" size="sm">
-              <Star className="mr-2 h-4 w-4" />
-              Request Feature
-            </Button>
-            <Button variant="outline" size="sm">
-              <BookOpen className="mr-2 h-4 w-4" />
-              Improve Docs
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
