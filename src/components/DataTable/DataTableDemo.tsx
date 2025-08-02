@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -161,7 +160,7 @@ export const DataTableDemo = () => {
       ),
       sortable: true,
       filterable: true,
-      filterType: 'select',
+      filterType: 'select' as const,
       filterOptions: [
         { label: 'Admin', value: 'Admin' },
         { label: 'Manager', value: 'Manager' },
@@ -178,7 +177,7 @@ export const DataTableDemo = () => {
       ),
       sortable: true,
       filterable: true,
-      filterType: 'select',
+      filterType: 'select' as const,
       filterOptions: [
         { label: 'Engineering', value: 'Engineering' },
         { label: 'Marketing', value: 'Marketing' },
@@ -210,7 +209,7 @@ export const DataTableDemo = () => {
       ),
       sortable: true,
       filterable: true,
-      filterType: 'select',
+      filterType: 'select' as const,
       filterOptions: [
         { label: 'Active', value: 'active' },
         { label: 'Inactive', value: 'inactive' },
@@ -254,7 +253,7 @@ export const DataTableDemo = () => {
       ),
       sortable: true,
       filterable: true,
-      filterType: 'number',
+      filterType: 'number' as const,
       align: 'right'
     },
     {
@@ -269,7 +268,7 @@ export const DataTableDemo = () => {
       ),
       sortable: true,
       filterable: true,
-      filterType: 'date'
+      filterType: 'date' as const
     },
     {
       id: 'lastLogin',

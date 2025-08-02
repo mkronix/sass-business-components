@@ -986,4 +986,5 @@ const DataTable = <T extends Record<string, any>>({
   );
 };
 
+export { DataTable };
 export default DataTable;
