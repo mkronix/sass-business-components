@@ -1,4 +1,5 @@
 
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -18,8 +19,8 @@ export default function EnhancedSubcategoryPage() {
 
   const categoryData = COMPONENTS.find(cat => cat.id === categoryId);
   const componentItem = categoryData?.items.find(item => {
-    const itemSlug = (item.name || item.title)?.toLowerCase().replace(/\s+/g, '-');
-    return itemSlug === subcategoryId || item.url?.includes(subcategoryId || '');
+    const itemSlug = ((item as any).name || (item as any).title)?.toLowerCase().replace(/\s+/g, '-');
+    return itemSlug === subcategoryId || (item as any).url?.includes(subcategoryId || '');
   });
 
   if (!categoryData || !componentItem) {
@@ -49,9 +50,9 @@ export default function EnhancedSubcategoryPage() {
     );
   }
 
-  const isReady = componentItem.status === 'ready';
-  const componentName = componentItem.name || componentItem.title || 'Component';
-  const componentDescription = componentItem.description || 'Professional component with modern design';
+  const isReady = (componentItem as any).status === 'ready';
+  const componentName = (componentItem as any).name || (componentItem as any).title || 'Component';
+  const componentDescription = (componentItem as any).description || 'Professional component with modern design';
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
@@ -105,12 +106,12 @@ export default function EnhancedSubcategoryPage() {
         </div>
       </div>
 
-      {isReady && componentItem.component ? (
+      {isReady && (componentItem as any).component ? (
         <Card className="border-primary/20 shadow-lg">
           <CardContent className="p-0">
             <div className="p-6">
               {/* Render the component directly from COMPONENTS data */}
-              {componentItem.component}
+              {(componentItem as any).component}
             </div>
           </CardContent>
         </Card>
@@ -144,3 +145,4 @@ export default function EnhancedSubcategoryPage() {
     </div>
   );
 }
+

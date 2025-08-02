@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -132,13 +133,13 @@ export default function CategoryPage() {
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {categoryData.items.map((item, index) => {
-              const isReady = item.status === 'ready';
-              const componentUrl = item.url?.replace('/category/', '/categories/') ||
-                `/categories/${categoryId}/${(item.name || item.title)?.toLowerCase().replace(/\s+/g, '-')}`;
+              const isReady = (item as any).status === 'ready';
+              const componentUrl = (item as any).url?.replace('/category/', '/categories/') ||
+                `/categories/${categoryId}/${((item as any).name || (item as any).title)?.toLowerCase().replace(/\s+/g, '-')}`;
 
               return (
                 <Card
-                  key={item.name || item.title || index}
+                  key={(item as any).name || (item as any).title || index}
                   className={`group transition-all duration-300 hover:shadow-xl hover:scale-[1.02] shadow-primary-custom ${isReady
                     ? 'hover:shadow-primary-custom/20 border-primary-custom/20'
                     : 'opacity-75 hover:opacity-100'
@@ -153,7 +154,7 @@ export default function CategoryPage() {
                         </div>
                         <div>
                           <CardTitle className="text-lg font-semibold">
-                            {item.name || item.title}
+                            {(item as any).name || (item as any).title || 'Component'}
                           </CardTitle>
                         </div>
                       </div>
@@ -166,7 +167,7 @@ export default function CategoryPage() {
                     </div>
 
                     <CardDescription className="text-sm leading-relaxed">
-                      {item.description ||
+                      {(item as any).description ||
                         (isReady
                           ? 'Advanced component with comprehensive features and responsive design'
                           : 'Professional component coming soon with modern design and functionality'
@@ -209,3 +210,4 @@ export default function CategoryPage() {
     </div>
   );
 }
+

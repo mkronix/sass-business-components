@@ -1,4 +1,5 @@
 
+
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -60,7 +61,7 @@ const categoryIcons = {
 const generateFeaturedCategories = () => {
   return COMPONENTS.map(category => {
     // Count ready components
-    const readyComponents = category.items.filter(item => item.status === 'ready').length;
+    const readyComponents = category.items.filter(item => (item as any).status === 'ready').length;
     const totalComponents = category.items.length;
 
     // Determine status based on ready components
@@ -116,7 +117,7 @@ const featuredCategories = generateFeaturedCategories();
 // Calculate dynamic stats
 const totalCategories = COMPONENTS.length;
 const totalReadyComponents = COMPONENTS.reduce((acc, category) => {
-  return acc + category.items.filter(item => item.status === 'ready').length;
+  return acc + category.items.filter(item => (item as any).status === 'ready').length;
 }, 0);
 
 export default function HomePage() {
@@ -236,3 +237,4 @@ export default function HomePage() {
     </div>
   );
 }
+
