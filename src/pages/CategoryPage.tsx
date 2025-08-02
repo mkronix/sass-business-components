@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -86,7 +85,10 @@ export default function CategoryPage() {
           <Card className="text-center shadow-primary-custom">
             <CardContent className="p-4">
               <div className="text-2xl font-bold text-secondary-custom">
-                {categoryData.items.filter(item => item.status === 'ready').length}
+                {categoryData.items.filter(item => {
+                  const itemWithStatus = item as any;
+                  return itemWithStatus?.status === 'ready';
+                }).length}
               </div>
               <div className="text-sm text-secondary-custom">Ready</div>
             </CardContent>
@@ -94,7 +96,10 @@ export default function CategoryPage() {
           <Card className="text-center shadow-primary-custom">
             <CardContent className="p-4">
               <div className="text-2xl font-bold text-primary-custom">
-                {categoryData.items.filter(item => !item.status || item.status !== 'ready').length}
+                {categoryData.items.filter(item => {
+                  const itemWithStatus = item as any;
+                  return !itemWithStatus?.status || itemWithStatus?.status !== 'ready';
+                }).length}
               </div>
               <div className="text-sm text-secondary-custom">Coming Soon</div>
             </CardContent>
@@ -133,13 +138,14 @@ export default function CategoryPage() {
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {categoryData.items.map((item, index) => {
-              const isReady = (item as any).status === 'ready';
-              const componentUrl = (item as any).url?.replace('/category/', '/categories/') ||
-                `/categories/${categoryId}/${((item as any).name || (item as any).title)?.toLowerCase().replace(/\s+/g, '-')}`;
+              const itemWithProps = item as any;
+              const isReady = itemWithProps?.status === 'ready';
+              const componentUrl = itemWithProps?.url?.replace('/category/', '/categories/') ||
+                `/categories/${categoryId}/${(itemWithProps?.name || itemWithProps?.title)?.toLowerCase().replace(/\s+/g, '-')}`;
 
               return (
                 <Card
-                  key={(item as any).name || (item as any).title || index}
+                  key={itemWithProps?.name || itemWithProps?.title || index}
                   className={`group transition-all duration-300 hover:shadow-xl hover:scale-[1.02] shadow-primary-custom ${isReady
                     ? 'hover:shadow-primary-custom/20 border-primary-custom/20'
                     : 'opacity-75 hover:opacity-100'
@@ -154,7 +160,7 @@ export default function CategoryPage() {
                         </div>
                         <div>
                           <CardTitle className="text-lg font-semibold">
-                            {(item as any).name || (item as any).title || 'Component'}
+                            {itemWithProps?.name || itemWithProps?.title || 'Component'}
                           </CardTitle>
                         </div>
                       </div>
@@ -167,7 +173,7 @@ export default function CategoryPage() {
                     </div>
 
                     <CardDescription className="text-sm leading-relaxed">
-                      {(item as any).description ||
+                      {itemWithProps?.description ||
                         (isReady
                           ? 'Advanced component with comprehensive features and responsive design'
                           : 'Professional component coming soon with modern design and functionality'
@@ -210,4 +216,3 @@ export default function CategoryPage() {
     </div>
   );
 }
-
