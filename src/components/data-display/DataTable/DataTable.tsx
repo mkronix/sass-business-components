@@ -612,11 +612,6 @@ const DataTable = <T extends Record<string, any>>({
                         <span>{column.header}</span>
                         {sortable && column.sortable !== false && getSortIcon(column.accessorKey)}
                       </div>
-                      {filterable && column.filterable !== false && (
-                        <div className="flex items-center">
-                          {getFilterIcon(column.accessorKey)}
-                        </div>
-                      )}
                     </div>
                   </th>
                 ))}
@@ -674,7 +669,7 @@ const DataTable = <T extends Record<string, any>>({
                           getCellPadding(),
                           column.align === 'center' && 'text-center',
                           column.align === 'right' && 'text-right',
-                          column.sticky && 'sticky left-0 bg-background group-hover:bg-muted/30',
+                          column.sticky && 'sticky left-0 bg-background',
                           isRowSelected(row) && column.sticky && 'bg-primary/5 group-hover:bg-primary/10'
                         )}
                         style={{

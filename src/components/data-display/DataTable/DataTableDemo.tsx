@@ -339,14 +339,6 @@ export const DataTableDemo = () => {
     </div>
   );
 
-  const globalActions = (
-    <div className="flex items-center gap-2">
-      <Button size="sm" variant="outline">
-        <Settings className="h-4 w-4 mr-2" />
-        Bulk Actions
-      </Button>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -370,7 +362,6 @@ export const DataTableDemo = () => {
         onExport={handleExport}
         onRefresh={handleRefresh}
         rowActions={rowActions}
-        globalActions={globalActions}
         enableColumnVisibility
         enableDensity
         stickyHeader

@@ -180,6 +180,7 @@ import SystemHealth from '@/components/performance/SystemHealth/SystemHealth';
 import ErrorTracking from '@/components/performance/ErrorTracking/ErrorTracking';
 import LoadTesting from '@/components/performance/LoadTesting/LoadTesting';
 import OptimizationTools from '@/components/performance/OptimizationTools/OptimizationTools';
+import TreeViewDemo from '@/components/data-display/TreeView/TreeViewDemo';
 
 const COMPONENTS = [
     {
@@ -217,7 +218,7 @@ const COMPONENTS = [
                 "name": 'TreeView',
                 "description": 'A tree view component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
                 "status": 'ready',
-                "component": <TreeView />
+                "component": <TreeViewDemo />
 
             },
             {
@@ -539,7 +540,7 @@ const COMPONENTS = [
                 "url": "/category/business-logic/workflow-builder",
                 "name": "WorkflowBuilder",
                 "description": "A visual workflow builder for creating and managing business processes.",
-                "status": "coming-soon",
+                "status": "ready",
                 "component": <WorkflowBuilder />
             },
             {
