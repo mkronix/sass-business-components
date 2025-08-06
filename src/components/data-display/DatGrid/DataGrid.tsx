@@ -2,17 +2,27 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Card } from '../Card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { Filter, MoreHorizontal, Redo, Undo } from 'lucide-react';
+import { 
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from "@/components/ui/drawer"
+import { Filter, MoreHorizontal, Redo, Undo, Search, X, Star, Clock, Pin, Tag } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { ContextMenu } from '../ContextMenu';
 import { PreviewModal } from '../PreviewModal';
 import { UndoNotification } from '../UndoNotification';
+import { cn } from '@/lib/utils';
 
 interface CardData {
   id: string;
@@ -37,6 +47,7 @@ interface DataGridProps {
   }[];
   keyboardShortcuts?: boolean;
   undoStackSize?: number;
+  className?: string;
 }
 
 const DataGrid: React.FC<DataGridProps> = ({
