@@ -7,20 +7,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { AnimatePresence, motion } from 'framer-motion';
 import {
+    AlertTriangle,
     Briefcase,
     Building,
     Calendar,
+    CheckCircle,
     ChevronLeft,
     ChevronRight,
+    Clock,
     Copy,
     DollarSign,
     Download,
     Edit2,
     Eye,
+    Filter,
     FilterX,
     Grid3X3,
+    Group,
+    Hash,
+    Heart,
+    Keyboard,
     List,
     Mail,
     Phone,
@@ -28,33 +35,19 @@ import {
     RefreshCw,
     Search,
     Settings,
+    Shield,
     SortAsc,
     SortDesc,
+    Tags,
     Trash2,
     TrendingUp,
+    Undo2,
     User,
     X,
-    Zap,
-    Star,
-    History,
-    Group,
-    Hash,
-    Clock,
-    Heart,
-    Undo2,
-    Command,
-    ChevronDown,
-    ChevronUp,
-    Shield,
-    AlertTriangle,
-    CheckCircle,
     XCircle,
-    RotateCcw,
-    Keyboard,
-    Filter,
-    Tags
+    Zap
 } from 'lucide-react';
-import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGridProps, FilterConfig, GridApi, SortConfig } from './types';
 
 type ViewMode = 'grid' | 'compact' | 'cards';
@@ -106,7 +99,8 @@ const DataGrid = <T extends Record<string, any>>({
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [gridSize, setGridSize] = useState<GridSize>('medium');
     const [pinnedItems, setPinnedItems] = useState<Set<string | number>>(new Set());
-
+    const [showFiltersModal, setShowFiltersModal] = useState(false);
+    const [showBulkActionsModal, setShowBulkActionsModal] = useState(false);
     // New enhanced features state
     const [groupBy, setGroupBy] = useState<GroupBy>('none');
     const [quickFilter, setQuickFilter] = useState<QuickFilter>('all');
@@ -711,12 +705,8 @@ const DataGrid = <T extends Record<string, any>>({
 
         if (viewMode === 'compact') {
             return (
-                <motion.div
+                <div
                     key={rowId}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate={isSelected ? "selected" : "visible"}
-                    whileHover="hover"
                     className={cn(
                         "flex items-center gap-4 p-4 bg-[#171717] border border-white/10 rounded-lg cursor-pointer relative group overflow-hidden",
                         isSelected && "border-white/30 bg-[#171717]/80",
@@ -734,17 +724,12 @@ const DataGrid = <T extends Record<string, any>>({
                     }}
                     onContextMenu={(e) => handleContextMenu(e, item)}
                 >
-                    {/* Selection overlay */}
-                    <AnimatePresence>
-                        {isSelected && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 bg-white/5 pointer-events-none"
-                            />
-                        )}
-                    </AnimatePresence>
+
+                    {isSelected && (
+                        <div
+                            className="absolute inset-0 bg-white/5 pointer-events-none"
+                        />
+                    )}
 
                     {/* Pin indicator */}
                     {isPinned && (
@@ -760,9 +745,7 @@ const DataGrid = <T extends Record<string, any>>({
 
                     {/* Selection checkbox */}
                     {enableRowSelection && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: isHovered || isSelected ? 1 : 0.6, scale: 1 }}
+                        <div
                             className="flex-shrink-0"
                         >
                             <Checkbox
@@ -770,7 +753,7 @@ const DataGrid = <T extends Record<string, any>>({
                                 onCheckedChange={(checked) => handleRowSelection(rowId, checked as boolean)}
                                 className="border-white/30 data-[state=checked]:bg-white data-[state=checked]:border-white"
                             />
-                        </motion.div>
+                        </div>
                     )}
 
                     {/* Avatar/Icon */}
@@ -830,9 +813,7 @@ const DataGrid = <T extends Record<string, any>>({
                     </div>
 
                     {/* Actions */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 10 }}
+                    <div
                         className="flex items-center gap-1"
                     >
                         <Button
@@ -869,19 +850,15 @@ const DataGrid = <T extends Record<string, any>>({
                         >
                             <Eye className="h-4 w-4" />
                         </Button>
-                    </motion.div>
-                </motion.div>
+                    </div>
+                </div>
             );
         }
 
         // Grid card view
         return (
-            <motion.div
+            <div
                 key={rowId}
-                variants={cardVariants}
-                initial="hidden"
-                animate={isSelected ? "selected" : "visible"}
-                whileHover="hover"
                 className={cn(
                     "bg-[#171717] border border-white/10 rounded-xl p-6 cursor-pointer relative group overflow-hidden",
                     "hover:border-white/30 transition-all duration-300",
@@ -902,49 +879,35 @@ const DataGrid = <T extends Record<string, any>>({
                 onContextMenu={(e) => handleContextMenu(e, item)}
             >
                 {/* Background glow effect */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered ? 0.1 : 0 }}
+                <div
                     className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"
                 />
 
-                {/* Selection overlay */}
-                <AnimatePresence>
-                    {isSelected && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="absolute inset-0 bg-white/5 rounded-xl border border-white/20 pointer-events-none"
-                        />
-                    )}
-                </AnimatePresence>
+                {isSelected && (
+                    <div
+                        className="absolute inset-0 bg-white/5 rounded-xl border border-white/20 pointer-events-none"
+                    />
+                )}
 
                 {/* Pin indicator */}
                 {isPinned && (
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                    <div
                         className="absolute top-3 right-3 w-3 h-3 bg-white rounded-full"
                     />
                 )}
 
                 {/* Favorite indicator */}
                 {isFavorite && (
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                    <div
                         className="absolute top-3 right-8 text-red-400"
                     >
                         <Heart className="h-4 w-4 fill-current" />
-                    </motion.div>
+                    </div>
                 )}
 
                 {/* Selection checkbox */}
                 {enableRowSelection && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: isHovered || isSelected ? 1 : 0, scale: 1 }}
+                    <div
                         className="absolute top-3 left-3"
                     >
                         <Checkbox
@@ -952,15 +915,14 @@ const DataGrid = <T extends Record<string, any>>({
                             onCheckedChange={(checked) => handleRowSelection(rowId, checked as boolean)}
                             className="border-white/40 data-[state=checked]:bg-white data-[state=checked]:border-white"
                         />
-                    </motion.div>
+                    </div>
                 )}
 
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                         {item.avatar ? (
-                            <motion.img
-                                whileHover={{ scale: 1.1 }}
+                            <img
                                 src={item.avatar}
                                 alt={item.name || 'Avatar'}
                                 className="w-12 h-12 rounded-full border-2 border-white/20"
@@ -980,9 +942,7 @@ const DataGrid = <T extends Record<string, any>>({
                         </div>
                     </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, rotate: -90 }}
-                        animate={{ opacity: isHovered ? 1 : 0, rotate: 0 }}
+                    <div
                         className="flex gap-1"
                     >
                         <Button
@@ -1019,7 +979,7 @@ const DataGrid = <T extends Record<string, any>>({
                         >
                             <Eye className="h-4 w-4" />
                         </Button>
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* Tags */}
@@ -1106,7 +1066,7 @@ const DataGrid = <T extends Record<string, any>>({
                         )}
                     </div>
                 </div>
-            </motion.div>
+            </div>
         );
     };
 
@@ -1132,41 +1092,45 @@ const DataGrid = <T extends Record<string, any>>({
 
     return (
         <div className={cn("bg-black border border-white/10 rounded-xl overflow-hidden", className)}>
-            {/* Undo Notification */}
-            <AnimatePresence>
-                {showUndoNotification && lastUndoAction && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-[#171717] border border-white/20 rounded-lg px-4 py-3 flex items-center gap-3 shadow-xl"
-                    >
-                        <CheckCircle className="h-5 w-5 text-green-400" />
-                        <span className="text-white text-sm">{lastUndoAction.description}</span>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={handleUndo}
-                            className="ml-2 border-white/20 text-white hover:bg-white/10"
-                        >
-                            <Undo2 className="h-4 w-4 mr-1" />
-                            Undo
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setShowUndoNotification(false)}
-                            className="text-white/60 hover:text-white hover:bg-white/10 p-1"
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
+            {showUndoNotification && lastUndoAction && (
+                <div
+                    className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-[#171717] border border-white/20 rounded-lg px-4 py-3 flex items-center gap-3 shadow-xl"
+                >
+                    <CheckCircle className="h-5 w-5 text-green-400" />
+                    <span className="text-white text-sm">{lastUndoAction.description}</span>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleUndo}
+                        className="ml-2 border-white/20 text-white hover:bg-white/10"
+                    >
+                        <Undo2 className="h-4 w-4 mr-1" />
+                        Undo
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setShowUndoNotification(false)}
+                        className="text-white/60 hover:text-white hover:bg-white/10 p-1"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
+            )}
+
+            <style>
+                {
+                    `
+                        .scrollbar-ui::-webkit-scrollbar {
+                            display: none;
+                        }
+                    `
+                }
+            </style>
             {/* Enhanced Toolbar */}
-            <div className="p-6 border-b border-white/10 bg-[#171717]/30">
-                <div className="flex items-center justify-between mb-4">
+            <div className="p-2 bg-[#171717]/30">
+                <div className="scrollbar-ui flex items-center justify-between mb-2 overflow-y-auto whitespace-nowrap">
                     <div className="flex items-center gap-2">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
@@ -1180,7 +1144,7 @@ const DataGrid = <T extends Record<string, any>>({
 
                         {/* Quick Filters */}
                         <div className="flex items-center gap-2">
-                            {(['all', 'recent', 'pinned', 'favorites', 'active', 'inactive'] as QuickFilter[]).map(filter => (
+                            {(['all', 'recent', 'pinned', 'favorites'] as QuickFilter[]).map(filter => (
                                 <Button
                                     key={filter}
                                     size="sm"
@@ -1193,41 +1157,36 @@ const DataGrid = <T extends Record<string, any>>({
                                     )}
                                     onClick={() => setQuickFilter(filter)}
                                 >
-                                    {filter === 'recent' && <Clock className="h-3 w-3 mr-1" />}
-                                    {filter === 'pinned' && <Pin className="h-3 w-3 mr-1" />}
-                                    {filter === 'favorites' && <Heart className="h-3 w-3 mr-1" />}
-                                    {filter === 'active' && <CheckCircle className="h-3 w-3 mr-1" />}
-                                    {filter === 'inactive' && <XCircle className="h-3 w-3 mr-1" />}
+                                    {filter === 'recent' && <Clock className="h-5 w-5 mr-1" />}
+                                    {filter === 'pinned' && <Pin className="h-5 w-5 mr-1" />}
+                                    {filter === 'favorites' && <Heart className="h-5 w-5 mr-1" />}
+                                    {filter === 'active' && <CheckCircle className="h-5 w-5 mr-1" />}
+                                    {filter === 'inactive' && <XCircle className="h-5 w-5 mr-1" />}
                                     {filter.charAt(0).toUpperCase() + filter.slice(1)}
                                 </Button>
                             ))}
                         </div>
 
-                        <AnimatePresence>
-                            {selectedRows.size > 0 && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="flex items-center gap-2"
-                                >
-                                    <Badge variant="secondary" className="bg-white/10 text-white border-white/20 rounded-md w-max py-[6px] text-base">
-                                        <Zap className="h-4 w-4 mr-1" />
-                                        {selectedRows.size} selected
-                                    </Badge>
-                                    {enableBulkOperations && (
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="border-white/20 text-white hover:bg-white/10"
-                                            onClick={handleBulkDelete}
-                                        >
-                                            <Trash2 className="h-4 w-4 mr-1" />
-                                        </Button>
-                                    )}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                        {selectedRows.size > 0 && (
+                            <div
+                                className="flex items-center gap-2"
+                            >
+                                <Badge variant="secondary" className="bg-white/10 text-white border-white/20 rounded-md w-max py-[6px] text-base">
+                                    <Zap className="h-4 w-4 mr-1" />
+                                    {selectedRows.size} selected
+                                </Badge>
+                                {enableBulkOperations && (
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="border-white/20 text-white hover:bg-white/10"
+                                        onClick={handleBulkDelete}
+                                    >
+                                        <Trash2 className="h-4 w-4 mr-1" />
+                                    </Button>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -1336,216 +1295,202 @@ const DataGrid = <T extends Record<string, any>>({
             </div>
 
 
-            {/* Advanced Filters Panel */}
-            <AnimatePresence>
-                {showFilters && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="pt-4 border-t border-white/10"
-                    >
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {/* Tag filters */}
-                            {allTags.length > 0 && (
-                                <div>
-                                    <label className="text-sm text-white/70 mb-2 block">Tags</label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {allTags.slice(0, 6).map(tag => (
-                                            <Button
-                                                key={tag}
-                                                size="sm"
-                                                variant={selectedTags.includes(tag) ? 'default' : 'outline'}
-                                                className={cn(
-                                                    "h-7 px-2 text-xs",
-                                                    selectedTags.includes(tag)
-                                                        ? 'bg-white text-black'
-                                                        : 'border-white/20 text-white hover:bg-white/10'
-                                                )}
-                                                onClick={() => {
-                                                    setSelectedTags(prev =>
-                                                        prev.includes(tag)
-                                                            ? prev.filter(t => t !== tag)
-                                                            : [...prev, tag]
-                                                    );
-                                                }}
-                                            >
-                                                <Hash className="h-3 w-3 mr-1" />
-                                                {tag}
-                                            </Button>
-                                        ))}
-                                        {allTags.length > 6 && (
-                                            <Badge variant="outline" className="text-xs bg-white/5 border-white/20 text-white/70">
-                                                +{allTags.length - 6} more
-                                            </Badge>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Status filters */}
+            {showFilters && (
+                <div
+                    className="pt-4 border-t border-white/10"
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Tag filters */}
+                        {allTags.length > 0 && (
                             <div>
-                                <label className="text-sm text-white/70 mb-2 block">Status</label>
+                                <label className="text-sm text-white/70 mb-2 block">Tags</label>
                                 <div className="flex flex-wrap gap-2">
-                                    {allStatuses.map(status => (
+                                    {allTags.slice(0, 6).map(tag => (
                                         <Button
-                                            key={status}
+                                            key={tag}
                                             size="sm"
-                                            variant={selectedStatuses.includes(status) ? 'default' : 'outline'}
+                                            variant={selectedTags.includes(tag) ? 'default' : 'outline'}
                                             className={cn(
                                                 "h-7 px-2 text-xs",
-                                                selectedStatuses.includes(status)
+                                                selectedTags.includes(tag)
                                                     ? 'bg-white text-black'
                                                     : 'border-white/20 text-white hover:bg-white/10'
                                             )}
                                             onClick={() => {
-                                                setSelectedStatuses(prev =>
-                                                    prev.includes(status)
-                                                        ? prev.filter(s => s !== status)
-                                                        : [...prev, status]
+                                                setSelectedTags(prev =>
+                                                    prev.includes(tag)
+                                                        ? prev.filter(t => t !== tag)
+                                                        : [...prev, tag]
                                                 );
                                             }}
                                         >
-                                            {status === 'Active' && <CheckCircle className="h-3 w-3 mr-1" />}
-                                            {status === 'Inactive' && <XCircle className="h-3 w-3 mr-1" />}
-                                            {status === 'On Leave' && <Clock className="h-3 w-3 mr-1" />}
-                                            {status === 'Pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                                            {status}
+                                            <Hash className="h-3 w-3 mr-1" />
+                                            {tag}
                                         </Button>
                                     ))}
+                                    {allTags.length > 6 && (
+                                        <Badge variant="outline" className="text-xs bg-white/5 border-white/20 text-white/70">
+                                            +{allTags.length - 6} more
+                                        </Badge>
+                                    )}
                                 </div>
                             </div>
+                        )}
 
-                            {/* Clear filters */}
-                            <div className="flex items-end">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="border-white/20 text-white hover:bg-white/10"
-                                    onClick={() => {
-                                        setSelectedTags([]);
-                                        setSelectedStatuses([]);
-                                        setFilters({});
-                                    }}
-                                >
-                                    <FilterX className="h-4 w-4 mr-1" />
-                                    Clear All
-                                </Button>
+                        {/* Status filters */}
+                        <div>
+                            <label className="text-sm text-white/70 mb-2 block">Status</label>
+                            <div className="flex flex-wrap gap-2">
+                                {allStatuses.map(status => (
+                                    <Button
+                                        key={status}
+                                        size="sm"
+                                        variant={selectedStatuses.includes(status) ? 'default' : 'outline'}
+                                        className={cn(
+                                            "h-7 px-2 text-xs",
+                                            selectedStatuses.includes(status)
+                                                ? 'bg-white text-black'
+                                                : 'border-white/20 text-white hover:bg-white/10'
+                                        )}
+                                        onClick={() => {
+                                            setSelectedStatuses(prev =>
+                                                prev.includes(status)
+                                                    ? prev.filter(s => s !== status)
+                                                    : [...prev, status]
+                                            );
+                                        }}
+                                    >
+                                        {status === 'Active' && <CheckCircle className="h-3 w-3 mr-1" />}
+                                        {status === 'Inactive' && <XCircle className="h-3 w-3 mr-1" />}
+                                        {status === 'On Leave' && <Clock className="h-3 w-3 mr-1" />}
+                                        {status === 'Pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
+                                        {status}
+                                    </Button>
+                                ))}
                             </div>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
-            {/* Active filters display */}
-            <AnimatePresence>
-                {(Object.keys(filters).length > 0 || sorting.length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0) && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="flex items-center gap-3 pt-4 border-t border-white/10"
-                    >
-                        {selectedTags.length > 0 && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-white/60">Tags:</span>
-                                {selectedTags.map(tag => (
-                                    <Badge
-                                        key={tag}
-                                        variant="secondary"
-                                        className="bg-white/10 text-white border-white/20"
-                                    >
-                                        <Hash className="h-3 w-3 mr-1" />
-                                        {tag}
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
-                                            onClick={() => setSelectedTags(prev => prev.filter(t => t !== tag))}
-                                        >
-                                            <X className="h-3 w-3" />
-                                        </Button>
-                                    </Badge>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedStatuses.length > 0 && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-white/60">Status:</span>
-                                {selectedStatuses.map(status => (
-                                    <Badge
-                                        key={status}
-                                        variant="secondary"
-                                        className="bg-white/10 text-white border-white/20"
-                                    >
-                                        {status}
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
-                                            onClick={() => setSelectedStatuses(prev => prev.filter(s => s !== status))}
-                                        >
-                                            <X className="h-3 w-3" />
-                                        </Button>
-                                    </Badge>
-                                ))}
-                            </div>
-                        )}
-
-                        {sorting.length > 0 && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-white/60">Sorted by:</span>
-                                {sorting.map((sort) => {
-                                    const column = columns.find(col => col.id === sort.columnId);
-                                    return (
-                                        <Badge
-                                            key={sort.columnId}
-                                            variant="secondary"
-                                            className="bg-white/10 text-white border-white/20"
-                                        >
-                                            {column?.title}
-                                            {sort.direction === 'asc' ? (
-                                                <SortAsc className="h-3 w-3 ml-1" />
-                                            ) : (
-                                                <SortDesc className="h-3 w-3 ml-1" />
-                                            )}
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
-                                                onClick={() => setSorting(prev => prev.filter(s => s.columnId !== sort.columnId))}
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </Button>
-                                        </Badge>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {Object.keys(filters).length > 0 && (
+                        {/* Clear filters */}
+                        <div className="flex items-end">
                             <Button
                                 size="sm"
-                                variant="ghost"
-                                className="text-white/60 hover:text-white"
-                                onClick={() => setFilters({})}
+                                variant="outline"
+                                className="border-white/20 text-white hover:bg-white/10"
+                                onClick={() => {
+                                    setSelectedTags([]);
+                                    setSelectedStatuses([]);
+                                    setFilters({});
+                                }}
                             >
                                 <FilterX className="h-4 w-4 mr-1" />
-                                Clear Filters ({Object.keys(filters).length})
+                                Clear All
                             </Button>
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {(Object.keys(filters).length > 0 || sorting.length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0) && (
+                <div
+                    className="flex items-center gap-3 pt-4 border-t border-white/10"
+                >
+                    {selectedTags.length > 0 && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-white/60">Tags:</span>
+                            {selectedTags.map(tag => (
+                                <Badge
+                                    key={tag}
+                                    variant="secondary"
+                                    className="bg-white/10 text-white border-white/20"
+                                >
+                                    <Hash className="h-3 w-3 mr-1" />
+                                    {tag}
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
+                                        onClick={() => setSelectedTags(prev => prev.filter(t => t !== tag))}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+                                </Badge>
+                            ))}
+                        </div>
+                    )}
+
+                    {selectedStatuses.length > 0 && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-white/60">Status:</span>
+                            {selectedStatuses.map(status => (
+                                <Badge
+                                    key={status}
+                                    variant="secondary"
+                                    className="bg-white/10 text-white border-white/20"
+                                >
+                                    {status}
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
+                                        onClick={() => setSelectedStatuses(prev => prev.filter(s => s !== status))}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+                                </Badge>
+                            ))}
+                        </div>
+                    )}
+
+                    {sorting.length > 0 && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-white/60">Sorted by:</span>
+                            {sorting.map((sort) => {
+                                const column = columns.find(col => col.id === sort.columnId);
+                                return (
+                                    <Badge
+                                        key={sort.columnId}
+                                        variant="secondary"
+                                        className="bg-white/10 text-white border-white/20"
+                                    >
+                                        {column?.title}
+                                        {sort.direction === 'asc' ? (
+                                            <SortAsc className="h-3 w-3 ml-1" />
+                                        ) : (
+                                            <SortDesc className="h-3 w-3 ml-1" />
+                                        )}
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
+                                            onClick={() => setSorting(prev => prev.filter(s => s.columnId !== sort.columnId))}
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </Button>
+                                    </Badge>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    {Object.keys(filters).length > 0 && (
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-white/60 hover:text-white"
+                            onClick={() => setFilters({})}
+                        >
+                            <FilterX className="h-4 w-4 mr-1" />
+                            Clear Filters ({Object.keys(filters).length})
+                        </Button>
+                    )}
+                </div>
+            )}
 
 
             {/* Grid Container */}
             <div ref={gridRef} className="p-6">
                 {/* Stats bar */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                <div
                     className="flex items-center justify-between mb-6 text-sm text-white/60"
                 >
                     <div className="flex items-center gap-4">
@@ -1578,100 +1523,83 @@ const DataGrid = <T extends Record<string, any>>({
                             </Button>
                         )}
                     </div>
-                </motion.div>
+                </div>
 
-                {/* Grouped Grid/List View */}
-                <AnimatePresence mode="wait">
-                    {Object.values(paginatedData).flat().length === 0 ? (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="flex flex-col items-center justify-center py-20 text-center"
+                {Object.values(paginatedData).flat().length === 0 ? (
+                    <div
+                        className="flex flex-col items-center justify-center py-20 text-center"
+                    >
+                        <div
+                            className="w-20 h-20 bg-[#171717] rounded-full flex items-center justify-center mb-6 border border-white/10"
                         >
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.2, type: "spring" }}
-                                className="w-20 h-20 bg-[#171717] rounded-full flex items-center justify-center mb-6 border border-white/10"
-                            >
-                                <Search className="h-10 w-10 text-white/40" />
-                            </motion.div>
-                            <h3 className="text-xl font-semibold text-white mb-2">No Items Found</h3>
-                            <p className="text-white/60 max-w-md">
-                                {searchQuery || Object.keys(filters).length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0
-                                    ? 'Try adjusting your search or filter criteria'
-                                    : 'No data available to display'
-                                }
-                            </p>
-                            {(searchQuery || Object.keys(filters).length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0) && (
-                                <Button
-                                    className="mt-4"
-                                    variant="outline"
-                                    onClick={() => {
-                                        setSearchQuery('');
-                                        setFilters({});
-                                        setSelectedTags([]);
-                                        setSelectedStatuses([]);
-                                    }}
-                                >
-                                    Clear All Filters
-                                </Button>
-                            )}
-                        </motion.div>
-                    ) : (
-                        <div className="space-y-8">
-                            {Object.entries(paginatedData).map(([groupName, items], groupIndex) => (
-                                <motion.div
-                                    key={groupName}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3, delay: groupIndex * 0.1 }}
-                                >
-                                    {/* Group Header */}
-                                    {groupBy !== 'none' && (
-                                        <motion.div
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            className="flex items-center gap-3 mb-4"
-                                        >
-                                            <div className="h-px bg-white/20 flex-1" />
-                                            <div className="flex items-center gap-2 px-4 py-2 bg-[#171717] border border-white/20 rounded-lg">
-                                                {groupBy === 'department' && <Building className="h-4 w-4 text-white/60" />}
-                                                {groupBy === 'status' && <Shield className="h-4 w-4 text-white/60" />}
-                                                {groupBy === 'tags' && <Tags className="h-4 w-4 text-white/60" />}
-                                                {groupBy === 'hireDate' && <Calendar className="h-4 w-4 text-white/60" />}
-                                                <span className="text-white font-medium">{groupName}</span>
-                                                <Badge variant="secondary" className="bg-white/10 text-white border-white/20 ml-2">
-                                                    {items.length}
-                                                </Badge>
-                                            </div>
-                                            <div className="h-px bg-white/20 flex-1" />
-                                        </motion.div>
-                                    )}
-
-                                    {/* Group Items */}
-                                    <motion.div
-                                        className={cn(
-                                            viewMode === 'compact' ? "space-y-3" : `grid gap-6 ${getGridColumns()}`
-                                        )}
-                                    >
-                                        {items.map((item, index) => renderItemCard(item, index + groupIndex * 10))}
-                                    </motion.div>
-                                </motion.div>
-                            ))}
+                            <Search className="h-10 w-10 text-white/40" />
                         </div>
-                    )}
-                </AnimatePresence>
+                        <h3 className="text-xl font-semibold text-white mb-2">No Items Found</h3>
+                        <p className="text-white/60 max-w-md">
+                            {searchQuery || Object.keys(filters).length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0
+                                ? 'Try adjusting your search or filter criteria'
+                                : 'No data available to display'
+                            }
+                        </p>
+                        {(searchQuery || Object.keys(filters).length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0) && (
+                            <Button
+                                className="mt-4"
+                                variant="outline"
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    setFilters({});
+                                    setSelectedTags([]);
+                                    setSelectedStatuses([]);
+                                }}
+                            >
+                                Clear All Filters
+                            </Button>
+                        )}
+                    </div>
+                ) : (
+                    <div className="space-y-8">
+                        {Object.entries(paginatedData).map(([groupName, items], groupIndex) => (
+                            <div
+                                key={groupName}
+                            >
+                                {/* Group Header */}
+                                {groupBy !== 'none' && (
+                                    <div
+                                        className="flex items-center gap-3 mb-4"
+                                    >
+                                        <div className="h-px bg-white/20 flex-1" />
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-[#171717] border border-white/20 rounded-lg">
+                                            {groupBy === 'department' && <Building className="h-4 w-4 text-white/60" />}
+                                            {groupBy === 'status' && <Shield className="h-4 w-4 text-white/60" />}
+                                            {groupBy === 'tags' && <Tags className="h-4 w-4 text-white/60" />}
+                                            {groupBy === 'hireDate' && <Calendar className="h-4 w-4 text-white/60" />}
+                                            <span className="text-white font-medium">{groupName}</span>
+                                            <Badge variant="secondary" className="bg-white/10 text-white border-white/20 ml-2">
+                                                {items.length}
+                                            </Badge>
+                                        </div>
+                                        <div className="h-px bg-white/20 flex-1" />
+                                    </div>
+                                )}
+
+                                {/* Group Items */}
+                                <div
+                                    className={cn(
+                                        viewMode === 'compact' ? "space-y-3" : `grid gap-6 ${getGridColumns()}`
+                                    )}
+                                >
+                                    {items.map((item, index) => renderItemCard(item, index + groupIndex * 10))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Enhanced Pagination */}
             {
                 pagination && totalPages > 1 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                    <div
                         className="flex items-center justify-between p-6 border-t border-white/10 bg-[#171717]/20"
                     >
                         <div className="flex items-center gap-4 text-sm text-white/60">
@@ -1755,418 +1683,395 @@ const DataGrid = <T extends Record<string, any>>({
                                 </Button>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 )
             }
 
-            {/* Preview Modal (Bottom Drawer) */}
-            <AnimatePresence>
-                {showPreview && previewItem && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-                            onClick={() => setShowPreview(false)}
-                        />
-                        <motion.div
-                            initial={{ y: '100%' }}
-                            animate={{ y: 0 }}
-                            exit={{ y: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed bottom-0 left-0 right-0 bg-[#171717] border-t border-white/20 rounded-t-2xl z-50 max-h-[80vh] overflow-hidden"
-                        >
-                            {/* Header */}
-                            <div className="flex items-center justify-between p-6 border-b border-white/10">
-                                <div className="flex items-center gap-4">
-                                    {previewItem.avatar ? (
-                                        <img
-                                            src={previewItem.avatar}
-                                            alt={previewItem.name || 'Avatar'}
-                                            className="w-12 h-12 rounded-full border-2 border-white/20"
-                                        />
-                                    ) : (
-                                        <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border-2 border-white/20">
-                                            <User className="h-6 w-6 text-white/70" />
+            {showPreview && previewItem && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+                        onClick={() => setShowPreview(false)}
+                    />
+                    <div
+                        className="fixed bottom-0 left-0 right-0 bg-[#171717] border-t border-white/20 rounded-t-2xl z-50 max-h-[80vh] overflow-hidden"
+                    >
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-white/10">
+                            <div className="flex items-center gap-4">
+                                {previewItem.avatar ? (
+                                    <img
+                                        src={previewItem.avatar}
+                                        alt={previewItem.name || 'Avatar'}
+                                        className="w-12 h-12 rounded-full border-2 border-white/20"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border-2 border-white/20">
+                                        <User className="h-6 w-6 text-white/70" />
+                                    </div>
+                                )}
+                                <div>
+                                    <h2 className="text-xl font-semibold text-white">
+                                        {previewItem.name || `Item ${getRowId(previewItem)}`}
+                                    </h2>
+                                    <p className="text-sm text-white/60">#{getRowId(previewItem)}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-white/70 hover:text-white hover:bg-white/10"
+                                    onClick={() => handleToggleFavorite(getRowId(previewItem))}
+                                >
+                                    <Heart className={cn("h-4 w-4", favorites.has(getRowId(previewItem)) && "fill-red-400 text-red-400")} />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-white/70 hover:text-white hover:bg-white/10"
+                                    onClick={() => handlePinItem(getRowId(previewItem))}
+                                >
+                                    <Pin className={cn("h-4 w-4", pinnedItems.has(getRowId(previewItem)) && "fill-white")} />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-white/70 hover:text-white hover:bg-white/10"
+                                    onClick={() => setShowPreview(false)}
+                                >
+                                    <X className="h-5 w-5" />
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 overflow-y-auto max-h-[60vh]">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Basic Info */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium text-white border-b border-white/10 pb-2">Basic Information</h3>
+                                    <div className="space-y-3">
+                                        {previewItem.email && (
+                                            <div className="flex items-center gap-3">
+                                                <Mail className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">{previewItem.email}</span>
+                                            </div>
+                                        )}
+                                        {previewItem.phoneNumber && (
+                                            <div className="flex items-center gap-3">
+                                                <Phone className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">{previewItem.phoneNumber}</span>
+                                            </div>
+                                        )}
+                                        {previewItem.department && (
+                                            <div className="flex items-center gap-3">
+                                                <Building className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">{previewItem.department}</span>
+                                            </div>
+                                        )}
+                                        {previewItem.role && (
+                                            <div className="flex items-center gap-3">
+                                                <Briefcase className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">{previewItem.role}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Employment Details */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium text-white border-b border-white/10 pb-2">Employment</h3>
+                                    <div className="space-y-3">
+                                        {previewItem.salary && (
+                                            <div className="flex items-center gap-3">
+                                                <DollarSign className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">${previewItem.salary.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                        {previewItem.hireDate && (
+                                            <div className="flex items-center gap-3">
+                                                <Calendar className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">{new Date(previewItem.hireDate).toLocaleDateString()}</span>
+                                            </div>
+                                        )}
+                                        {previewItem.performance && (
+                                            <div className="flex items-center gap-3">
+                                                <TrendingUp className="h-4 w-4 text-white/60" />
+                                                <span className="text-white/80">{previewItem.performance}% Performance</span>
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-3">
+                                            <Badge
+                                                variant={previewItem.status === 'Active' ? 'default' : 'secondary'}
+                                                className="bg-white/10 text-white border-white/20"
+                                            >
+                                                {previewItem.status || 'Active'}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Tags & Skills */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium text-white border-b border-white/10 pb-2">Tags & Skills</h3>
+                                    {previewItem.tags && previewItem.tags.length > 0 && (
+                                        <div>
+                                            <h4 className="text-sm text-white/70 mb-2">Tags</h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {previewItem.tags.map((tag: string) => (
+                                                    <Badge
+                                                        key={tag}
+                                                        variant="outline"
+                                                        className="bg-white/5 border-white/20 text-white/70"
+                                                    >
+                                                        <Hash className="h-3 w-3 mr-1" />
+                                                        {tag}
+                                                    </Badge>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
+                                    {previewItem.skills && previewItem.skills.length > 0 && (
+                                        <div>
+                                            <h4 className="text-sm text-white/70 mb-2">Skills</h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {previewItem.skills.map((skill: string) => (
+                                                    <Badge
+                                                        key={skill}
+                                                        variant="secondary"
+                                                        className="bg-white/10 text-white border-white/20"
+                                                    >
+                                                        {skill}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {previewItem.bio && (
+                                        <div>
+                                            <h4 className="text-sm text-white/70 mb-2">Bio</h4>
+                                            <p className="text-white/80 text-sm">{previewItem.bio}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {showColumnManager && (
+                <Dialog open={showColumnManager} onOpenChange={setShowColumnManager}>
+                    <DialogContent className="max-w-2xl bg-[#171717] border-white/20 text-white">
+                        <DialogHeader>
+                            <DialogTitle className="text-white">Grid Settings</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-6">
+                            {/* View Options */}
+                            <div className="space-y-3">
+                                <h4 className="font-medium text-white">Display Options</h4>
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <h2 className="text-xl font-semibold text-white">
-                                            {previewItem.name || `Item ${getRowId(previewItem)}`}
-                                        </h2>
-                                        <p className="text-sm text-white/60">#{getRowId(previewItem)}</p>
+                                        <label className="text-sm text-white/70 mb-2 block">View Mode</label>
+                                        <Select value={viewMode} onValueChange={(value: ViewMode) => setViewMode(value)}>
+                                            <SelectTrigger className="bg-black border-white/20 text-white">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-[#171717] border-white/20">
+                                                <SelectItem value="grid" className="text-white">Grid View</SelectItem>
+                                                <SelectItem value="compact" className="text-white">Compact List</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="text-white/70 hover:text-white hover:bg-white/10"
-                                        onClick={() => handleToggleFavorite(getRowId(previewItem))}
-                                    >
-                                        <Heart className={cn("h-4 w-4", favorites.has(getRowId(previewItem)) && "fill-red-400 text-red-400")} />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="text-white/70 hover:text-white hover:bg-white/10"
-                                        onClick={() => handlePinItem(getRowId(previewItem))}
-                                    >
-                                        <Pin className={cn("h-4 w-4", pinnedItems.has(getRowId(previewItem)) && "fill-white")} />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="text-white/70 hover:text-white hover:bg-white/10"
-                                        onClick={() => setShowPreview(false)}
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </Button>
-                                </div>
-                            </div>
-
-                            {/* Content */}
-                            <div className="p-6 overflow-y-auto max-h-[60vh]">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {/* Basic Info */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-lg font-medium text-white border-b border-white/10 pb-2">Basic Information</h3>
-                                        <div className="space-y-3">
-                                            {previewItem.email && (
-                                                <div className="flex items-center gap-3">
-                                                    <Mail className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">{previewItem.email}</span>
-                                                </div>
-                                            )}
-                                            {previewItem.phoneNumber && (
-                                                <div className="flex items-center gap-3">
-                                                    <Phone className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">{previewItem.phoneNumber}</span>
-                                                </div>
-                                            )}
-                                            {previewItem.department && (
-                                                <div className="flex items-center gap-3">
-                                                    <Building className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">{previewItem.department}</span>
-                                                </div>
-                                            )}
-                                            {previewItem.role && (
-                                                <div className="flex items-center gap-3">
-                                                    <Briefcase className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">{previewItem.role}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Employment Details */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-lg font-medium text-white border-b border-white/10 pb-2">Employment</h3>
-                                        <div className="space-y-3">
-                                            {previewItem.salary && (
-                                                <div className="flex items-center gap-3">
-                                                    <DollarSign className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">${previewItem.salary.toLocaleString()}</span>
-                                                </div>
-                                            )}
-                                            {previewItem.hireDate && (
-                                                <div className="flex items-center gap-3">
-                                                    <Calendar className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">{new Date(previewItem.hireDate).toLocaleDateString()}</span>
-                                                </div>
-                                            )}
-                                            {previewItem.performance && (
-                                                <div className="flex items-center gap-3">
-                                                    <TrendingUp className="h-4 w-4 text-white/60" />
-                                                    <span className="text-white/80">{previewItem.performance}% Performance</span>
-                                                </div>
-                                            )}
-                                            <div className="flex items-center gap-3">
-                                                <Badge
-                                                    variant={previewItem.status === 'Active' ? 'default' : 'secondary'}
-                                                    className="bg-white/10 text-white border-white/20"
-                                                >
-                                                    {previewItem.status || 'Active'}
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Tags & Skills */}
-                                    <div className="space-y-4">
-                                        <h3 className="text-lg font-medium text-white border-b border-white/10 pb-2">Tags & Skills</h3>
-                                        {previewItem.tags && previewItem.tags.length > 0 && (
-                                            <div>
-                                                <h4 className="text-sm text-white/70 mb-2">Tags</h4>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {previewItem.tags.map((tag: string) => (
-                                                        <Badge
-                                                            key={tag}
-                                                            variant="outline"
-                                                            className="bg-white/5 border-white/20 text-white/70"
-                                                        >
-                                                            <Hash className="h-3 w-3 mr-1" />
-                                                            {tag}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {previewItem.skills && previewItem.skills.length > 0 && (
-                                            <div>
-                                                <h4 className="text-sm text-white/70 mb-2">Skills</h4>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {previewItem.skills.map((skill: string) => (
-                                                        <Badge
-                                                            key={skill}
-                                                            variant="secondary"
-                                                            className="bg-white/10 text-white border-white/20"
-                                                        >
-                                                            {skill}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {previewItem.bio && (
-                                            <div>
-                                                <h4 className="text-sm text-white/70 mb-2">Bio</h4>
-                                                <p className="text-white/80 text-sm">{previewItem.bio}</p>
-                                            </div>
-                                        )}
+                                    <div>
+                                        <label className="text-sm text-white/70 mb-2 block">Grid Size</label>
+                                        <Select value={gridSize} onValueChange={(value: GridSize) => setGridSize(value)}>
+                                            <SelectTrigger className="bg-black border-white/20 text-white">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-[#171717] border-white/20">
+                                                <SelectItem value="small" className="text-white">Small Cards</SelectItem>
+                                                <SelectItem value="medium" className="text-white">Medium Cards</SelectItem>
+                                                <SelectItem value="large" className="text-white">Large Cards</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-
-            {/* Settings Dialog */}
-            <AnimatePresence>
-                {showColumnManager && (
-                    <Dialog open={showColumnManager} onOpenChange={setShowColumnManager}>
-                        <DialogContent className="max-w-2xl bg-[#171717] border-white/20 text-white">
-                            <DialogHeader>
-                                <DialogTitle className="text-white">Grid Settings</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-6">
-                                {/* View Options */}
-                                <div className="space-y-3">
-                                    <h4 className="font-medium text-white">Display Options</h4>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="text-sm text-white/70 mb-2 block">View Mode</label>
-                                            <Select value={viewMode} onValueChange={(value: ViewMode) => setViewMode(value)}>
-                                                <SelectTrigger className="bg-black border-white/20 text-white">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-[#171717] border-white/20">
-                                                    <SelectItem value="grid" className="text-white">Grid View</SelectItem>
-                                                    <SelectItem value="compact" className="text-white">Compact List</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div>
-                                            <label className="text-sm text-white/70 mb-2 block">Grid Size</label>
-                                            <Select value={gridSize} onValueChange={(value: GridSize) => setGridSize(value)}>
-                                                <SelectTrigger className="bg-black border-white/20 text-white">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-[#171717] border-white/20">
-                                                    <SelectItem value="small" className="text-white">Small Cards</SelectItem>
-                                                    <SelectItem value="medium" className="text-white">Medium Cards</SelectItem>
-                                                    <SelectItem value="large" className="text-white">Large Cards</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
+            {showKeyboardHelp && (
+                <Dialog open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp}>
+                    <DialogContent className="max-w-2xl bg-[#171717] border-white/20 text-white">
+                        <DialogHeader>
+                            <DialogTitle className="text-white flex items-center gap-2">
+                                <Keyboard className="h-5 w-5" />
+                                Keyboard Shortcuts
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 className="font-medium text-white mb-3">Navigation</h4>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Search</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+F</kbd>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Select All</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+A</kbd>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Escape Selection</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Esc</kbd>
                                     </div>
                                 </div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
-                )}
-            </AnimatePresence>
-            <AnimatePresence>
-                {showKeyboardHelp && (
-                    <Dialog open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp}>
-                        <DialogContent className="max-w-2xl bg-[#171717] border-white/20 text-white">
-                            <DialogHeader>
-                                <DialogTitle className="text-white flex items-center gap-2">
-                                    <Keyboard className="h-5 w-5" />
-                                    Keyboard Shortcuts
-                                </DialogTitle>
-                            </DialogHeader>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 className="font-medium text-white mb-3">Navigation</h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Search</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+F</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Select All</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+A</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Escape Selection</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Esc</kbd>
-                                        </div>
+                            <div>
+                                <h4 className="font-medium text-white mb-3">Actions</h4>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Undo</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+Z</kbd>
                                     </div>
-                                </div>
-                                <div>
-                                    <h4 className="font-medium text-white mb-3">Actions</h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Undo</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+Z</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Toggle Grouping</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">G</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Toggle Filters</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">F</kbd>
-                                        </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Toggle Grouping</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">G</kbd>
                                     </div>
-                                </div>
-                                <div>
-                                    <h4 className="font-medium text-white mb-3">View Modes</h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Grid View</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">1</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Compact View</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">2</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Small Cards</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">3</kbd>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-white/70">Large Cards</span>
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">4</kbd>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="font-medium text-white mb-3">Help</h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between items-center">
-                                            <kbd className="px-2 py-1 bg-white/10 rounded text-xs">?</kbd>
-                                        </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Toggle Filters</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">F</kbd>
                                     </div>
                                 </div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
-                )}
-            </AnimatePresence>
+                            <div>
+                                <h4 className="font-medium text-white mb-3">View Modes</h4>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Grid View</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">1</kbd>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Compact View</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">2</kbd>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Small Cards</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">3</kbd>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white/70">Large Cards</span>
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">4</kbd>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="font-medium text-white mb-3">Help</h4>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between items-center">
+                                        <kbd className="px-2 py-1 bg-white/10 rounded text-xs">?</kbd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
 
-            {/* Enhanced Context Menu */}
-            <AnimatePresence>
-                {contextMenu && (
-                    <motion.div
-                        ref={contextMenuRef}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="fixed z-50 bg-[#171717] border border-white/20 rounded-lg shadow-xl py-2 min-w-48"
-                        style={{
-                            left: contextMenu.x,
-                            top: contextMenu.y,
-                            maxWidth: contextMenu.cardRef ?
-                                Math.min(200, contextMenu.cardRef.getBoundingClientRect().width - 20) : 200
+            {contextMenu && (
+                <div
+                    ref={contextMenuRef}
+                    className="fixed z-50 bg-[#171717] border border-white/20 rounded-lg shadow-xl py-2 min-w-48"
+                    style={{
+                        left: contextMenu.x,
+                        top: contextMenu.y,
+                        maxWidth: contextMenu.cardRef ?
+                            Math.min(200, contextMenu.cardRef.getBoundingClientRect().width - 20) : 200
+                    }}
+                    onBlur={() => setContextMenu(null)}
+                    tabIndex={-1}
+                >
+                    <button
+                        className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                        onClick={() => {
+                            if (contextMenu.row) {
+                                setPreviewItem(contextMenu.row);
+                                setShowPreview(true);
+                            }
+                            setContextMenu(null);
                         }}
-                        onBlur={() => setContextMenu(null)}
-                        tabIndex={-1}
                     >
+                        <Eye className="h-4 w-4" />
+                        View Details
+                    </button>
+                    <button
+                        className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                        onClick={() => {
+                            if (contextMenu.row) {
+                                navigator.clipboard.writeText(JSON.stringify(contextMenu.row, null, 2));
+                            }
+                            setContextMenu(null);
+                        }}
+                    >
+                        <Copy className="h-4 w-4" />
+                        Copy Data
+                    </button>
+                    <Separator className="my-1 bg-white/10" />
+                    <button
+                        className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                        onClick={() => {
+                            if (contextMenu.row) {
+                                const rowId = getRowId(contextMenu.row);
+                                handleToggleFavorite(rowId);
+                            }
+                            setContextMenu(null);
+                        }}
+                    >
+                        <Heart className={cn(
+                            "h-4 w-4",
+                            contextMenu.row && favorites.has(getRowId(contextMenu.row)) && "fill-red-400 text-red-400"
+                        )} />
+                        {contextMenu.row && favorites.has(getRowId(contextMenu.row)) ? 'Remove from Favorites' : 'Add to Favorites'}
+                    </button>
+                    <button
+                        className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                        onClick={() => {
+                            if (contextMenu.row) {
+                                const rowId = getRowId(contextMenu.row);
+                                handlePinItem(rowId);
+                            }
+                            setContextMenu(null);
+                        }}
+                    >
+                        <Pin className="h-4 w-4" />
+                        {contextMenu.row && pinnedItems.has(getRowId(contextMenu.row)) ? 'Unpin Item' : 'Pin Item'}
+                    </button>
+                    {enableInlineEditing && (
                         <button
                             className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
-                            onClick={() => {
-                                if (contextMenu.row) {
-                                    setPreviewItem(contextMenu.row);
-                                    setShowPreview(true);
-                                }
-                                setContextMenu(null);
-                            }}
                         >
-                            <Eye className="h-4 w-4" />
-                            View Details
+                            <Edit2 className="h-4 w-4" />
+                            Edit Item
                         </button>
-                        <button
-                            className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
-                            onClick={() => {
-                                if (contextMenu.row) {
-                                    navigator.clipboard.writeText(JSON.stringify(contextMenu.row, null, 2));
-                                }
-                                setContextMenu(null);
-                            }}
-                        >
-                            <Copy className="h-4 w-4" />
-                            Copy Data
-                        </button>
-                        <Separator className="my-1 bg-white/10" />
-                        <button
-                            className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
-                            onClick={() => {
-                                if (contextMenu.row) {
-                                    const rowId = getRowId(contextMenu.row);
-                                    handleToggleFavorite(rowId);
-                                }
-                                setContextMenu(null);
-                            }}
-                        >
-                            <Heart className={cn(
-                                "h-4 w-4",
-                                contextMenu.row && favorites.has(getRowId(contextMenu.row)) && "fill-red-400 text-red-400"
-                            )} />
-                            {contextMenu.row && favorites.has(getRowId(contextMenu.row)) ? 'Remove from Favorites' : 'Add to Favorites'}
-                        </button>
-                        <button
-                            className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
-                            onClick={() => {
-                                if (contextMenu.row) {
-                                    const rowId = getRowId(contextMenu.row);
-                                    handlePinItem(rowId);
-                                }
-                                setContextMenu(null);
-                            }}
-                        >
-                            <Pin className="h-4 w-4" />
-                            {contextMenu.row && pinnedItems.has(getRowId(contextMenu.row)) ? 'Unpin Item' : 'Pin Item'}
-                        </button>
-                        {enableInlineEditing && (
-                            <button
-                                className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
-                            >
-                                <Edit2 className="h-4 w-4" />
-                                Edit Item
-                            </button>
-                        )}
-                        <Separator className="my-1 bg-white/10" />
-                        <button
-                            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3"
-                            onClick={() => {
-                                if (contextMenu.row) {
-                                    handleDeleteItem(contextMenu.row);
-                                }
-                                setContextMenu(null);
-                            }}
-                        >
-                            <Trash2 className="h-4 w-4" />
-                            Delete Item
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Custom Footer */}
+                    )}
+                    <Separator className="my-1 bg-white/10" />
+                    <button
+                        className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3"
+                        onClick={() => {
+                            if (contextMenu.row) {
+                                handleDeleteItem(contextMenu.row);
+                            }
+                            setContextMenu(null);
+                        }}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        Delete Item
+                    </button>
+                </div>
+            )}
             {customFooter}
         </div >
     );
