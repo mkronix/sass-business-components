@@ -1,3 +1,4 @@
+
 export interface GridColumn<T = any> {
   id: string;
   field: string;
@@ -12,12 +13,13 @@ export interface GridColumn<T = any> {
   pinned?: 'left' | 'right';
   cellRenderer?: (params: CellRendererParams<T>) => React.ReactNode;
   headerRenderer?: () => React.ReactNode;
-  type?: 'text' | 'number' | 'date' | 'boolean' | 'custom';
+  type?: 'text' | 'number' | 'date' | 'boolean' | 'custom' | 'select';
   format?: string;
   align?: 'left' | 'center' | 'right';
   editable?: boolean;
   valueGetter?: (row: T) => any;
   valueSetter?: (row: T, value: any) => T;
+  options?: Array<{ label: string; value: any }>;
 }
 
 export interface CellRendererParams<T = any> {
@@ -86,8 +88,84 @@ export interface DataGridProps<T = any> {
   getRowId?: (row: T) => string | number;
   onRowClick?: (row: T, event: React.MouseEvent) => void;
   onRowDoubleClick?: (row: T, event: React.MouseEvent) => void;
-  onCellEdit?: (rowId: string | number, field: string, value: any) => void;
+  onCellEdit?: (rowId: string | number, field: string, value: any, oldValue?: any) => void;
   onSelectionChange?: (selectedRows: T[]) => void;
   customToolbar?: React.ReactNode;
   customFooter?: React.ReactNode;
+}
+
+// Additional types needed by index.ts
+export type ViewMode = 'grid' | 'compact' | 'cards';
+export type GridSize = 'small' | 'medium' | 'large';
+export type DensityMode = 'compact' | 'standard' | 'comfortable';
+
+export interface AnimationVariants {
+  hidden: any;
+  visible: any;
+  hover?: any;
+  selected?: any;
+}
+
+export interface ContextMenuItem {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+  action: () => void;
+  disabled?: boolean;
+  separator?: boolean;
+}
+
+export interface FilterPanelConfig {
+  enabled: boolean;
+  position: 'left' | 'right' | 'bottom';
+  width?: number;
+  height?: number;
+}
+
+export interface CustomFilter {
+  id: string;
+  field: string;
+  type: 'text' | 'number' | 'date' | 'select';
+  label: string;
+  options?: Array<{ label: string; value: any }>;
+}
+
+export interface ExportConfig {
+  csv?: boolean;
+  excel?: boolean;
+  json?: boolean;
+  pdf?: boolean;
+}
+
+export interface BulkOperation {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+  action: (selectedItems: any[]) => void;
+  confirmMessage?: string;
+}
+
+export interface GridConfig {
+  showHeaders?: boolean;
+  showPagination?: boolean;
+  showToolbar?: boolean;
+  showSearch?: boolean;
+  showFilters?: boolean;
+  autoHeight?: boolean;
+  stickyHeaders?: boolean;
+}
+
+export interface SearchConfig {
+  enabled: boolean;
+  placeholder?: string;
+  debounceMs?: number;
+  searchFields?: string[];
+}
+
+export interface PerformanceMetrics {
+  renderTime?: number;
+  itemCount?: number;
+  visibleItems?: number;
+  scrollPosition?: number;
+  lastUpdate?: number;
 }
