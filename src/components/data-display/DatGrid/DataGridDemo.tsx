@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Zap } from "lucide-react";
 import { useState } from "react";
@@ -85,13 +86,10 @@ const DataGridDemo = () => {
         }
     ];
 
-    const handleCellEdit = async (rowId, field, newValue, oldValue) => {
+    const handleCellEdit = (rowId: string | number, field: string, newValue: any, oldValue?: any) => {
         console.log('Cell edited:', { rowId, field, newValue, oldValue });
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return true;
+        // Simulate API call - we don't need to return a promise here since the interface is void
     };
-
 
     const customFooter = (
         <div className="p-6 border-t border-white/10 bg-[#171717]/10">
@@ -114,7 +112,6 @@ const DataGridDemo = () => {
 
     return (
         <div className="bg-black">
-
             <DataGrid
                 data={data}
                 columns={columns}
