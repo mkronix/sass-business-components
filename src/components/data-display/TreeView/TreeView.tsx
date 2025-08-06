@@ -25,7 +25,7 @@ const treeVariants = {
         height: 'auto',
         opacity: 1,
         transition: {
-            height: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
+            height: { duration: 0.2, ease: [0.4, 0, 0.2, 1] as const },
             opacity: { duration: 0.15, delay: 0.05 }
         }
     },
@@ -33,7 +33,7 @@ const treeVariants = {
         height: 0,
         opacity: 0,
         transition: {
-            height: { duration: 0.2, ease: [0.4, 0, 0.6, 1] },
+            height: { duration: 0.2, ease: [0.4, 0, 0.6, 1] as const },
             opacity: { duration: 0.1 }
         }
     }
