@@ -207,6 +207,29 @@ const DataGrid = <T extends Record<string, any>>({
         }
     }, [showUndoNotification]);
 
+    // Handle search highlighting separately to avoid infinite re-renders
+    useEffect(() => {
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            const highlighted = new Set<string | number>();
+
+            gridData.forEach(row => {
+                const matches = columns.some(col => {
+                    const value = row[col.field];
+                    const stringValue = String(value || '').toLowerCase();
+                    return stringValue.includes(query);
+                });
+                if (matches) {
+                    highlighted.add(getRowId(row));
+                }
+            });
+
+            setHighlightedItems(highlighted);
+        } else {
+            setHighlightedItems(new Set());
+        }
+    }, [searchQuery, gridData, columns, getRowId]);
+
     // Get unique values for filters
     const getUniqueValues = (field: string) => {
         return [...new Set(gridData.map(item => item[field]).filter(Boolean))];
@@ -290,27 +313,18 @@ const DataGrid = <T extends Record<string, any>>({
             result = result.filter(row => selectedStatuses.includes(row.status));
         }
 
-        // Apply global search with highlighting
+        // Apply global search
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
-            const highlighted = new Set<string | number>();
 
             result = result.filter(row => {
                 const matches = columns.some(col => {
                     const value = row[col.field];
                     const stringValue = String(value || '').toLowerCase();
-                    if (stringValue.includes(query)) {
-                        highlighted.add(getRowId(row));
-                        return true;
-                    }
-                    return false;
+                    return stringValue.includes(query);
                 });
                 return matches;
             });
-
-            setHighlightedItems(highlighted);
-        } else {
-            setHighlightedItems(new Set());
         }
 
         // Apply column filters
@@ -678,7 +692,7 @@ const DataGrid = <T extends Record<string, any>>({
                 transition: {
                     duration: 0.3,
                     delay: index * 0.05,
-                    type: "spring",
+                    type: "spring" as const,
                     stiffness: 260,
                     damping: 20
                 }
