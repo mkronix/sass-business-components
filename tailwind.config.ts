@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -19,48 +18,50 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				// Simple 3-color system
+				background: '#000000', // Black background
+				foreground: '#ffffff', // White text
+				accent: '#171717', // Charcoal for accents
+				border: 'rgba(255, 255, 255, 0.1)', // Light white for borders
+
+				// Component colors mapped to our 3-color system
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#ffffff',
+					foreground: '#000000'
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: '#171717',
+					foreground: '#ffffff'
 				},
 				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+					DEFAULT: '#ef4444',
+					foreground: '#ffffff'
 				},
 				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
-				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
-				},
-				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: '#171717',
+					foreground: 'rgba(255, 255, 255, 0.7)'
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: '#000000',
+					foreground: '#ffffff'
 				},
+				popover: {
+					DEFAULT: '#000000',
+					foreground: '#ffffff'
+				},
+				input: '#171717',
+				ring: '#ffffff',
+
+				// Sidebar colors
 				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					DEFAULT: '#000000',
+					foreground: '#ffffff',
+					primary: '#ffffff',
+					'primary-foreground': '#000000',
+					accent: '#171717',
+					'accent-foreground': '#ffffff',
+					border: 'rgba(255, 255, 255, 0.2)',
+					ring: '#ffffff'
 				}
 			},
 			borderRadius: {

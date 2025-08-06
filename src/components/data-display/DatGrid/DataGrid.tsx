@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowUpDown,
     Check,
@@ -17,38 +18,47 @@ import {
     Edit2,
     Filter,
     FilterX,
+    Grid3X3,
+    List,
+    MoreHorizontal,
     Pin,
-    PinOff,
     RefreshCw,
     Search,
     Settings,
     SortAsc,
     SortDesc,
     Trash2,
-    X
+    X,
+    Zap,
+    Eye,
+    Calendar,
+    DollarSign,
+    User,
+    Phone,
+    Mail,
+    Building,
+    Briefcase,
+    TrendingUp
 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { CellRendererParams, DataGridProps, FilterConfig, GridApi, GridColumn, SortConfig } from './types';
+
+type ViewMode = 'grid' | 'compact' | 'cards';
+type GridSize = 'small' | 'medium' | 'large';
 
 const DataGrid = <T extends Record<string, any>>({
     data = [],
     columns = [],
     loading = false,
-    rowHeight = 48,
-    headerHeight = 56,
-    enableColumnPinning = true,
     enableRowSelection = true,
     enableMultiSelect = true,
     enableInlineEditing = true,
     enableBulkOperations = true,
     enableExport = true,
-    enableAggregation = true,
     enableContextMenu = true,
-    enableUndoRedo = true,
     pageSize = 100,
     pagination = true,
     className,
-    theme = 'auto',
     density = 'standard',
     getRowId = (row) => row.id,
     onRowClick,
@@ -63,50 +73,20 @@ const DataGrid = <T extends Record<string, any>>({
     const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
     const [editingCell, setEditingCell] = useState<{ rowId: string | number; field: string } | null>(null);
     const [editValue, setEditValue] = useState<any>('');
-    const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
-    const [columnOrder, setColumnOrder] = useState<string[]>(columns.map(col => col.id));
-    const [pinnedColumns, setPinnedColumns] = useState<Record<string, 'left' | 'right' | false>>({});
-    const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
     const [sorting, setSorting] = useState<SortConfig[]>([]);
     const [filters, setFilters] = useState<Record<string, FilterConfig>>({});
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageSize, setCurrentPageSize] = useState(pageSize);
     const [searchQuery, setSearchQuery] = useState('');
     const [showColumnManager, setShowColumnManager] = useState(false);
-    const [showFilterDialog, setShowFilterDialog] = useState(false);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number; row?: T } | null>(null);
+    const [hoveredCard, setHoveredCard] = useState<string | number | null>(null);
+    const [viewMode, setViewMode] = useState<ViewMode>('grid');
+    const [gridSize, setGridSize] = useState<GridSize>('medium');
+    const [pinnedItems, setPinnedItems] = useState<Set<string | number>>(new Set());
 
     // Refs
     const gridRef = useRef<HTMLDivElement>(null);
-    const bodyRef = useRef<HTMLDivElement>(null);
-
-    // Get row height based on density
-    const getRowHeight = useCallback(() => {
-        switch (density) {
-            case 'compact': return 32;
-            case 'comfortable': return 64;
-            default: return rowHeight;
-        }
-    }, [density, rowHeight]);
-
-    // Column calculations
-    const visibleColumns = useMemo(() => {
-        return columns
-            .filter(col => !hiddenColumns.has(col.id))
-            .sort((a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id));
-    }, [columns, hiddenColumns, columnOrder]);
-
-    const pinnedLeftColumns = useMemo(() => {
-        return visibleColumns.filter(col => pinnedColumns[col.id] === 'left');
-    }, [visibleColumns, pinnedColumns]);
-
-    const pinnedRightColumns = useMemo(() => {
-        return visibleColumns.filter(col => pinnedColumns[col.id] === 'right');
-    }, [visibleColumns, pinnedColumns]);
-
-    const centerColumns = useMemo(() => {
-        return visibleColumns.filter(col => !pinnedColumns[col.id]);
-    }, [visibleColumns, pinnedColumns]);
 
     // Data processing
     const processedData = useMemo(() => {
@@ -116,7 +96,7 @@ const DataGrid = <T extends Record<string, any>>({
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             result = result.filter(row =>
-                visibleColumns.some(col => {
+                columns.some(col => {
                     const value = row[col.field];
                     return String(value || '').toLowerCase().includes(query);
                 })
@@ -165,8 +145,18 @@ const DataGrid = <T extends Record<string, any>>({
             });
         }
 
-        return result;
-    }, [gridData, searchQuery, filters, sorting, columns, visibleColumns]);
+        // Sort pinned items to top
+        return result.sort((a, b) => {
+            const aId = getRowId(a);
+            const bId = getRowId(b);
+            const aPinned = pinnedItems.has(aId);
+            const bPinned = pinnedItems.has(bId);
+
+            if (aPinned && !bPinned) return -1;
+            if (!aPinned && bPinned) return 1;
+            return 0;
+        });
+    }, [gridData, searchQuery, filters, sorting, columns, pinnedItems, getRowId]);
 
     // Pagination
     const paginatedData = useMemo(() => {
@@ -186,60 +176,12 @@ const DataGrid = <T extends Record<string, any>>({
                 return value === filter.value;
             case 'contains':
                 return String(value).toLowerCase().includes(String(filter.value).toLowerCase());
-            case 'startsWith':
-                return String(value).toLowerCase().startsWith(String(filter.value).toLowerCase());
-            case 'endsWith':
-                return String(value).toLowerCase().endsWith(String(filter.value).toLowerCase());
-            case 'gt':
-                return Number(value) > Number(filter.value);
-            case 'lt':
-                return Number(value) < Number(filter.value);
-            case 'gte':
-                return Number(value) >= Number(filter.value);
-            case 'lte':
-                return Number(value) <= Number(filter.value);
-            case 'between':
-                return Number(value) >= Number(filter.value) && Number(value) <= Number(filter.value2);
-            case 'in':
-                return Array.isArray(filter.value) && filter.value.includes(value);
             default:
                 return true;
         }
     };
 
     // Event handlers
-    const handleSort = useCallback((columnId: string) => {
-        setSorting(prev => {
-            const existingSort = prev.find(s => s.columnId === columnId);
-            if (existingSort) {
-                if (existingSort.direction === 'asc') {
-                    return prev.map(s => s.columnId === columnId ? { ...s, direction: 'desc' as const } : s);
-                } else {
-                    return prev.filter(s => s.columnId !== columnId);
-                }
-            } else {
-                return [...prev, { columnId, direction: 'asc' as const, priority: prev.length }];
-            }
-        });
-    }, []);
-
-    const handleCellEdit = useCallback(async (rowId: string | number, field: string, newValue: any) => {
-        const oldValue = gridData.find(row => getRowId(row) === rowId)?.[field];
-
-        if (onCellEdit) {
-            const success = await onCellEdit(rowId, field, newValue, oldValue);
-            if (!success) return false;
-        }
-
-        // Update local data
-        setGridData(prev => prev.map(row =>
-            getRowId(row) === rowId ? { ...row, [field]: newValue } : row
-        ));
-
-
-        return true;
-    }, [gridData, onCellEdit, getRowId, enableUndoRedo]);
-
     const handleRowSelection = useCallback((rowId: string | number, selected: boolean) => {
         setSelectedRows(prev => {
             const newSet = new Set(prev);
@@ -269,27 +211,22 @@ const DataGrid = <T extends Record<string, any>>({
         }
     }, [paginatedData, selectedRows, getRowId]);
 
-    const handleColumnResize = useCallback((columnId: string, width: number) => {
-        setColumnWidths(prev => ({ ...prev, [columnId]: Math.max(50, width) }));
+    const handlePinItem = useCallback((rowId: string | number) => {
+        setPinnedItems(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(rowId)) {
+                newSet.delete(rowId);
+            } else {
+                newSet.add(rowId);
+            }
+            return newSet;
+        });
     }, []);
-
-    const handleColumnPin = useCallback((columnId: string, pinned: 'left' | 'right' | false) => {
-        setPinnedColumns(prev => ({ ...prev, [columnId]: pinned }));
-    }, []);
-
-    const handleExport = useCallback((format: 'csv' | 'excel' | 'json') => {
-        const exportData = selectedRows.size > 0
-            ? processedData.filter(row => selectedRows.has(getRowId(row)))
-            : processedData;
-
-        console.log(`Exporting ${exportData.length} rows as ${format}`);
-        // Implementation would go here
-    }, [processedData, selectedRows, getRowId]);
 
     // Grid API
     const gridApi: GridApi<T> = useMemo(() => ({
         refreshData: () => setGridData([...data]),
-        exportData: handleExport,
+        exportData: (format: 'csv' | 'excel' | 'json') => console.log(`Exporting as ${format}`),
         selectAll: handleSelectAll,
         clearSelection: () => setSelectedRows(new Set()),
         getSelectedRows: () => paginatedData.filter(row => selectedRows.has(getRowId(row))),
@@ -298,229 +235,358 @@ const DataGrid = <T extends Record<string, any>>({
         updateRow: (id, updates) => setGridData(prev => prev.map(row =>
             getRowId(row) === id ? { ...row, ...updates } : row
         )),
-        getColumnState: () => visibleColumns.map((col, index) => ({
-            id: col.id,
-            width: columnWidths[col.id] || col.width || 150,
-            pinned: pinnedColumns[col.id] || false,
-            hidden: hiddenColumns.has(col.id),
-            order: index
-        })),
-        setColumnState: (state) => {
-            setColumnWidths(Object.fromEntries(state.map(s => [s.id, s.width])));
-            setPinnedColumns(Object.fromEntries(state.map(s => [s.id, s.pinned])));
-            setHiddenColumns(new Set(state.filter(s => s.hidden).map(s => s.id)));
-            setColumnOrder(state.sort((a, b) => a.order - b.order).map(s => s.id));
-        },
+        getColumnState: () => [],
+        setColumnState: () => { },
         applyFilter: (columnId, filter) => setFilters(prev => ({ ...prev, [columnId]: filter })),
         clearFilters: () => setFilters({}),
         setSorting: (newSorting) => setSorting(newSorting),
-        autoSizeColumns: () => {
-            // Auto-size implementation would go here
-            console.log('Auto-sizing columns...');
-        },
+        autoSizeColumns: () => { },
         exportToPDF: () => console.log('Exporting to PDF...')
-    }), [
-        data, handleExport, handleSelectAll, paginatedData, selectedRows, getRowId,
-        visibleColumns, columnWidths, pinnedColumns, hiddenColumns
-    ]);
+    }), [data, handleSelectAll, paginatedData, selectedRows, getRowId]);
 
-    // Cell renderer
-    const renderCell = useCallback((column: GridColumn<T>, row: T, rowIndex: number, columnIndex: number) => {
-        const value = row[column.field];
-        const rowId = getRowId(row);
-        const isEditing = editingCell?.rowId === rowId && editingCell?.field === column.field;
+    // Get grid columns based on size
+    const getGridColumns = () => {
+        switch (gridSize) {
+            case 'small': return 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5';
+            case 'medium': return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4';
+            case 'large': return 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
+            default: return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5';
+        }
+    };
 
-        const cellParams: CellRendererParams<T> = {
-            value,
-            row,
-            column,
-            rowIndex,
-            columnIndex,
-            isEditing,
-            startEdit: () => {
-                if (column.editable && enableInlineEditing) {
-                    setEditingCell({ rowId, field: column.field });
-                    setEditValue(value);
+    // Render item card based on view mode
+    const renderItemCard = (item: T, index: number) => {
+        const rowId = getRowId(item);
+        const isSelected = selectedRows.has(rowId);
+        const isPinned = pinnedItems.has(rowId);
+        const isHovered = hoveredCard === rowId;
+
+        const cardVariants = {
+            hidden: { opacity: 0, y: 20, scale: 0.95 },
+            visible: {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                transition: {
+                    duration: 0.3,
+                    delay: index * 0.05,
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20
                 }
             },
-            stopEdit: () => setEditingCell(null),
-            api: gridApi
+            hover: {
+                scale: 1.02,
+                y: -4,
+                transition: { duration: 0.2 }
+            },
+            selected: {
+                scale: 1.03,
+                boxShadow: "0 0 0 2px #ffffff, 0 8px 25px rgba(255, 255, 255, 0.15)",
+                transition: { duration: 0.2 }
+            }
         };
 
-        if (isEditing) {
+        if (viewMode === 'compact') {
             return (
-                <div className="flex items-center gap-2 px-2">
-                    <Input
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleCellEdit(rowId, column.field, editValue);
-                                setEditingCell(null);
-                            }
-                            if (e.key === 'Escape') {
-                                setEditingCell(null);
-                            }
-                        }}
-                        className="h-8 text-sm"
-                        autoFocus
-                    />
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                            handleCellEdit(rowId, column.field, editValue);
-                            setEditingCell(null);
-                        }}
-                        className="h-6 w-6 p-0"
+                <motion.div
+                    key={rowId}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate={isSelected ? "selected" : "visible"}
+                    whileHover="hover"
+                    className={cn(
+                        "flex items-center gap-4 p-4 bg-[#171717] border border-white/10 rounded-lg cursor-pointer relative group overflow-hidden",
+                        isSelected && "border-white/30 bg-[#171717]/80",
+                        isPinned && "ring-1 ring-white/20"
+                    )}
+                    onMouseEnter={() => setHoveredCard(rowId)}
+                    onMouseLeave={() => setHoveredCard(null)}
+                    onClick={(e) => onRowClick?.(item, e)}
+                    onDoubleClick={(e) => onRowDoubleClick?.(item, e)}
+                    onContextMenu={(e) => {
+                        if (enableContextMenu) {
+                            e.preventDefault();
+                            setContextMenu({ x: e.clientX, y: e.clientY, row: item });
+                        }
+                    }}
+                >
+                    {/* Selection overlay */}
+                    <AnimatePresence>
+                        {isSelected && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 bg-white/5 pointer-events-none"
+                            />
+                        )}
+                    </AnimatePresence>
+
+                    {/* Pin indicator */}
+                    {isPinned && (
+                        <div className="absolute top-2 left-2 w-2 h-2 bg-white rounded-full animate-pulse" />
+                    )}
+
+                    {/* Selection checkbox */}
+                    {enableRowSelection && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: isHovered || isSelected ? 1 : 0.6, scale: 1 }}
+                            className="flex-shrink-0"
+                        >
+                            <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={(checked) => handleRowSelection(rowId, checked as boolean)}
+                                className="border-white/30 data-[state=checked]:bg-white data-[state=checked]:border-white"
+                            />
+                        </motion.div>
+                    )}
+
+                    {/* Avatar/Icon */}
+                    <div className="flex-shrink-0">
+                        {item.avatar ? (
+                            <img
+                                src={item.avatar}
+                                alt={item.name || 'Avatar'}
+                                className="w-10 h-10 rounded-full border border-white/20"
+                            />
+                        ) : (
+                            <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
+                                <User className="h-5 w-5 text-white/70" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-medium text-white truncate">
+                                {item.name || `Item ${rowId}`}
+                            </h3>
+                            <Badge
+                                variant="secondary"
+                                className="ml-2 bg-white/10 text-white border-white/20"
+                            >
+                                {item.status || 'Active'}
+                            </Badge>
+                        </div>
+                        <p className="text-sm text-white/60 truncate mt-1">
+                            {item.email || item.department || 'No description'}
+                        </p>
+                    </div>
+
+                    {/* Actions */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 10 }}
+                        className="flex items-center gap-1"
                     >
-                        <Check className="h-3 w-3" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setEditingCell(null)}
-                        className="h-6 w-6 p-0"
-                    >
-                        <X className="h-3 w-3" />
-                    </Button>
-                </div>
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePinItem(rowId);
+                            }}
+                        >
+                            <Pin className={cn("h-4 w-4", isPinned && "fill-white")} />
+                        </Button>
+                    </motion.div>
+                </motion.div>
             );
         }
 
-        if (column.cellRenderer) {
-            return column.cellRenderer(cellParams);
-        }
-
-        // Default cell rendering based on column type
-        let displayValue = value;
-        if (column.format) {
-            displayValue = column.format(value);
-        } else if (column.type === 'date' && value instanceof Date) {
-            displayValue = value.toLocaleDateString();
-        } else if (column.type === 'number') {
-            displayValue = typeof value === 'number' ? value.toLocaleString() : value;
-        } else if (column.type === 'boolean') {
-            displayValue = value ? '✓' : '✗';
-        }
-
+        // Grid card view
         return (
-            <div
+            <motion.div
+                key={rowId}
+                variants={cardVariants}
+                initial="hidden"
+                animate={isSelected ? "selected" : "visible"}
+                whileHover="hover"
                 className={cn(
-                    "px-3 py-2 text-sm truncate cursor-pointer",
-                    column.align === 'center' && 'text-center',
-                    column.align === 'right' && 'text-right',
-                    column.editable && enableInlineEditing && 'hover:bg-muted/50'
+                    "bg-[#171717] border border-white/10 rounded-xl p-6 cursor-pointer relative group overflow-hidden",
+                    "hover:border-white/30 transition-all duration-300",
+                    isSelected && "border-white/50 bg-[#171717]/90 shadow-xl shadow-white/10",
+                    isPinned && "ring-1 ring-white/30",
+                    gridSize === 'large' && "p-8"
                 )}
-                onClick={() => cellParams.startEdit()}
+                onMouseEnter={() => setHoveredCard(rowId)}
+                onMouseLeave={() => setHoveredCard(null)}
+                onClick={(e) => onRowClick?.(item, e)}
+                onDoubleClick={(e) => onRowDoubleClick?.(item, e)}
+                onContextMenu={(e) => {
+                    if (enableContextMenu) {
+                        e.preventDefault();
+                        setContextMenu({ x: e.clientX, y: e.clientY, row: item });
+                    }
+                }}
             >
-                {String(displayValue || '')}
-            </div>
-        );
-    }, [editingCell, editValue, enableInlineEditing, gridApi, getRowId, handleCellEdit]);
+                {/* Background glow effect */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isHovered ? 0.1 : 0 }}
+                    className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"
+                />
 
-    // Render column sections
-    const renderColumnSection = (columnsToRender: GridColumn<T>[], sectionClass = '') => (
-        <div className={cn("flex", sectionClass)}>
-            {columnsToRender.map((column, columnIndex) => {
-                const width = columnWidths[column.id] || column.width || 150;
-                return (
-                    <div
-                        key={column.id}
-                        className="border-r border-border last:border-r-0"
-                        style={{ width, minWidth: width }}
+                {/* Selection overlay */}
+                <AnimatePresence>
+                    {isSelected && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="absolute inset-0 bg-white/5 rounded-xl border border-white/20 pointer-events-none"
+                        />
+                    )}
+                </AnimatePresence>
+
+                {/* Pin indicator */}
+                {isPinned && (
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute top-3 right-3 w-3 h-3 bg-white rounded-full"
+                    />
+                )}
+
+                {/* Selection checkbox */}
+                {enableRowSelection && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: isHovered || isSelected ? 1 : 0, scale: 1 }}
+                        className="absolute top-3 left-3"
                     >
-                        {/* Header */}
-                        <div
-                            className={cn(
-                                "flex items-center justify-between px-3 py-2 font-medium text-sm bg-muted/30 border-b",
-                                "hover:bg-muted/50 transition-colors cursor-pointer"
-                            )}
-                            style={{ height: headerHeight }}
-                            onClick={() => column.sortable && handleSort(column.id)}
-                        >
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span className="truncate">{column.title}</span>
-                                {column.sortable && (
-                                    <div className="flex-shrink-0">
-                                        {(() => {
-                                            const sort = sorting.find(s => s.columnId === column.id);
-                                            if (!sort) return <ArrowUpDown className="h-3 w-3 opacity-50" />;
-                                            return sort.direction === 'asc'
-                                                ? <SortAsc className="h-3 w-3 text-primary" />
-                                                : <SortDesc className="h-3 w-3 text-primary" />;
-                                        })()}
-                                    </div>
-                                )}
+                        <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={(checked) => handleRowSelection(rowId, checked as boolean)}
+                            className="border-white/40 data-[state=checked]:bg-white data-[state=checked]:border-white"
+                        />
+                    </motion.div>
+                )}
+
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        {item.avatar ? (
+                            <motion.img
+                                whileHover={{ scale: 1.1 }}
+                                src={item.avatar}
+                                alt={item.name || 'Avatar'}
+                                className="w-12 h-12 rounded-full border-2 border-white/20"
+                            />
+                        ) : (
+                            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border-2 border-white/20">
+                                <User className="h-6 w-6 text-white/70" />
                             </div>
-
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                                {filters[column.id] && (
-                                    <Filter className="h-3 w-3 text-primary" />
-                                )}
-
-                                {enableColumnPinning && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            const currentPin = pinnedColumns[column.id];
-                                            handleColumnPin(column.id, currentPin === 'left' ? false : 'left');
-                                        }}
-                                    >
-                                        {pinnedColumns[column.id] === 'left' ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Cells */}
-                        <div className="relative">
-                            {paginatedData.map((row, rowIndex) => {
-                                const rowId = getRowId(row);
-                                const isSelected = selectedRows.has(rowId);
-
-                                return (
-                                    <div
-                                        key={rowId}
-                                        className={cn(
-                                            "border-b border-border/50 transition-colors",
-                                            isSelected && "bg-primary/5",
-                                            "hover:bg-muted/30 group"
-                                        )}
-                                        style={{ height: getRowHeight() }}
-                                        onClick={(e) => onRowClick?.(row, e)}
-                                        onDoubleClick={(e) => onRowDoubleClick?.(row, e)}
-                                        onContextMenu={(e) => {
-                                            if (enableContextMenu) {
-                                                e.preventDefault();
-                                                setContextMenu({ x: e.clientX, y: e.clientY, row });
-                                            }
-                                        }}
-                                    >
-                                        {renderCell(column, row, rowIndex, columnIndex)}
-                                    </div>
-                                );
-                            })}
+                        )}
+                        <div>
+                            <h3 className="font-semibold text-white text-lg leading-tight">
+                                {item.name || `Item ${rowId}`}
+                            </h3>
+                            <p className="text-sm text-white/60">
+                                #{rowId}
+                            </p>
                         </div>
                     </div>
-                );
-            })}
-        </div>
-    );
+
+                    <motion.div
+                        initial={{ opacity: 0, rotate: -90 }}
+                        animate={{ opacity: isHovered ? 1 : 0, rotate: 0 }}
+                        className="flex gap-1"
+                    >
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-white/70 hover:text-white hover:bg-white/10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePinItem(rowId);
+                            }}
+                        >
+                            <Pin className={cn("h-4 w-4", isPinned && "fill-white")} />
+                        </Button>
+                    </motion.div>
+                </div>
+
+                {/* Content Grid */}
+                <div className="space-y-4">
+                    {/* Status and metrics */}
+                    <div className="flex items-center justify-between">
+                        <Badge
+                            variant={item.status === 'Active' ? 'default' : 'secondary'}
+                            className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+                        >
+                            {item.status || 'Active'}
+                        </Badge>
+                        {item.performance && (
+                            <div className="flex items-center gap-2">
+                                <TrendingUp className="h-4 w-4 text-white/60" />
+                                <span className="text-sm text-white/80">{item.performance}%</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Key details */}
+                    <div className="grid grid-cols-1 gap-3 text-sm">
+                        {item.department && (
+                            <div className="flex items-center gap-2 text-white/70">
+                                <Building className="h-4 w-4" />
+                                <span>{item.department}</span>
+                            </div>
+                        )}
+                        {item.role && (
+                            <div className="flex items-center gap-2 text-white/70">
+                                <Briefcase className="h-4 w-4" />
+                                <span>{item.role}</span>
+                            </div>
+                        )}
+                        {item.email && (
+                            <div className="flex items-center gap-2 text-white/70">
+                                <Mail className="h-4 w-4" />
+                                <span className="truncate">{item.email}</span>
+                            </div>
+                        )}
+                        {item.phoneNumber && (
+                            <div className="flex items-center gap-2 text-white/70">
+                                <Phone className="h-4 w-4" />
+                                <span>{item.phoneNumber}</span>
+                            </div>
+                        )}
+                        {item.salary && (
+                            <div className="flex items-center gap-2 text-white/70">
+                                <DollarSign className="h-4 w-4" />
+                                <span>${item.salary.toLocaleString()}</span>
+                            </div>
+                        )}
+                        {item.hireDate && (
+                            <div className="flex items-center gap-2 text-white/70">
+                                <Calendar className="h-4 w-4" />
+                                <span>{new Date(item.hireDate).toLocaleDateString()}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </motion.div>
+        );
+    };
 
     // Loading skeleton
     if (loading) {
         return (
-            <div className={cn("border rounded-lg bg-card", className)}>
-                <div className="p-4 border-b">
-                    <Skeleton className="h-8 w-64" />
+            <div className={cn("bg-black border border-white/10 rounded-xl p-6", className)}>
+                <div className="flex items-center justify-between mb-6">
+                    <Skeleton className="h-10 w-64 bg-[#171717]" />
+                    <div className="flex gap-2">
+                        <Skeleton className="h-10 w-24 bg-[#171717]" />
+                        <Skeleton className="h-10 w-24 bg-[#171717]" />
+                    </div>
                 </div>
-                <div className="p-4 space-y-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <Skeleton key={i} className="h-12 w-full" />
+                <div className={cn("grid gap-4", getGridColumns())}>
+                    {Array.from({ length: 12 }).map((_, i) => (
+                        <Skeleton key={i} className="h-48 bg-[#171717] rounded-xl" />
                     ))}
                 </div>
             </div>
@@ -528,186 +594,274 @@ const DataGrid = <T extends Record<string, any>>({
     }
 
     return (
-        <div className={cn("flex flex-col border rounded-lg bg-card shadow-sm", className)}>
-            {/* Toolbar */}
-            <div className="flex items-center justify-between p-4 border-b bg-muted/20">
-                <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search all columns..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 w-64"
-                        />
+        <div className={cn("bg-black border border-white/10 rounded-xl overflow-hidden", className)}>
+            {/* Enhanced Toolbar */}
+            <div className="p-6 border-b border-white/10 bg-[#171717]/30">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
+                            <Input
+                                placeholder="Search items..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-10 w-72 bg-[#171717] border-white/20 text-white placeholder:text-white/40 focus:border-white/40"
+                            />
+                        </div>
+
+                        <AnimatePresence>
+                            {selectedRows.size > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="flex items-center gap-2"
+                                >
+                                    <Badge variant="secondary" className="bg-white/10 text-white border-white/20 rounded-md w-max py-[6px] text-base">
+                                        <Zap className="h-4 w-4 mr-1" />
+                                        {selectedRows.size} selected
+                                    </Badge>
+                                    {enableBulkOperations && (
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="border-white/20 text-white hover:bg-white/10"
+                                            onClick={() => {
+                                                selectedRows.forEach(id => gridApi.removeRow(id));
+                                                setSelectedRows(new Set());
+                                            }}
+                                        >
+                                            <Trash2 className="h-4 w-4 mr-1" />
+                                        </Button>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
-                    {enableBulkOperations && selectedRows.size > 0 && (
-                        <Badge variant="secondary" className="ml-2">
-                            {selectedRows.size} selected
-                        </Badge>
-                    )}
+                    <div className="flex items-center gap-2">
+                        {customToolbar}
 
-                    {Object.keys(filters).length > 0 && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setFilters({})}
-                            className="text-destructive hover:text-destructive"
-                        >
-                            <FilterX className="h-4 w-4 mr-1" />
-                            Clear Filters ({Object.keys(filters).length})
-                        </Button>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                    {customToolbar}
-
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowFilterDialog(true)}
-                    >
-                        <Filter className="h-4 w-4 mr-1" />
-                    </Button>
-
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowColumnManager(true)}
-                    >
-                        <Settings className="h-4 w-4 mr-1" />
-                    </Button>
-
-                    {enableExport && (
-                        <Select onValueChange={handleExport}>
-                            <SelectTrigger className="w-max">
-                                <Download className="h-4 w-4 mr-2" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="csv">Export CSV</SelectItem>
-                                <SelectItem value="excel">Export Excel</SelectItem>
-                                <SelectItem value="json">Export JSON</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-
-                    {enableBulkOperations && selectedRows.size > 0 && (
-                        <div className="flex gap-1">
-                            <Button size="sm" variant="outline" className="text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                                ({selectedRows.size})
+                        {/* View mode switcher */}
+                        <div className="flex items-center bg-[#171717] border border-white/20 rounded-lg p-1">
+                            <Button
+                                size="sm"
+                                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                                className={cn(
+                                    "h-8 px-3",
+                                    viewMode === 'grid' ? 'bg-white text-black' : 'text-white/70 hover:text-white hover:bg-white/10'
+                                )}
+                                onClick={() => setViewMode('grid')}
+                            >
+                                <Grid3X3 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant={viewMode === 'compact' ? 'default' : 'ghost'}
+                                className={cn(
+                                    "h-8 px-3",
+                                    viewMode === 'compact' ? 'bg-white text-black' : 'text-white/70 hover:text-white hover:bg-white/10'
+                                )}
+                                onClick={() => setViewMode('compact')}
+                            >
+                                <List className="h-4 w-4" />
                             </Button>
                         </div>
-                    )}
 
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => gridApi.refreshData()}
-                    >
-                        <RefreshCw className="h-4 w-4" />
-                    </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-white/20 text-white hover:bg-white/10"
+                            onClick={() => setShowColumnManager(true)}
+                        >
+                            <Settings className="h-4 w-4 mr-1" />
+                            Settings
+                        </Button>
+
+                        {enableExport && (
+                            <Select onValueChange={(format) => gridApi.exportData(format as any)}>
+                                <SelectTrigger className="w-32 bg-[#171717] border-white/20 text-white">
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Export
+                                </SelectTrigger>
+                                <SelectContent className="bg-[#171717] border-white/20">
+                                    <SelectItem value="csv" className="text-white">CSV</SelectItem>
+                                    <SelectItem value="excel" className="text-white">Excel</SelectItem>
+                                    <SelectItem value="json" className="text-white">JSON</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        )}
+
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-white/20 text-white hover:bg-white/10"
+                            onClick={() => gridApi.refreshData()}
+                        >
+                            <RefreshCw className="h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
+
+                {/* Filters and sorting */}
+                <AnimatePresence>
+                    {(Object.keys(filters).length > 0 || sorting.length > 0) && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="flex items-center gap-3 pt-4 border-t border-white/10"
+                        >
+                            {sorting.length > 0 && (
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-white/60">Sorted by:</span>
+                                    {sorting.map((sort) => {
+                                        const column = columns.find(col => col.id === sort.columnId);
+                                        return (
+                                            <Badge
+                                                key={sort.columnId}
+                                                variant="secondary"
+                                                className="bg-white/10 text-white border-white/20"
+                                            >
+                                                {column?.title}
+                                                {sort.direction === 'asc' ? (
+                                                    <SortAsc className="h-3 w-3 ml-1" />
+                                                ) : (
+                                                    <SortDesc className="h-3 w-3 ml-1" />
+                                                )}
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="h-4 w-4 p-0 ml-1 text-white/60 hover:text-white"
+                                                    onClick={() => setSorting(prev => prev.filter(s => s.columnId !== sort.columnId))}
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </Button>
+                                            </Badge>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {Object.keys(filters).length > 0 && (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-white/60 hover:text-white"
+                                    onClick={() => setFilters({})}
+                                >
+                                    <FilterX className="h-4 w-4 mr-1" />
+                                    Clear Filters ({Object.keys(filters).length})
+                                </Button>
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Grid Container */}
-            <div ref={gridRef} className="flex-1 overflow-hidden relative">
-                <div className="flex h-full">
-                    {/* Selection Column */}
-                    {enableRowSelection && (
-                        <div className="flex-shrink-0 w-12 border-r border-border bg-muted/10">
-                            {/* Header */}
-                            <div
-                                className="flex items-center justify-center border-b bg-muted/30"
-                                style={{ height: headerHeight }}
-                            >
-                                {enableMultiSelect && (
-                                    <Checkbox
-                                        checked={paginatedData.length > 0 && paginatedData.every(row => selectedRows.has(getRowId(row)))}
-                                        onCheckedChange={handleSelectAll}
-                                    />
-                                )}
-                            </div>
-
-                            {/* Cells */}
-                            <div>
-                                {paginatedData.map((row) => {
-                                    const rowId = getRowId(row);
-                                    return (
-                                        <div
-                                            key={rowId}
-                                            className="flex items-center justify-center border-b border-border/50"
-                                            style={{ height: getRowHeight() }}
-                                        >
-                                            <Checkbox
-                                                checked={selectedRows.has(rowId)}
-                                                onCheckedChange={(checked) => handleRowSelection(rowId, checked as boolean)}
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Left Pinned Columns */}
-                    {pinnedLeftColumns.length > 0 && (
-                        <div className="flex-shrink-0 border-r-2 border-primary/20 bg-muted/5">
-                            {renderColumnSection(pinnedLeftColumns)}
-                        </div>
-                    )}
-
-                    {/* Scrollable Center Columns */}
-                    <div className="flex-1 overflow-x-auto" ref={bodyRef}>
-                        {renderColumnSection(centerColumns)}
+            <div ref={gridRef} className="p-6">
+                {/* Stats bar */}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-between mb-6 text-sm text-white/60"
+                >
+                    <div className="flex items-center gap-4">
+                        <span>
+                            {processedData.length} items total
+                        </span>
+                        {pinnedItems.size > 0 && (
+                            <span>• {pinnedItems.size} pinned</span>
+                        )}
+                        {selectedRows.size > 0 && (
+                            <span className="text-white font-medium">• {selectedRows.size} selected</span>
+                        )}
                     </div>
+                    <div className="flex items-center gap-2">
+                        {enableRowSelection && enableMultiSelect && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-white/60 hover:text-white"
+                                onClick={handleSelectAll}
+                            >
+                                {paginatedData.length > 0 && paginatedData.every(row => selectedRows.has(getRowId(row))) ? 'Deselect All' : 'Select All'}
+                            </Button>
+                        )}
+                    </div>
+                </motion.div>
 
-                    {/* Right Pinned Columns */}
-                    {pinnedRightColumns.length > 0 && (
-                        <div className="flex-shrink-0 border-l-2 border-primary/20 bg-muted/5">
-                            {renderColumnSection(pinnedRightColumns)}
-                        </div>
-                    )}
-                </div>
-
-                {/* Empty State */}
-                {paginatedData.length === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-background/50">
-                        <div className="text-center">
-                            <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                                <Search className="h-8 w-8 text-muted-foreground" />
-                            </div>
-                            <h3 className="text-lg font-semibold mb-2">No Data Found</h3>
-                            <p className="text-muted-foreground max-w-sm">
+                {/* Grid/List View */}
+                <AnimatePresence mode="wait">
+                    {paginatedData.length === 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="flex flex-col items-center justify-center py-20 text-center"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.2, type: "spring" }}
+                                className="w-20 h-20 bg-[#171717] rounded-full flex items-center justify-center mb-6 border border-white/10"
+                            >
+                                <Search className="h-10 w-10 text-white/40" />
+                            </motion.div>
+                            <h3 className="text-xl font-semibold text-white mb-2">No Items Found</h3>
+                            <p className="text-white/60 max-w-md">
                                 {searchQuery || Object.keys(filters).length > 0
                                     ? 'Try adjusting your search or filter criteria'
                                     : 'No data available to display'
                                 }
                             </p>
-                        </div>
-                    </div>
-                )}
+                            {(searchQuery || Object.keys(filters).length > 0) && (
+                                <Button
+                                    className="mt-4"
+                                    variant="outline"
+                                    onClick={() => {
+                                        setSearchQuery('');
+                                        setFilters({});
+                                    }}
+                                >
+                                    Clear All Filters
+                                </Button>
+                            )}
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key={viewMode}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                            className={cn(
+                                viewMode === 'compact' ? "space-y-3" : `grid gap-6 ${getGridColumns()}`
+                            )}
+                        >
+                            {paginatedData.map((item, index) => renderItemCard(item, index))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
-            {/* Footer with Pagination */}
-            {pagination && (
-                <div className="flex items-center justify-between p-4 border-t bg-muted/10">
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            {/* Enhanced Pagination */}
+            {pagination && totalPages > 1 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-between p-6 border-t border-white/10 bg-[#171717]/20"
+                >
+                    <div className="flex items-center gap-4 text-sm text-white/60">
                         <span>
                             Showing {((currentPage - 1) * currentPageSize) + 1} to{' '}
                             {Math.min(currentPage * currentPageSize, processedData.length)} of{' '}
-                            {processedData.length} rows
+                            {processedData.length} items
                         </span>
-                        {selectedRows.size > 0 && (
-                            <span className="text-primary font-medium">
-                                • {selectedRows.size} selected
-                            </span>
-                        )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                         <Select
                             value={String(currentPageSize)}
                             onValueChange={(value) => {
@@ -715,179 +869,187 @@ const DataGrid = <T extends Record<string, any>>({
                                 setCurrentPage(1);
                             }}
                         >
-                            <SelectTrigger className="w-20">
+                            <SelectTrigger className="w-24 bg-[#171717] border-white/20 text-white">
                                 <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="25">25</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                                <SelectItem value="100">100</SelectItem>
-                                <SelectItem value="200">200</SelectItem>
+                            <SelectContent className="bg-[#171717] border-white/20">
+                                <SelectItem value="25" className="text-white">25</SelectItem>
+                                <SelectItem value="50" className="text-white">50</SelectItem>
+                                <SelectItem value="100" className="text-white">100</SelectItem>
+                                <SelectItem value="200" className="text-white">200</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                            disabled={currentPage === 1}
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                disabled={currentPage === 1}
+                                className="border-white/20 text-white hover:bg-white/10 disabled:opacity-30"
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
 
-                        <div className="flex items-center gap-1">
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                let page;
-                                if (totalPages <= 5) {
-                                    page = i + 1;
-                                } else if (currentPage <= 3) {
-                                    page = i + 1;
-                                } else if (currentPage >= totalPages - 2) {
-                                    page = totalPages - 4 + i;
-                                } else {
-                                    page = currentPage - 2 + i;
-                                }
+                            <div className="flex items-center gap-1">
+                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                    let page;
+                                    if (totalPages <= 5) {
+                                        page = i + 1;
+                                    } else if (currentPage <= 3) {
+                                        page = i + 1;
+                                    } else if (currentPage >= totalPages - 2) {
+                                        page = totalPages - 4 + i;
+                                    } else {
+                                        page = currentPage - 2 + i;
+                                    }
 
-                                return (
-                                    <Button
-                                        key={page}
-                                        variant={currentPage === page ? "default" : "outline"}
-                                        size="sm"
-                                        onClick={() => setCurrentPage(page)}
-                                        className="w-8 h-8"
-                                    >
-                                        {page}
-                                    </Button>
-                                );
-                            })}
+                                    return (
+                                        <Button
+                                            key={page}
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                            className={cn(
+                                                "w-10 h-10",
+                                                currentPage === page
+                                                    ? "bg-white text-black"
+                                                    : "border-white/20 text-white hover:bg-white/10"
+                                            )}
+                                        >
+                                            {page}
+                                        </Button>
+                                    );
+                                })}
+                            </div>
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                                disabled={currentPage === totalPages}
+                                className="border-white/20 text-white hover:bg-white/10 disabled:opacity-30"
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
                         </div>
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                            disabled={currentPage === totalPages}
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
                     </div>
-                </div>
+                </motion.div>
             )}
 
-            {/* Column Manager Dialog */}
-            <Dialog open={showColumnManager} onOpenChange={setShowColumnManager}>
-                <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>Manage Columns</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 max-h-96 overflow-y-auto">
-                        {columns.map((column) => (
-                            <div key={column.id} className="flex items-center justify-between p-3 border rounded">
-                                <div className="flex items-center gap-3">
-                                    <Checkbox
-                                        checked={!hiddenColumns.has(column.id)}
-                                        onCheckedChange={(checked) => {
-                                            if (checked) {
-                                                setHiddenColumns(prev => {
-                                                    const newSet = new Set(prev);
-                                                    newSet.delete(column.id);
-                                                    return newSet;
-                                                });
-                                            } else {
-                                                setHiddenColumns(prev => new Set([...prev, column.id]));
-                                            }
-                                        }}
-                                    />
-                                    <span className="font-medium">{column.title}</span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <Input
-                                        type="number"
-                                        value={columnWidths[column.id] || column.width || 150}
-                                        onChange={(e) => handleColumnResize(column.id, Number(e.target.value))}
-                                        className="w-20"
-                                        min="50"
-                                    />
-
-                                    <Select
-                                        value={pinnedColumns[column.id] || 'none'}
-                                        onValueChange={(value) => handleColumnPin(column.id, value === 'none' ? false : value as 'left' | 'right')}
-                                    >
-                                        <SelectTrigger className="w-24">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="none">None</SelectItem>
-                                            <SelectItem value="left">Left</SelectItem>
-                                            <SelectItem value="right">Right</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+            {/* Settings Dialog */}
+            <AnimatePresence>
+                {showColumnManager && (
+                    <Dialog open={showColumnManager} onOpenChange={setShowColumnManager}>
+                        <DialogContent className="max-w-2xl bg-[#171717] border-white/20 text-white">
+                            <DialogHeader>
+                                <DialogTitle className="text-white">Grid Settings</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-6">
+                                {/* View Options */}
+                                <div className="space-y-3">
+                                    <h4 className="font-medium text-white">Display Options</h4>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm text-white/70 mb-2 block">View Mode</label>
+                                            <Select value={viewMode} onValueChange={(value: ViewMode) => setViewMode(value)}>
+                                                <SelectTrigger className="bg-black border-white/20 text-white">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-[#171717] border-white/20">
+                                                    <SelectItem value="grid" className="text-white">Grid View</SelectItem>
+                                                    <SelectItem value="compact" className="text-white">Compact List</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div>
+                                            <label className="text-sm text-white/70 mb-2 block">Grid Size</label>
+                                            <Select value={gridSize} onValueChange={(value: GridSize) => setGridSize(value)}>
+                                                <SelectTrigger className="bg-black border-white/20 text-white">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-[#171717] border-white/20">
+                                                    <SelectItem value="small" className="text-white">Small Cards</SelectItem>
+                                                    <SelectItem value="medium" className="text-white">Medium Cards</SelectItem>
+                                                    <SelectItem value="large" className="text-white">Large Cards</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </DialogContent>
-            </Dialog>
+                        </DialogContent>
+                    </Dialog>
+                )}
+            </AnimatePresence>
 
-            {/* Context Menu */}
-            {contextMenu && (
-                <div
-                    className="fixed z-50 bg-background border rounded-lg shadow-lg py-2 min-w-32"
-                    style={{ left: contextMenu.x, top: contextMenu.y }}
-                    onBlur={() => setContextMenu(null)}
-                    tabIndex={-1}
-                >
-                    <button
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
-                        onClick={() => {
-                            if (contextMenu.row) {
-                                navigator.clipboard.writeText(JSON.stringify(contextMenu.row));
-                            }
-                            setContextMenu(null);
-                        }}
+            <AnimatePresence>
+                {contextMenu && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="fixed z-50 bg-[#171717] border border-white/20 rounded-lg shadow-xl py-2 min-w-48"
+                        style={{ left: contextMenu.x, top: contextMenu.y }}
+                        onBlur={() => setContextMenu(null)}
+                        tabIndex={-1}
                     >
-                        <Copy className="h-4 w-4" />
-                        Copy Row
-                    </button>
-                    {enableInlineEditing && (
                         <button
-                            className="w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                            className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
                             onClick={() => {
-                                // Start editing first editable cell
-                                const editableColumn = visibleColumns.find(col => col.editable);
-                                if (editableColumn && contextMenu.row) {
-                                    setEditingCell({
-                                        rowId: getRowId(contextMenu.row),
-                                        field: editableColumn.field
-                                    });
-                                    setEditValue(contextMenu.row[editableColumn.field]);
+                                if (contextMenu.row) {
+                                    navigator.clipboard.writeText(JSON.stringify(contextMenu.row));
                                 }
                                 setContextMenu(null);
                             }}
                         >
-                            <Edit2 className="h-4 w-4" />
-                            Edit Row
+                            <Copy className="h-4 w-4" />
+                            Copy Item Data
                         </button>
-                    )}
-                    <Separator className="my-1" />
-                    <button
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-muted text-destructive flex items-center gap-2"
-                        onClick={() => {
-                            if (contextMenu.row) {
-                                gridApi.removeRow(getRowId(contextMenu.row));
-                            }
-                            setContextMenu(null);
-                        }}
-                    >
-                        <Trash2 className="h-4 w-4" />
-                        Delete Row
-                    </button>
-                </div>
-            )}
-
-            {/* Custom Footer */}
-            {customFooter}
+                        <button
+                            className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                            onClick={() => {
+                                if (contextMenu.row) {
+                                    const rowId = getRowId(contextMenu.row);
+                                    handlePinItem(rowId);
+                                }
+                                setContextMenu(null);
+                            }}
+                        >
+                            <Pin className="h-4 w-4" />
+                            {contextMenu.row && pinnedItems.has(getRowId(contextMenu.row)) ? 'Unpin Item' : 'Pin Item'}
+                        </button>
+                        <Separator className="my-1 bg-white/10" />
+                        <button
+                            className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                        >
+                            <Eye className="h-4 w-4" />
+                            View Details
+                        </button>
+                        {enableInlineEditing && (
+                            <button
+                                className="w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/10 flex items-center gap-3"
+                            >
+                                <Edit2 className="h-4 w-4" />
+                                Edit Item
+                            </button>
+                        )}
+                        <Separator className="my-1 bg-white/10" />
+                        <button
+                            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3"
+                            onClick={() => {
+                                if (contextMenu.row) {
+                                    gridApi.removeRow(getRowId(contextMenu.row));
+                                }
+                                setContextMenu(null);
+                            }}
+                        >
+                            <Trash2 className="h-4 w-4" />
+                            Delete Item
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
