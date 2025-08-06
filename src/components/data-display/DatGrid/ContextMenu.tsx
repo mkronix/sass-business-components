@@ -1,16 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { 
-  Copy, 
-  Edit, 
-  Eye, 
-  Heart, 
-  Pin, 
-  Star, 
-  Trash2,
+import {
+  Copy,
   Download,
-  Share
+  Edit,
+  Eye,
+  Heart,
+  Pin,
+  Share,
+  Trash2
 } from 'lucide-react';
 import React from 'react';
 
@@ -43,7 +42,7 @@ const ContextMenu = <T extends Record<string, any>>({
   onPinItem,
   onDeleteItem
 }: ContextMenuProps<T>) => {
-  
+
   if (!contextMenu || !contextMenu.row) {
     return null;
   }
@@ -61,7 +60,7 @@ const ContextMenu = <T extends Record<string, any>>({
   return (
     <div
       ref={contextMenuRef}
-      className="fixed z-50 min-w-[200px] bg-[#0A0A0A] border border-white/20 rounded-lg shadow-xl shadow-black/50 backdrop-blur-sm"
+      className="fixed z-50 min-w-[200px] max-w-[100px] bg-[#0A0A0A] border border-white/20 rounded-lg shadow-xl shadow-black/50 backdrop-blur-sm"
       style={{
         left: contextMenu.x,
         top: contextMenu.y,

@@ -120,7 +120,7 @@ const getBuiltInTemplates = <T extends ListItem>(): ListTemplate<T>[] => [
             <div
                 className={cn(
                     "p-6 border rounded-lg hover:shadow-sm transition-all cursor-pointer",
-                    isSelected && "ring-2 ring-primary/20 bg-primary/5"
+                    isSelected && "ring-0 ring-primary/20 bg-primary/5"
                 )}
                 onClick={onClick}
             >

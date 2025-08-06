@@ -128,7 +128,7 @@ export function ThemeSelector({ open, onOpenChange }: Readonly<ThemeSelectorProp
             <TabsContent value="basic" className="space-y-6">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card
-                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'light' ? 'ring-2 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
+                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'light' ? 'ring-0 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
                   onClick={() => setTheme('light')}
                 >
                   <CardHeader className="text-center pb-4 bg-gradient-to-br from-yellow-50 to-orange-50">
@@ -158,7 +158,7 @@ export function ThemeSelector({ open, onOpenChange }: Readonly<ThemeSelectorProp
                 </Card>
 
                 <Card
-                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'dark' ? 'ring-2 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
+                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'dark' ? 'ring-0 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
                   onClick={() => setTheme('dark')}
                 >
                   <CardHeader className="text-center pb-4 bg-gradient-to-br from-slate-800 to-slate-900">
@@ -188,7 +188,7 @@ export function ThemeSelector({ open, onOpenChange }: Readonly<ThemeSelectorProp
                 </Card>
 
                 <Card
-                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'system' ? 'ring-2 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
+                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'system' ? 'ring-0 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
                   onClick={() => setTheme('system')}
                 >
                   <CardHeader className="text-center pb-4 bg-gradient-to-br from-gray-100 to-gray-200">
@@ -218,7 +218,7 @@ export function ThemeSelector({ open, onOpenChange }: Readonly<ThemeSelectorProp
                 </Card>
 
                 <Card
-                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'custom' ? 'ring-2 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
+                  className={`group cursor-pointer transition-all duration-500 hover:scale-105 hover-primary-custom bg-secondary-custom border-primary-custom rounded-2xl overflow-hidden relative ${theme === 'custom' ? 'ring-0 ring-offset-2 ring-primary-custom accent-primary-custom' : ''}`}
                   onClick={() => setActiveTab('custom')}
                 >
                   <CardHeader className="text-center pb-4 bg-gradient-to-br from-purple-100 to-pink-100">

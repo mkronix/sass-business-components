@@ -1,8 +1,7 @@
-// components/data-display/dataGrid/components/Toolbar.tsx
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import {
     Clock,
@@ -14,13 +13,10 @@ import {
     Keyboard,
     List,
     Pin,
-    RefreshCw,
     Search,
     Settings,
     Trash2,
-    Zap,
-    CheckCircle,
-    XCircle
+    Zap
 } from 'lucide-react';
 import React from 'react';
 
@@ -38,8 +34,6 @@ interface ToolbarProps {
     enableBulkOperations: boolean;
     groupBy: GroupBy;
     onGroupByChange: (groupBy: GroupBy) => void;
-    showFilters: boolean;
-    onShowFiltersChange: (show: boolean) => void;
     viewMode: ViewMode;
     onViewModeChange: (mode: ViewMode) => void;
     onSettingsClick: () => void;
@@ -61,8 +55,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
     enableBulkOperations,
     groupBy,
     onGroupByChange,
-    showFilters,
-    onShowFiltersChange,
     viewMode,
     onViewModeChange,
     onSettingsClick,
@@ -103,19 +95,17 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                 size="sm"
                                 variant={quickFilter === filter ? 'default' : 'ghost'}
                                 className={cn(
-                                    "h-8 px-3 text-xs flex-shrink-0",
+                                    "h-8 px-3 text-base",
                                     quickFilter === filter
                                         ? 'bg-white text-black'
                                         : 'text-white/70 hover:text-white hover:bg-white/10'
                                 )}
                                 onClick={() => onQuickFilterChange(filter)}
                             >
-                                {filter === 'recent' && <Clock className="h-3 w-3 mr-1" />}
-                                {filter === 'pinned' && <Pin className="h-3 w-3 mr-1" />}
-                                {filter === 'favorites' && <Heart className="h-3 w-3 mr-1" />}
-                                {filter === 'active' && <CheckCircle className="h-3 w-3 mr-1" />}
-                                {filter === 'inactive' && <XCircle className="h-3 w-3 mr-1" />}
-                                {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                {filter === 'recent' && <Clock className="h-4 w-4 mr-1" />}
+                                {filter === 'pinned' && <Pin className="h-4 w-4 mr-1" />}
+                                {filter === 'favorites' && <Heart className="h-4 w-4 mr-1" />}
+                                {filter === 'all' && filter.charAt(0).toUpperCase() + filter.slice(1)}
                             </Button>
                         ))}
                     </div>
@@ -123,19 +113,18 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     {/* Bulk Operations */}
                     {selectedRows.size > 0 && (
                         <div className="flex items-center gap-2 flex-shrink-0">
-                            <Badge variant="secondary" className="bg-white/10 text-white border-white/20 rounded-md py-1 px-2">
-                                <Zap className="h-3 w-3 mr-1" />
+                            <Badge variant="secondary" className="bg-white/10 text-white border-white/20 rounded-md py-1 px-2 text-sm">
+                                <Zap className="h-4 w-4 mr-1" />
                                 {selectedRows.size} selected
                             </Badge>
                             {enableBulkOperations && (
                                 <Button
-                                    size="sm"
+                                    size="icon"
                                     variant="outline"
                                     className="border-white/20 text-white hover:bg-white/10 h-8"
                                     onClick={onBulkDelete}
                                 >
-                                    <Trash2 className="h-3 w-3 mr-1" />
-                                    Delete
+                                    <Trash2 className="h-4 w-4" />
                                 </Button>
                             )}
                         </div>
@@ -147,9 +136,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
                     {/* Grouping controls */}
                     <Select value={groupBy} onValueChange={(value: GroupBy) => onGroupByChange(value)}>
-                        <SelectTrigger className="w-36 bg-[#171717] border-white/20 text-white h-8">
+                        <SelectTrigger className="w-max bg-[#171717] border-white/20 text-white h-8">
                             <Group className="h-3 w-3 mr-2" />
-                            <SelectValue placeholder="Group by" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#171717] border-white/20">
                             <SelectItem value="none" className="text-white">No Grouping</SelectItem>
@@ -160,22 +148,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         </SelectContent>
                     </Select>
 
-                    {/* Filters Toggle */}
-                    <Button
-                        size="sm"
-                        variant={showFilters ? 'default' : 'outline'}
-                        className={cn(
-                            "h-8",
-                            showFilters
-                                ? 'bg-white text-black'
-                                : 'border-white/20 text-white hover:bg-white/10'
-                        )}
-                        onClick={() => onShowFiltersChange(!showFilters)}
-                    >
-                        <Filter className="h-3 w-3 mr-1" />
-                        Filters
-                    </Button>
-
                     {/* Advanced Filters Button */}
                     <Button
                         size="sm"
@@ -184,7 +156,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         onClick={onAdvancedFiltersClick}
                     >
                         <Filter className="h-3 w-3 mr-1" />
-                        Advanced
                     </Button>
 
                     {/* View mode switcher */}
@@ -221,15 +192,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         onClick={onSettingsClick}
                     >
                         <Settings className="h-3 w-3 mr-1" />
-                        Settings
                     </Button>
 
                     {/* Export */}
                     {enableExport && (
                         <Select onValueChange={(format) => gridApi.exportData(format as any)}>
-                            <SelectTrigger className="w-32 bg-[#171717] border-white/20 text-white h-8">
+                            <SelectTrigger className="w-max bg-[#171717] border-white/20 text-white h-8">
                                 <Download className="h-3 w-3 mr-2" />
-                                Export
                             </SelectTrigger>
                             <SelectContent className="bg-[#171717] border-white/20">
                                 <SelectItem value="csv" className="text-white">CSV</SelectItem>
@@ -238,17 +207,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
                             </SelectContent>
                         </Select>
                     )}
-
-                    {/* Refresh */}
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-white/20 text-white hover:bg-white/10 h-8 w-8 p-0"
-                        onClick={onRefresh}
-                    >
-                        <RefreshCw className="h-3 w-3" />
-                    </Button>
-
                     {/* Keyboard Help */}
                     <Button
                         size="sm"

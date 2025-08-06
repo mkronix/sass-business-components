@@ -6,10 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { 
-  Grid3X3, 
-  List, 
-  Settings, 
+import {
+  Grid3X3,
+  List,
+  Settings,
   Monitor,
   Smartphone,
   Tablet
@@ -33,7 +33,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onGridSizeChange,
   onClose
 }) => {
-  
+
   const viewModes = [
     {
       id: 'grid',
@@ -43,7 +43,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     },
     {
       id: 'compact',
-      label: 'Compact View', 
+      label: 'Compact View',
       description: 'Dense list with essential information',
       icon: List
     }
@@ -75,7 +75,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl bg-[#0A0A0A] border-white/20 text-white">
+      <DialogContent className="max-w-3xl max-h-[90vh]  bg-[#0A0A0A] border-white/20 text-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
@@ -104,8 +104,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* View Mode Selection */}
               <div>
                 <Label className="text-sm font-medium mb-4 block">View Mode</Label>
-                <RadioGroup 
-                  value={viewMode} 
+                <RadioGroup
+                  value={viewMode}
                   onValueChange={(value) => onViewModeChange(value as any)}
                   className="space-y-3"
                 >
@@ -113,8 +113,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     const Icon = mode.icon;
                     return (
                       <div key={mode.id} className="flex items-center space-x-3">
-                        <RadioGroupItem 
-                          value={mode.id} 
+                        <RadioGroupItem
+                          value={mode.id}
                           id={mode.id}
                           className="border-white/30 text-white"
                         />
@@ -139,30 +139,29 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               {viewMode === 'grid' && (
                 <div>
                   <Label className="text-sm font-medium mb-4 block">Card Size</Label>
-                  <RadioGroup 
-                    value={gridSize} 
+                  <RadioGroup
+                    value={gridSize}
                     onValueChange={(value) => onGridSizeChange(value as any)}
-                    className="space-y-3"
+                    className="grid grid-cols-3 gap-3"
                   >
                     {gridSizes.map(size => {
                       const Icon = size.icon;
                       return (
                         <div key={size.id} className="flex items-center space-x-3">
-                          <RadioGroupItem 
-                            value={size.id} 
+                          <RadioGroupItem
+                            value={size.id}
                             id={size.id}
                             className="border-white/30 text-white"
                           />
-                          <div className="flex items-center gap-3 flex-1 p-4 bg-[#171717] rounded-lg border border-white/10 cursor-pointer hover:bg-[#1a1a1a] transition-colors">
+                          <div className="flex flex-col items-start gap-3 flex-1 p-4 bg-[#171717] rounded-lg border border-white/10 cursor-pointer hover:bg-[#1a1a1a] transition-colors">
                             <Icon className="h-5 w-5 text-white/60" />
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
                                 <Label htmlFor={size.id} className="text-white font-medium cursor-pointer">
                                   {size.label}
                                 </Label>
-                                <span className="text-xs text-white/40">{size.columns}</span>
                               </div>
-                              <p className="text-sm text-white/60 mt-1">{size.description}</p>
+                              <span className="text-sm text-white/40">{size.columns}</span>
                             </div>
                           </div>
                         </div>
@@ -242,8 +241,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   <p className="text-sm text-white/60 mb-3">
                     Reset all display settings to their default values
                   </p>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     className="border-white/20 text-white hover:bg-white/10"
                   >
@@ -255,14 +254,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </Tabs>
 
-        <div className="flex justify-end gap-2 pt-6 border-t border-white/10">
-          <Button variant="outline" onClick={onClose} className="border-white/20 text-white hover:bg-white/10">
-            Cancel
-          </Button>
-          <Button onClick={onClose}>
-            Save Changes
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );

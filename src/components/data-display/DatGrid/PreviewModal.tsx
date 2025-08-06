@@ -1,26 +1,23 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { 
-  Building, 
-  Calendar, 
-  CheckCircle, 
-  Clock, 
-  Heart, 
-  Mail, 
-  Phone, 
-  Pin, 
-  Shield, 
-  Star, 
-  User, 
-  XCircle,
+import {
+  Building,
+  Calendar,
+  CheckCircle,
+  Clock,
   Copy,
   Edit,
-  Share
+  Heart,
+  Mail,
+  Phone,
+  Pin,
+  Share,
+  Shield,
+  User,
+  XCircle
 } from 'lucide-react';
-import React from 'react';
 
 interface PreviewModalProps<T = any> {
   isOpen: boolean;
@@ -43,7 +40,7 @@ const PreviewModal = <T extends Record<string, any>>({
   onToggleFavorite,
   onPinItem
 }: PreviewModalProps<T>) => {
-  
+
   if (!item) return null;
 
   const rowId = getRowId(item);
@@ -66,7 +63,7 @@ const PreviewModal = <T extends Record<string, any>>({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-[#0A0A0A] border-white/20 text-white">
+      <DialogContent hideCloseButton className="max-w-2xl max-h-[90vh] bg-[#0A0A0A] border-white/20 text-white">
         <DialogHeader>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
@@ -82,7 +79,7 @@ const PreviewModal = <T extends Record<string, any>>({
                 </DialogDescription>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
@@ -95,7 +92,7 @@ const PreviewModal = <T extends Record<string, any>>({
               >
                 <Heart className={cn("h-4 w-4", isFavorite && "fill-current")} />
               </Button>
-              
+
               <Button
                 size="sm"
                 variant="outline"
@@ -107,6 +104,34 @@ const PreviewModal = <T extends Record<string, any>>({
               >
                 <Pin className={cn("h-4 w-4", isPinned && "fill-current")} />
               </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 w-8 p-0 border-white/20 text-white hover:bg-white/10"
+                  onClick={copyToClipboard}
+                >
+                  <Copy className="h-4 w-4 " />
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 w-8 p-0 border-white/20 text-white hover:bg-white/10"
+                  onClick={() => console.log('Edit:', item)}
+                >
+                  <Edit className="h-4 w-4 " />
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 w-8 p-0 border-white/20 text-white hover:bg-white/10"
+                  onClick={() => console.log('Share:', item)}
+                >
+                  <Share className="h-4 w-4 " />
+                </Button>
+              </div>
             </div>
           </div>
         </DialogHeader>
@@ -120,7 +145,7 @@ const PreviewModal = <T extends Record<string, any>>({
               {item.status === 'On Leave' && <Clock className="h-4 w-4 mr-2" />}
               {item.status}
             </Badge>
-            
+
             {item.employeeId && (
               <Badge variant="outline" className="bg-white/5 border-white/20 text-white/70">
                 ID: {item.employeeId}
@@ -144,7 +169,7 @@ const PreviewModal = <T extends Record<string, any>>({
                   </div>
                 </div>
               )}
-              
+
               {item.phone && (
                 <div className="flex items-center gap-3 p-3 bg-[#171717] rounded-lg border border-white/10">
                   <Phone className="h-4 w-4 text-white/60" />
@@ -168,12 +193,12 @@ const PreviewModal = <T extends Record<string, any>>({
                 <p className="text-sm text-white/60 mb-1">Department</p>
                 <p className="text-white">{item.department || 'Not specified'}</p>
               </div>
-              
+
               <div className="p-3 bg-[#171717] rounded-lg border border-white/10">
                 <p className="text-sm text-white/60 mb-1">Position</p>
                 <p className="text-white">{item.role || 'Not specified'}</p>
               </div>
-              
+
               {item.hireDate && (
                 <div className="p-3 bg-[#171717] rounded-lg border border-white/10">
                   <p className="text-sm text-white/60 mb-1">Hire Date</p>
@@ -183,7 +208,7 @@ const PreviewModal = <T extends Record<string, any>>({
                   </div>
                 </div>
               )}
-              
+
               {item.salary && (
                 <div className="p-3 bg-[#171717] rounded-lg border border-white/10">
                   <p className="text-sm text-white/60 mb-1">Salary</p>
@@ -202,9 +227,9 @@ const PreviewModal = <T extends Record<string, any>>({
               </h3>
               <div className="flex flex-wrap gap-2">
                 {item.tags.map((tag: string, index: number) => (
-                  <Badge 
+                  <Badge
                     key={index}
-                    variant="outline" 
+                    variant="outline"
                     className="bg-white/5 border-white/20 text-white/70 hover:bg-white/10"
                   >
                     {tag}
@@ -214,46 +239,6 @@ const PreviewModal = <T extends Record<string, any>>({
             </div>
           )}
 
-          {/* Actions */}
-          <Separator className="bg-white/10" />
-          
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
-                onClick={copyToClipboard}
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Data
-              </Button>
-              
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
-                onClick={() => console.log('Edit:', item)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
-                onClick={() => console.log('Share:', item)}
-              >
-                <Share className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-            </div>
-            
-            <Button onClick={onClose}>
-              Close
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

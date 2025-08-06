@@ -9,7 +9,7 @@ export function Header() {
   const [themeModalOpen, setThemeModalOpen] = useState(false);
 
   return (
-    <header className="h-16 border-primary-custom bg-primary-custom border-b border-primary-custom bg-primary-custom sticky top-0 z-30">
+    <header className="h-16 border-primary-custom bg-secondary border-b border-primary-custom bg-primary-custom sticky top-0 z-30">
       <div className="flex h-full items-center justify-between px-6">
         <Link to="/">
           <h1 className="text-lg font-semibold text-primary-custom">Business SaaS Components</h1>

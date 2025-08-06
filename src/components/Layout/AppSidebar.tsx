@@ -155,7 +155,7 @@ export function AppSidebar({ onExpandedChange }: Readonly<AppSidebarProps>) {
           ref={sidebarRef}
           className={`
             fixed left-0 top-0 h-screen z-40
-            bg-primary-custom border-r border-primary-custom 
+            bg-secondary border-r border-primary-custom 
             transition-all duration-300 ease-in-out flex flex-col shadow-primary-custom
             ${isExpanded ? "w-max" : "w-16"}
           `}
@@ -290,7 +290,7 @@ export function AppSidebar({ onExpandedChange }: Readonly<AppSidebarProps>) {
 
               const IconComponent = category.icon;
               return (
-                <div className="bg-primary-custom border border-secondary-custom rounded-xl shadow-primary-custom min-w-[320px] max-w-[420px] py-2 ml-3 backdrop-blur-sm bg-primary-custom/95 animate-in fade-in slide-in-from-left-2 duration-200">
+                <div className="bg-secondary border border-secondary-custom rounded-xl shadow-primary-custom min-w-[320px] max-w-[420px] py-2 ml-3 backdrop-blur-sm bg-primary-custom/95 animate-in fade-in slide-in-from-left-2 duration-200">
                   <div className="px-4 py-3 text-sm font-semibold text-secondary-custom border-b border-secondary-custom flex items-center gap-3 bg-secondary-custom/50">
                     <div className="flex items-center justify-center w-5 h-5 text-primary-custom rounded-lg">
                       <IconComponent className="h-3 w-3 text-primary-custom" />

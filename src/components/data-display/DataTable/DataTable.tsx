@@ -788,7 +788,7 @@ const DataTable = <T extends Record<string, any>>({
               key={rowIndex}
               className={cn(
                 "transition-all duration-200 hover:shadow-md",
-                isRowSelected(row) && "ring-2 ring-primary/20 bg-primary/5"
+                isRowSelected(row) && "ring-0 ring-primary/20 bg-primary/5"
               )}
             >
               <CardContent className={cn(getCellPadding())}>

@@ -22,8 +22,6 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGridProps, FilterConfig, GridApi, SortConfig } from './types';
 
-// Reusable Components
-import Toolbar from './Toolbar';
 import ContextMenu from './ContextMenu';
 import FilterModal from './FilterModal';
 import ItemCard from './ItemCard';
@@ -32,6 +30,7 @@ import Pagination from './Pagination';
 import PreviewModal from './PreviewModal';
 import SettingsModal from './SettingsModal';
 import StatsBar from './StatsBar';
+import Toolbar from './Toolbar';
 import UndoNotification from './UndoNotification';
 
 // Types
@@ -92,7 +91,6 @@ const DataGrid = <T extends Record<string, any>>({
     const [hoveredCard, setHoveredCard] = useState<string | number | null>(null);
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [gridSize, setGridSize] = useState<GridSize>('medium');
-    const [showFilters, setShowFilters] = useState(false);
 
     // Enhanced features state
     const [pinnedItems, setPinnedItems] = useState<Set<string | number>>(new Set());
@@ -163,11 +161,6 @@ const DataGrid = <T extends Record<string, any>>({
             else if (e.key === 'g' && !cmdKey) {
                 e.preventDefault();
                 setGroupBy(prev => prev === 'department' ? 'none' : 'department');
-            }
-            // F - Toggle filters
-            else if (e.key === 'f' && !cmdKey) {
-                e.preventDefault();
-                setShowFilters(prev => !prev);
             }
         };
 
@@ -694,8 +687,6 @@ const DataGrid = <T extends Record<string, any>>({
                 enableBulkOperations={enableBulkOperations}
                 groupBy={groupBy}
                 onGroupByChange={setGroupBy}
-                showFilters={showFilters}
-                onShowFiltersChange={setShowFilters}
                 viewMode={viewMode}
                 onViewModeChange={setViewMode}
                 onSettingsClick={() => setShowColumnManager(true)}
@@ -706,100 +697,6 @@ const DataGrid = <T extends Record<string, any>>({
                 onAdvancedFiltersClick={() => setShowFiltersModal(true)}
                 customToolbar={customToolbar}
             />
-
-            {/* Quick Filters */}
-            {showFilters && (
-                <div className="px-6 pb-4 border-t border-white/10">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Tag filters */}
-                        {allTags.length > 0 && (
-                            <div>
-                                <label className="text-sm text-white/70 mb-2 block">Tags</label>
-                                <div className="flex flex-wrap gap-2">
-                                    {allTags.slice(0, 6).map(tag => (
-                                        <Button
-                                            key={tag}
-                                            size="sm"
-                                            variant={selectedTags.includes(tag) ? 'default' : 'outline'}
-                                            className={cn(
-                                                "h-7 px-2 text-xs",
-                                                selectedTags.includes(tag)
-                                                    ? 'bg-white text-black'
-                                                    : 'border-white/20 text-white hover:bg-white/10'
-                                            )}
-                                            onClick={() => {
-                                                setSelectedTags(prev =>
-                                                    prev.includes(tag)
-                                                        ? prev.filter(t => t !== tag)
-                                                        : [...prev, tag]
-                                                );
-                                            }}
-                                        >
-                                            <Hash className="h-3 w-3 mr-1" />
-                                            {tag}
-                                        </Button>
-                                    ))}
-                                    {allTags.length > 6 && (
-                                        <Badge variant="outline" className="text-xs bg-white/5 border-white/20 text-white/70">
-                                            +{allTags.length - 6} more
-                                        </Badge>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Status filters */}
-                        <div>
-                            <label className="text-sm text-white/70 mb-2 block">Status</label>
-                            <div className="flex flex-wrap gap-2">
-                                {allStatuses.map(status => (
-                                    <Button
-                                        key={status}
-                                        size="sm"
-                                        variant={selectedStatuses.includes(status) ? 'default' : 'outline'}
-                                        className={cn(
-                                            "h-7 px-2 text-xs",
-                                            selectedStatuses.includes(status)
-                                                ? 'bg-white text-black'
-                                                : 'border-white/20 text-white hover:bg-white/10'
-                                        )}
-                                        onClick={() => {
-                                            setSelectedStatuses(prev =>
-                                                prev.includes(status)
-                                                    ? prev.filter(s => s !== status)
-                                                    : [...prev, status]
-                                            );
-                                        }}
-                                    >
-                                        {status === 'Active' && <CheckCircle className="h-3 w-3 mr-1" />}
-                                        {status === 'Inactive' && <XCircle className="h-3 w-3 mr-1" />}
-                                        {status === 'On Leave' && <Clock className="h-3 w-3 mr-1" />}
-                                        {status === 'Pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                                        {status}
-                                    </Button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Clear filters */}
-                        <div className="flex items-end">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-white/20 text-white hover:bg-white/10"
-                                onClick={() => {
-                                    setSelectedTags([]);
-                                    setSelectedStatuses([]);
-                                    setFilters({});
-                                }}
-                            >
-                                <FilterX className="h-4 w-4 mr-1" />
-                                Clear All
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Active Filters Display */}
             {(Object.keys(filters).length > 0 || sorting.length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0) && (
