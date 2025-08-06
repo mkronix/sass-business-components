@@ -25,7 +25,7 @@ const treeVariants = {
         height: 'auto',
         opacity: 1,
         transition: {
-            height: { duration: 0.2, ease: 'easeOut' },
+            height: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
             opacity: { duration: 0.15, delay: 0.05 }
         }
     },
@@ -33,7 +33,7 @@ const treeVariants = {
         height: 0,
         opacity: 0,
         transition: {
-            height: { duration: 0.2, ease: 'easeIn' },
+            height: { duration: 0.2, ease: [0.4, 0, 0.6, 1] },
             opacity: { duration: 0.1 }
         }
     }
@@ -320,9 +320,9 @@ const TreeNodeComponent: React.FC<{
             <AnimatePresence>
                 {isExpanded && hasChildren && (
                     <motion.div
-                        initial={animated ? "collapsed" : false}
-                        animate={animated ? "expanded" : false}
-                        exit={animated ? "collapsed" : false}
+                        initial={animated ? "collapsed" : undefined}
+                        animate={animated ? "expanded" : undefined}
+                        exit={animated ? "collapsed" : undefined}
                         variants={animated ? treeVariants : undefined}
                         className="overflow-hidden"
                     >
