@@ -1,11 +1,16 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Edit2, Eye, RefreshCw, Trash2 } from "lucide-react";
-import { useState } from "react";
-import ListView from "./ListView";
-import { generateSampleData, ListViewColumn } from "./types";
+import {
+    Download,
+    Trash2,
+    TrendingUp,
+    Users, Zap
+} from 'lucide-react';
+import { useState } from 'react';
+import ListView from './ListView';
+import { BulkAction, generateSampleData, ListViewColumn, QuickFilter } from './types';
+
+// Demo Component
 const ListViewDemo = () => {
-    const [data, setData] = useState(() => generateSampleData(100));
+    const [data, setData] = useState(() => generateSampleData(75));
     const [loading, setLoading] = useState(false);
 
     const columns: ListViewColumn[] = [
@@ -13,7 +18,6 @@ const ListViewDemo = () => {
             id: 'name',
             field: 'name',
             title: 'Name',
-            width: '200px',
             sortable: true,
             searchable: true
         },
@@ -21,7 +25,6 @@ const ListViewDemo = () => {
             id: 'email',
             field: 'email',
             title: 'Email',
-            width: '250px',
             sortable: true,
             searchable: true
         },
@@ -29,7 +32,6 @@ const ListViewDemo = () => {
             id: 'department',
             field: 'department',
             title: 'Department',
-            width: '150px',
             sortable: true,
             filterable: true
         },
@@ -37,7 +39,6 @@ const ListViewDemo = () => {
             id: 'position',
             field: 'position',
             title: 'Position',
-            width: '150px',
             sortable: true,
             filterable: true
         },
@@ -45,7 +46,6 @@ const ListViewDemo = () => {
             id: 'salary',
             field: 'salary',
             title: 'Salary',
-            width: '120px',
             type: 'number',
             align: 'right',
             sortable: true,
@@ -55,80 +55,93 @@ const ListViewDemo = () => {
             id: 'status',
             field: 'status',
             title: 'Status',
-            width: '100px',
             sortable: true,
-            filterable: true,
-            render: (value) => (
-                <Badge variant={value === 'Active' ? 'default' : 'secondary'}>
-                    {value}
-                </Badge>
-            )
-        },
-        {
-            id: 'joinDate',
-            field: 'joinDate',
-            title: 'Join Date',
-            width: '120px',
-            type: 'date',
-            sortable: true,
-            format: (value) => value.toLocaleDateString()
+            filterable: true
         }
     ];
 
-    const customActions = (item: any) => (
-        <div className="flex items-center gap-1">
-            <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                <Eye className="h-3 w-3" />
-            </Button>
-            <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                <Edit2 className="h-3 w-3" />
-            </Button>
-            <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-destructive">
-                <Trash2 className="h-3 w-3" />
-            </Button>
-        </div>
-    );
+    const quickFilters: QuickFilter[] = [
+        {
+            id: 'active',
+            label: 'Active',
+            field: 'status',
+            value: 'Active',
+            icon: <Users className="h-4 w-4" />
+        },
+        {
+            id: 'engineering',
+            label: 'Engineering',
+            field: 'department',
+            value: 'Engineering',
+            icon: <Zap className="h-4 w-4" />
+        },
+        {
+            id: 'high-salary',
+            label: 'High Salary',
+            field: 'salary',
+            value: 100000,
+            operator: 'gte',
+            icon: <TrendingUp className="h-4 w-4" />
+        }
+    ];
 
-    const customToolbar = (
-        <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={() => {
-                setLoading(true);
-                setTimeout(() => {
-                    setData(generateSampleData(100));
-                    setLoading(false);
-                }, 1000);
-            }}>
-                <RefreshCw className="h-4 w-4 mr-1" />
-            </Button>
-        </div>
-    );
+    const bulkActions: BulkAction[] = [
+        {
+            id: 'export',
+            label: 'Export Selected',
+            icon: <Download className="h-4 w-4" />,
+            action: (items) => console.log('Exporting:', items.length, 'items'),
+            variant: 'outline'
+        },
+        {
+            id: 'delete',
+            label: 'Delete Selected',
+            icon: <Trash2 className="h-4 w-4" />,
+            action: (items) => console.log('Deleting:', items.length, 'items'),
+            variant: 'destructive'
+        }
+    ];
+
 
     return (
-        <div className="space-y-6">
-            <ListView
-                data={data}
-                columns={columns}
-                loading={loading}
-                selectable
-                multiSelect
-                searchable
-                filterable
-                sortable
-                pagination
-                exportable
-                pageSize={20}
-                groupBy="department"
-                showGroupHeaders
-                customToolbar={customToolbar}
-                customActions={customActions}
-                onSelectionChange={(items) => console.log('Selected:', items.length)}
-                onItemClick={(item) => console.log('Clicked:', item.name)}
-                onEdit={(item) => console.log('Edit:', item.name)}
-                onDelete={(item) => console.log('Delete:', item.name)}
-                onExport={(format, data) => console.log('Export:', format, data.length)}
-                className="min-h-[600px]"
-            />
-        </div>
+
+        <ListView
+            data={data}
+            columns={columns}
+            loading={loading}
+            selectable
+            multiSelect
+            searchable
+            filterable
+            sortable
+            pagination
+            exportable
+            pageSize={20}
+            pageSizeOptions={[10, 20, 50, 100]}
+            density="normal"
+            groupBy="department"
+            showGroupHeaders
+            collapsibleGroups
+            quickFilters={quickFilters}
+            bulkActions={bulkActions}
+            onSelectionChange={(items) => console.log('Selected:', items.length, 'items')}
+            onItemClick={(item) => console.log('Clicked:', item.name)}
+            onEdit={(item) => console.log('Edit:', item.name)}
+            onDelete={(item) => console.log('Delete:', item.name)}
+            onDuplicate={(item) => console.log('Duplicate:', item.name)}
+            onBookmark={(item) => console.log('Bookmark:', item.name)}
+            onShare={(item) => console.log('Share:', item.name)}
+            onExport={(format, data) => console.log('Export:', format, data.length, 'items')}
+            onRefresh={() => {
+                setLoading(true);
+                setTimeout(() => {
+                    setData(generateSampleData(75));
+                    setLoading(false);
+                }, 1000);
+            }}
+            className="min-h-[600px]"
+        />
+
     );
 };
 

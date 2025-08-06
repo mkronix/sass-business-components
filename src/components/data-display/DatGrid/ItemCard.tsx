@@ -10,11 +10,12 @@ import {
     Eye,
     Heart,
     Mail,
+    MoreVertical,
     Phone,
     Pin,
     User
 } from 'lucide-react';
-import React from 'react';
+import React, { useRef } from 'react';
 
 interface ItemCardProps<T = any> {
     item: T;
@@ -32,6 +33,7 @@ interface ItemCardProps<T = any> {
     onToggleFavorite: (rowId: string | number) => void;
     onPinItem: (rowId: string | number) => void;
     onPreview: (item: T) => void;
+    onMenuClick?: (e: React.MouseEvent, item: T) => void; // New prop for menu click
     onClick?: (e: React.MouseEvent) => void;
     onDoubleClick?: (e: React.MouseEvent) => void;
     onContextMenu?: (e: React.MouseEvent) => void;
@@ -54,16 +56,18 @@ const ItemCard = <T extends Record<string, any>>({
     onToggleFavorite,
     onPinItem,
     onPreview,
+    onMenuClick,
     onClick,
     onDoubleClick,
     onContextMenu,
     onHover
 }: ItemCardProps<T>) => {
 
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
+
     // Highlight matching text
     const highlightText = (text: string, query: string) => {
         if (!query || !text) return text;
-
         const regex = new RegExp(`(${query})`, 'gi');
         return text.replace(regex, `<mark class="bg-yellow-400/30 text-yellow-200">$1</mark>`);
     };
@@ -76,6 +80,24 @@ const ItemCard = <T extends Record<string, any>>({
             case 'pending': return 'text-yellow-400 bg-yellow-400/10';
             case 'on leave': return 'text-blue-400 bg-blue-400/10';
             default: return 'text-gray-400 bg-gray-400/10';
+        }
+    };
+
+    // Handle menu click with proper positioning
+    const handleMenuClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (onMenuClick && menuButtonRef.current) {
+            // Get button position and add offset for menu positioning
+            const buttonRect = menuButtonRef.current.getBoundingClientRect();
+            const menuEvent = {
+                ...e,
+                clientX: buttonRect.right - 10, // Position menu to the right of button
+                clientY: buttonRect.top,        // Align with button top
+            } as React.MouseEvent;
+
+            onMenuClick(menuEvent, item);
         }
     };
 
@@ -137,17 +159,29 @@ const ItemCard = <T extends Record<string, any>>({
                             {item.status}
                         </Badge>
 
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-white/60 hover:text-white hover:bg-white/10"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onPreview(item);
-                            }}
-                        >
-                            <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 w-7 p-0 text-white/60 hover:text-white hover:bg-white/10"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPreview(item);
+                                }}
+                            >
+                                <Eye className="h-3 w-3" />
+                            </Button>
+
+                            <Button
+                                ref={menuButtonRef}
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 w-7 p-0 text-white/60 hover:text-white hover:bg-white/10"
+                                onClick={handleMenuClick}
+                            >
+                                <MoreVertical className="h-3 w-3" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -174,7 +208,7 @@ const ItemCard = <T extends Record<string, any>>({
             onMouseLeave={() => onHover(null)}
         >
             {/* Header with actions */}
-            <div className="absolute top-3 right-3 z-10 flex gap-1">
+            <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1">
                 {enableRowSelection && (
                     <Checkbox
                         checked={isSelected}
@@ -183,6 +217,13 @@ const ItemCard = <T extends Record<string, any>>({
                         onClick={(e) => e.stopPropagation()}
                     />
                 )}
+                {/* <Button
+                    ref={menuButtonRef}
+                    className="h-6 w-5 p-0 bg-black/50 backdrop-blur-sm border border-white/20 text-white/70 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={handleMenuClick}
+                >
+                    <MoreVertical className="h-3 w-3" />
+                </Button> */}
             </div>
 
             {/* Avatar and status */}

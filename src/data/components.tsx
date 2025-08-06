@@ -1,186 +1,184 @@
-import CardLayout from '@/components/data-display/CardLayout/CardLayout';
 import { DataTableDemo } from '@/components/data-display/DataTable/DataTableDemo';
 import DataGridDemo from '@/components/data-display/DatGrid/DataGridDemo';
 import ListViewDemo from '@/components/data-display/ListView/ListViewDemo';
 import TimeLine from '@/components/data-display/Timeline/TimeLine';
-import TreeView from '@/components/data-display/TreeView/TreeView';
 
 // Form Components
-import DynamicForm from '@/components/form/DynamicForm/DynamicForm';
-import FormField from '@/components/form/FormField/FormField';
-import SearchBar from '@/components/form/SearchBar/SearchBar';
 import DatePicker from '@/components/form/DatePicker/DatePicker';
+import DynamicForm from '@/components/form/DynamicForm/DynamicForm';
 import FileUpload from '@/components/form/FileUpload/FileUpload';
-import RichTextEditor from '@/components/form/RichTextEditor/RichTextEditor';
-import SignaturePad from '@/components/form/SignaturePad/SignaturePad';
+import FormField from '@/components/form/FormField/FormField';
 import LocationPicker from '@/components/form/LocationPicker/LocationPicker';
+import RichTextEditor from '@/components/form/RichTextEditor/RichTextEditor';
+import SearchBar from '@/components/form/SearchBar/SearchBar';
+import SignaturePad from '@/components/form/SignaturePad/SignaturePad';
 
 // Navigation Components
-import ModularNavigation from '@/components/navigation/ModularNavigation/ModularNavigation';
 import Breadcrumb from '@/components/navigation/Breadcrumb/Breadcrumb';
-import TabNavigation from '@/components/navigation/TabNavigation/TabNavigation';
-import Sidebar from '@/components/navigation/Sidebar/Sidebar';
 import MegaMenu from '@/components/navigation/MegaMenu/MegaMenu';
+import ModularNavigation from '@/components/navigation/ModularNavigation/ModularNavigation';
 import Pagination from '@/components/navigation/Pagination/Pagination';
+import Sidebar from '@/components/navigation/Sidebar/Sidebar';
+import TabNavigation from '@/components/navigation/TabNavigation/TabNavigation';
 
 // Feedback Components
-import NotificationCenter from '@/components/feedback/NotificationCenter/NotificationCenter';
+import AlertDialog from '@/components/feedback/AlertDialog/AlertDialog';
 import Modal from '@/components/feedback/Modal/Modal';
+import NotificationCenter from '@/components/feedback/NotificationCenter/NotificationCenter';
+import ProgressTracker from '@/components/feedback/ProgressTracker/ProgressTracker';
 import StatusIndicator from '@/components/feedback/StatusIndicator/StatusIndicator';
 import Toast from '@/components/feedback/Toast/Toast';
-import AlertDialog from '@/components/feedback/AlertDialog/AlertDialog';
-import ProgressTracker from '@/components/feedback/ProgressTracker/ProgressTracker';
 
 // Chart Components
 import ChartWrapper from '@/components/charts/ChartWrapper/ChartWrapper';
-import KPICard from '@/components/charts/KPICard/KPICard';
-import Dashboard from '@/components/charts/Dashboard/Dashboard';
-import MetricDisplay from '@/components/charts/MetricDisplay/MetricDisplay';
 import ComparisonChart from '@/components/charts/ComparisonChart/ComparisonChart';
+import Dashboard from '@/components/charts/Dashboard/Dashboard';
+import KPICard from '@/components/charts/KPICard/KPICard';
+import MetricDisplay from '@/components/charts/MetricDisplay/MetricDisplay';
 import RealtimeChart from '@/components/charts/RealtimeChart/RealtimeChart';
 
 // Media Components
-import ImageGallery from '@/components/media/ImageGallery/ImageGallery';
 import DocumentViewer from '@/components/media/DocumentViewer/DocumentViewer';
+import ImageEditor from '@/components/media/ImageEditor/ImageEditor';
+import ImageGallery from '@/components/media/ImageGallery/ImageGallery';
 import MediaPlayer from '@/components/media/MediaPlayer/MediaPlayer';
 import PDFViewer from '@/components/media/PDFViewer/PDFViewer';
-import ImageEditor from '@/components/media/ImageEditor/ImageEditor';
 
 // Business Logic Components
-import WorkflowBuilder from '@/components/business-logic/WorkflowBuilder/WorkflowBuilder';
 import CalendarScheduler from '@/components/business-logic/CalendarScheduler/CalendarScheduler';
-import InvoiceGenerator from '@/components/business-logic/InvoiceGenerator/InvoiceGenerator';
-import OrderManagement from '@/components/business-logic/OrderManagement/OrderManagement';
 import CustomerPortal from '@/components/business-logic/CustomerPortal/CustomerPortal';
 import InventoryTracker from '@/components/business-logic/InventoryTracker/InventoryTracker';
+import InvoiceGenerator from '@/components/business-logic/InvoiceGenerator/InvoiceGenerator';
+import OrderManagement from '@/components/business-logic/OrderManagement/OrderManagement';
+import WorkflowBuilder from '@/components/business-logic/WorkflowBuilder/WorkflowBuilder';
 
 // Utility Components
-import LoadingStates from '@/components/utility/LoadingStates/LoadingStates';
 import ConfirmationDialog from '@/components/utility/ConfirmationDialog/ConfirmationDialog';
-import HelpTooltip from '@/components/utility/HelpTooltip/HelpTooltip';
-import ErrorBoundary from '@/components/utility/ErrorBoundary/ErrorBoundary';
 import DataFormatter from '@/components/utility/DataFormatter/DataFormatter';
+import ErrorBoundary from '@/components/utility/ErrorBoundary/ErrorBoundary';
+import HelpTooltip from '@/components/utility/HelpTooltip/HelpTooltip';
+import LoadingStates from '@/components/utility/LoadingStates/LoadingStates';
 import ValidationEngine from '@/components/utility/ValidationEngine/ValidationEngine';
 
 // PWA Components
-import OfflineIndicator from '@/components/pwa/OfflineIndicator/OfflineIndicator';
-import InstallPrompt from '@/components/pwa/InstallPrompt/InstallPrompt';
-import CameraCapture from '@/components/pwa/CameraCapture/CameraCapture';
-import PushNotifications from '@/components/pwa/PushNotifications/PushNotifications';
 import BackgroundSync from '@/components/pwa/BackgroundSync/BackgroundSync';
+import CameraCapture from '@/components/pwa/CameraCapture/CameraCapture';
+import InstallPrompt from '@/components/pwa/InstallPrompt/InstallPrompt';
+import OfflineIndicator from '@/components/pwa/OfflineIndicator/OfflineIndicator';
+import PushNotifications from '@/components/pwa/PushNotifications/PushNotifications';
 import ServiceWorker from '@/components/pwa/ServiceWorker/ServiceWorker';
 
 // Industry Components
-import POSInterface from '@/components/industry/POSInterface/POSInterface';
 import AppointmentBooking from '@/components/industry/AppointmentBooking/AppointmentBooking';
-import RestaurantMenu from '@/components/industry/RestaurantMenu/RestaurantMenu';
 import HotelBooking from '@/components/industry/HotelBooking/HotelBooking';
 import MedicalRecords from '@/components/industry/MedicalRecords/MedicalRecords';
+import POSInterface from '@/components/industry/POSInterface/POSInterface';
+import RestaurantMenu from '@/components/industry/RestaurantMenu/RestaurantMenu';
 
 // Messaging Components
-import WhatsAppIntegration from '@/components/messaging/WhatsAppIntegration/WhatsAppIntegration';
-import SMSManager from '@/components/messaging/SMSManager/SMSManager';
-import EmailComposer from '@/components/messaging/EmailComposer/EmailComposer';
 import ChatInterface from '@/components/messaging/ChatInterface/ChatInterface';
-import VideoCall from '@/components/messaging/VideoCall/VideoCall';
+import EmailComposer from '@/components/messaging/EmailComposer/EmailComposer';
 import NotificationHub from '@/components/messaging/NotificationHub/NotificationHub';
+import SMSManager from '@/components/messaging/SMSManager/SMSManager';
+import VideoCall from '@/components/messaging/VideoCall/VideoCall';
+import WhatsAppIntegration from '@/components/messaging/WhatsAppIntegration/WhatsAppIntegration';
 
 // Integration Components
-import PaymentGateway from '@/components/integration/PaymentGateway/PaymentGateway';
 import APIConnector from '@/components/integration/APIConnector/APIConnector';
+import DataSync from '@/components/integration/DataSync/DataSync';
 import LogisticsIntegration from '@/components/integration/LogisticsIntegration/LogisticsIntegration';
+import PaymentGateway from '@/components/integration/PaymentGateway/PaymentGateway';
 import SocialLogin from '@/components/integration/SocialLogin/SocialLogin';
 import WebhookManager from '@/components/integration/WebhookManager/WebhookManager';
-import DataSync from '@/components/integration/DataSync/DataSync';
 
 // Security Components
-import TwoFactorAuth from '@/components/security/TwoFactorAuth/TwoFactorAuth';
 import AuditLogger from '@/components/security/AuditLogger/AuditLogger';
+import ComplianceChecker from '@/components/security/ComplianceChecker/ComplianceChecker';
 import DataEncryption from '@/components/security/DataEncryption/DataEncryption';
 import PermissionManager from '@/components/security/PermissionManager/PermissionManager';
 import SessionManager from '@/components/security/SessionManager/SessionManager';
-import ComplianceChecker from '@/components/security/ComplianceChecker/ComplianceChecker';
+import TwoFactorAuth from '@/components/security/TwoFactorAuth/TwoFactorAuth';
 
 // Reporting Components
-import ReportBuilder from '@/components/reporting/ReportBuilder/ReportBuilder';
 import AdvancedAnalytics from '@/components/reporting/AdvancedAnalytics/AdvancedAnalytics';
-import ExportManager from '@/components/reporting/ExportManager/ExportManager';
-import DataVisualization from '@/components/reporting/DataVisualization/DataVisualization';
-import ScheduledReports from '@/components/reporting/ScheduledReports/ScheduledReports';
 import BusinessIntelligence from '@/components/reporting/BusinessIntelligence/BusinessIntelligence';
+import DataVisualization from '@/components/reporting/DataVisualization/DataVisualization';
+import ExportManager from '@/components/reporting/ExportManager/ExportManager';
+import ReportBuilder from '@/components/reporting/ReportBuilder/ReportBuilder';
+import ScheduledReports from '@/components/reporting/ScheduledReports/ScheduledReports';
 
 // User Experience Components
-import OnboardingWizard from '@/components/user-experience/OnboardingWizard/OnboardingWizard';
 import FeedbackCollector from '@/components/user-experience/FeedbackCollector/FeedbackCollector';
-import ThemeCustomizer from '@/components/user-experience/ThemeCustomizer/ThemeCustomizer';
-import UserProfile from '@/components/user-experience/UserProfile/UserProfile';
+import OnboardingWizard from '@/components/user-experience/OnboardingWizard/OnboardingWizard';
 import PreferenceManager from '@/components/user-experience/PreferenceManager/PreferenceManager';
+import ThemeCustomizer from '@/components/user-experience/ThemeCustomizer/ThemeCustomizer';
 import TourGuide from '@/components/user-experience/TourGuide/TourGuide';
+import UserProfile from '@/components/user-experience/UserProfile/UserProfile';
 
 // Mobile Components
+import MobileNavigation from '@/components/mobile/MobileNavigation/MobileNavigation';
+import NativeIntegration from '@/components/mobile/NativeIntegration/NativeIntegration';
 import PullToRefresh from '@/components/mobile/PullToRefresh/PullToRefresh';
 import SwipeActions from '@/components/mobile/SwipeActions/SwipeActions';
-import VoiceInput from '@/components/mobile/VoiceInput/VoiceInput';
 import TouchGestures from '@/components/mobile/TouchGestures/TouchGestures';
-import NativeIntegration from '@/components/mobile/NativeIntegration/NativeIntegration';
-import MobileNavigation from '@/components/mobile/MobileNavigation/MobileNavigation';
+import VoiceInput from '@/components/mobile/VoiceInput/VoiceInput';
 
 // Advanced Business Components
-import SubscriptionManager from '@/components/advanced-business/SubscriptionManager/SubscriptionManager';
-import LeadManagement from '@/components/advanced-business/LeadManagement/LeadManagement';
+import BusinessRules from '@/components/advanced-business/BusinessRules/BusinessRules';
 import ContractManager from '@/components/advanced-business/ContractManager/ContractManager';
 import CRMIntegration from '@/components/advanced-business/CRMIntegration/CRMIntegration';
 import ERPConnector from '@/components/advanced-business/ERPConnector/ERPConnector';
-import BusinessRules from '@/components/advanced-business/BusinessRules/BusinessRules';
+import LeadManagement from '@/components/advanced-business/LeadManagement/LeadManagement';
+import SubscriptionManager from '@/components/advanced-business/SubscriptionManager/SubscriptionManager';
 
 // Automation Components
 import ChatbotBuilder from '@/components/automation/ChatbotBuilder/ChatbotBuilder';
-import SmartRecommendations from '@/components/automation/SmartRecommendations/SmartRecommendations';
 import DocumentAI from '@/components/automation/DocumentAI/DocumentAI';
-import WorkflowAutomation from '@/components/automation/WorkflowAutomation/WorkflowAutomation';
 import MLIntegration from '@/components/automation/MLIntegration/MLIntegration';
 import PredictiveAnalytics from '@/components/automation/PredictiveAnalytics/PredictiveAnalytics';
+import SmartRecommendations from '@/components/automation/SmartRecommendations/SmartRecommendations';
+import WorkflowAutomation from '@/components/automation/WorkflowAutomation/WorkflowAutomation';
 
 // Collaboration Components
-import TeamCollaboration from '@/components/collaboration/TeamCollaboration/TeamCollaboration';
-import TaskAssignment from '@/components/collaboration/TaskAssignment/TaskAssignment';
 import AnnouncementCenter from '@/components/collaboration/AnnouncementCenter/AnnouncementCenter';
-import SharedWorkspace from '@/components/collaboration/SharedWorkspace/SharedWorkspace';
 import DocumentSharing from '@/components/collaboration/DocumentSharing/DocumentSharing';
+import SharedWorkspace from '@/components/collaboration/SharedWorkspace/SharedWorkspace';
+import TaskAssignment from '@/components/collaboration/TaskAssignment/TaskAssignment';
 import TeamCalendar from '@/components/collaboration/TeamCalendar/TeamCalendar';
+import TeamCollaboration from '@/components/collaboration/TeamCollaboration/TeamCollaboration';
 
 // Quality Components
-import SurveyBuilder from '@/components/quality/SurveyBuilder/SurveyBuilder';
 import ABTesting from '@/components/quality/ABTesting/ABTesting';
-import QualityAssurance from '@/components/quality/QualityAssurance/QualityAssurance';
-import TestingFramework from '@/components/quality/TestingFramework/TestingFramework';
 import FeedbackSystem from '@/components/quality/FeedbackSystem/FeedbackSystem';
+import QualityAssurance from '@/components/quality/QualityAssurance/QualityAssurance';
 import QualityMetrics from '@/components/quality/QualityMetrics/QualityMetrics';
+import SurveyBuilder from '@/components/quality/SurveyBuilder/SurveyBuilder';
+import TestingFramework from '@/components/quality/TestingFramework/TestingFramework';
 
 // Location Components
-import MapIntegration from '@/components/location/MapIntegration/MapIntegration';
-import LocationPicker2 from '@/components/location/LocationPicker/LocationPicker';
 import GeofenceManager from '@/components/location/GeofenceManager/GeofenceManager';
-import RouteOptimization from '@/components/location/RouteOptimization/RouteOptimization';
+import LocationPicker2 from '@/components/location/LocationPicker/LocationPicker';
 import LocationTracking from '@/components/location/LocationTracking/LocationTracking';
+import MapIntegration from '@/components/location/MapIntegration/MapIntegration';
+import RouteOptimization from '@/components/location/RouteOptimization/RouteOptimization';
 import StoreLocator from '@/components/location/StoreLocator/StoreLocator';
 
 // Accessibility Components
 import AccessibilityHelper from '@/components/accessibility/AccessibilityHelper/AccessibilityHelper';
+import CulturalAdaptation from '@/components/accessibility/CulturalAdaptation/CulturalAdaptation';
+import KeyboardNavigation from '@/components/accessibility/KeyboardNavigation/KeyboardNavigation';
 import MultiLanguage from '@/components/accessibility/MultiLanguage/MultiLanguage';
 import RegionalCompliance from '@/components/accessibility/RegionalCompliance/RegionalCompliance';
-import CulturalAdaptation from '@/components/accessibility/CulturalAdaptation/CulturalAdaptation';
 import ScreenReader from '@/components/accessibility/ScreenReader/ScreenReader';
-import KeyboardNavigation from '@/components/accessibility/KeyboardNavigation/KeyboardNavigation';
 
 // Performance Components
-import PerformanceMonitor from '@/components/performance/PerformanceMonitor/PerformanceMonitor';
-import UsageAnalytics from '@/components/performance/UsageAnalytics/UsageAnalytics';
-import SystemHealth from '@/components/performance/SystemHealth/SystemHealth';
+import TreeViewDemo from '@/components/data-display/TreeView/TreeViewDemo';
 import ErrorTracking from '@/components/performance/ErrorTracking/ErrorTracking';
 import LoadTesting from '@/components/performance/LoadTesting/LoadTesting';
 import OptimizationTools from '@/components/performance/OptimizationTools/OptimizationTools';
-import TreeViewDemo from '@/components/data-display/TreeView/TreeViewDemo';
+import PerformanceMonitor from '@/components/performance/PerformanceMonitor/PerformanceMonitor';
+import SystemHealth from '@/components/performance/SystemHealth/SystemHealth';
+import UsageAnalytics from '@/components/performance/UsageAnalytics/UsageAnalytics';
 
 const COMPONENTS = [
     {
@@ -228,14 +226,6 @@ const COMPONENTS = [
                 "description": 'A timeline component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
                 "status": 'ready',
                 "component": <TimeLine />
-            },
-            {
-                "title": "CardLayout",
-                "url": "/category/data-display/card-layout",
-                "name": 'CardLayout',
-                "description": 'A card layout component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
-                "status": 'ready',
-                "component": <CardLayout />
             }
         ]
     },

@@ -11,7 +11,7 @@ import {
   Share,
   Trash2
 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface ContextMenuProps<T = any> {
   contextMenu: { x: number; y: number; row?: T; cardRef?: HTMLElement } | null;
@@ -43,6 +43,41 @@ const ContextMenu = <T extends Record<string, any>>({
   onDeleteItem
 }: ContextMenuProps<T>) => {
 
+  // Handle scroll to close context menu
+  useEffect(() => {
+    if (!contextMenu) return;
+
+    let lastScrollY = window.scrollY;
+    let lastScrollX = window.scrollX;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const currentScrollX = window.scrollX;
+
+      // Close if scrolled more than 20px in any direction
+      if (Math.abs(currentScrollY - lastScrollY) > 20 ||
+        Math.abs(currentScrollX - lastScrollX) > 20) {
+        onClose();
+      }
+    };
+
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Also listen to scroll on the grid container
+    const gridContainer = document.querySelector('[data-grid-container]');
+    if (gridContainer) {
+      gridContainer.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (gridContainer) {
+        gridContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [contextMenu, onClose]);
+
   if (!contextMenu || !contextMenu.row) {
     return null;
   }
@@ -57,15 +92,44 @@ const ContextMenu = <T extends Record<string, any>>({
     onClose();
   };
 
+  // Calculate position to ensure menu stays in viewport
+  const calculatePosition = () => {
+    const menuWidth = 220; // Slightly wider than min-width
+    const menuHeight = 320; // Approximate height
+
+    let { x, y } = contextMenu;
+
+    // Adjust horizontal position
+    if (x + menuWidth > window.innerWidth) {
+      x = window.innerWidth - menuWidth - 10;
+    }
+    if (x < 10) {
+      x = 10;
+    }
+
+    // Adjust vertical position
+    if (y + menuHeight > window.innerHeight) {
+      y = window.innerHeight - menuHeight - 10;
+    }
+    if (y < 10) {
+      y = 10;
+    }
+
+    return { x, y };
+  };
+
+  const { x, y } = calculatePosition();
+
   return (
     <div
       ref={contextMenuRef}
-      className="absolute z-50 min-w-[200px] max-w-[250px] bg-[#0A0A0A] border border-white/20 rounded-lg shadow-xl shadow-black/50 backdrop-blur-sm"
+      className="fixed z-[9999] min-w-[200px] max-w-[250px] bg-[#0A0A0A] border border-white/20 rounded-lg shadow-xl shadow-black/50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 duration-200"
       style={{
-        left: contextMenu.x,
-        top: contextMenu.y,
+        left: x,
+        top: y,
       }}
       onClick={(e) => e.stopPropagation()}
+      onContextMenu={(e) => e.preventDefault()} // Prevent context menu on context menu
     >
       <div className="p-2 space-y-1">
         {/* Primary Actions */}

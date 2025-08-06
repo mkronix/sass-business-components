@@ -4,226 +4,194 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
-    ArrowUpDown,
+    Bookmark,
     Building,
-    Calendar,
-    Check,
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
-    DollarSign,
-    Download,
-    Edit2,
-    Filter,
-    FilterX,
-    Mail,
-    MapPin,
+    Check, ChevronDown, ChevronLeft, ChevronRight,
+    Copy,
+    Download, Edit2, Filter, FilterX, Grid3X3, List, Mail,
     Package,
-    Phone,
+    Plus,
+    RefreshCw,
     Search,
-    SortAsc,
-    SortDesc,
-    Trash2,
-    X
+    Share,
+    Star, Trash2, X
 } from 'lucide-react';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { FilterConfig, ListItem, ListItemProps, ListTemplate, ListViewProps, SortConfig } from './types';
-const getBuiltInTemplates = <T extends ListItem>(): ListTemplate<T>[] => [
-    {
-        id: 'default',
-        name: 'Default List',
-        description: 'Simple list with basic information',
-        component: ({ item, isSelected, onSelect, onClick, columns, customActions }) => (
-            <div
-                className={cn(
-                    "flex items-center gap-4 p-4 border-b hover:bg-muted/50 transition-colors cursor-pointer",
-                    isSelected && "bg-primary/5 border-primary/20"
-                )}
-                onClick={onClick}
-            >
-                <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={onSelect}
-                    onClick={(e) => e.stopPropagation()}
+import React, { useCallback, useMemo, useState } from 'react';
+import { ListItem, ListViewProps, FilterConfig, SortConfig } from './types';
+
+const DefaultTemplate: React.FC<{
+    item: ListItem;
+    isSelected: boolean;
+    onSelect: (selected: boolean) => void;
+    onClick?: (event: React.MouseEvent) => void;
+    customActions?: React.ReactNode;
+    density?: 'compact' | 'normal' | 'comfortable';
+}> = ({ item, isSelected, onSelect, onClick, customActions, density = 'normal' }) => {
+    const paddingClass = {
+        compact: 'p-3',
+        normal: 'p-4',
+        comfortable: 'p-6'
+    }[density];
+
+    return (
+        <div
+            className={cn(
+                "flex items-center gap-4 border-b hover:bg-muted/50 transition-all duration-200 cursor-pointer group",
+                isSelected && "bg-primary/5 border-primary/20",
+                paddingClass
+            )}
+            onClick={onClick}
+        >
+            <Checkbox
+                checked={isSelected}
+                onCheckedChange={onSelect}
+                onClick={(e) => e.stopPropagation()}
+            />
+
+            {item.avatar && (
+                <img
+                    src={item.avatar}
+                    alt={item.name}
+                    className="w-10 h-10 rounded-full border-2 border-background shadow-sm"
                 />
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                        <h3 className="font-medium truncate">{item.name}</h3>
-                        <div className="flex items-center gap-2">
-                            {customActions}
-                        </div>
+            )}
+
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+                            {item.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground truncate">{item.email}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">{item.email}</p>
+
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {customActions}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4 mt-2">
                     {item.department && (
-                        <Badge variant="outline" className="mt-1 text-xs">
+                        <Badge variant="outline" className="text-xs">
+                            <Building className="h-3 w-3 mr-1" />
                             {item.department}
                         </Badge>
                     )}
+
+                    {item.status && (
+                        <Badge
+                            variant={item.status === 'Active' ? 'default' : 'secondary'}
+                            className="text-xs"
+                        >
+                            {item.status}
+                        </Badge>
+                    )}
+
+                    {item.rating && (
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: 5 }, (_, i) => (
+                                <Star
+                                    key={i}
+                                    className={cn(
+                                        "h-3 w-3",
+                                        i < item.rating ? "text-yellow-500 fill-current" : "text-muted-foreground"
+                                    )}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
-        ),
-        itemHeight: 80
-    },
-    {
-        id: 'compact',
-        name: 'Compact List',
-        description: 'Dense list for maximum information density',
-        component: ({ item, isSelected, onSelect, onClick, customActions }) => (
-            <div
-                className={cn(
-                    "flex items-center gap-3 p-2 border-b hover:bg-muted/30 transition-colors cursor-pointer",
-                    isSelected && "bg-primary/5"
-                )}
-                onClick={onClick}
-            >
+        </div>
+    );
+};
+
+const CardTemplate: React.FC<{
+    item: ListItem;
+    isSelected: boolean;
+    onSelect: (selected: boolean) => void;
+    onClick?: (event: React.MouseEvent) => void;
+    customActions?: React.ReactNode;
+}> = ({ item, isSelected, onSelect, onClick, customActions }) => (
+    <Card
+        className={cn(
+            "p-4 hover:shadow-lg transition-all duration-300 cursor-pointer border-2 group",
+            isSelected && "border-primary bg-primary/5 shadow-md"
+        )}
+        onClick={onClick}
+    >
+        <div className="space-y-3">
+            <div className="flex items-start justify-between">
                 <Checkbox
                     checked={isSelected}
                     onCheckedChange={onSelect}
                     onClick={(e) => e.stopPropagation()}
-                    className="h-4 w-4"
                 />
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    {customActions}
+                </div>
+            </div>
+
+            <div className="text-center">
                 {item.avatar && (
                     <img
                         src={item.avatar}
                         alt={item.name}
-                        className="w-6 h-6 rounded-full"
+                        className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-primary/10"
                     />
                 )}
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm truncate">{item.name}</span>
-                        <span className="text-xs text-muted-foreground">•</span>
-                        <span className="text-xs text-muted-foreground truncate">{item.department}</span>
-                        {item.status && (
-                            <Badge variant="outline" className="h-4 text-xs px-1">
-                                {item.status}
-                            </Badge>
-                        )}
-                    </div>
-                </div>
-                <div className="flex items-center gap-1">
-                    {customActions}
-                </div>
-            </div>
-        ),
-        itemHeight: 40,
-        spacing: 'tight'
-    },
-    {
-        id: 'detailed',
-        name: 'Detailed View',
-        description: 'Rich layout with comprehensive information',
-        component: ({ item, isSelected, onSelect, onClick, customActions }) => (
-            <div
-                className={cn(
-                    "p-6 border rounded-lg hover:shadow-sm transition-all cursor-pointer",
-                    isSelected && "ring-0 ring-primary/20 bg-primary/5"
-                )}
-                onClick={onClick}
-            >
-                <div className="flex items-start gap-4">
-                    <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={onSelect}
-                        onClick={(e) => e.stopPropagation()}
-                        className="mt-1"
-                    />
-                    {item.avatar && (
-                        <img
-                            src={item.avatar}
-                            alt={item.name}
-                            className="w-12 h-12 rounded-full"
-                        />
+                <h3 className="font-semibold text-lg mb-1">{item.name}</h3>
+                <p className="text-sm text-muted-foreground mb-2">{item.position}</p>
+
+                <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
+                    {item.department && (
+                        <Badge variant="outline" className="text-xs">
+                            {item.department}
+                        </Badge>
                     )}
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between mb-3">
-                            <div>
-                                <h3 className="text-lg font-semibold">{item.name}</h3>
-                                <p className="text-muted-foreground">{item.position} • {item.department}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {item.status && (
-                                    <Badge variant={item.status === 'Active' ? 'default' : 'secondary'}>
-                                        {item.status}
-                                    </Badge>
-                                )}
-                                {item.priority && (
-                                    <Badge
-                                        variant={
-                                            item.priority === 'Critical' ? 'destructive' :
-                                                item.priority === 'High' ? 'default' : 'outline'
-                                        }
-                                    >
-                                        {item.priority}
-                                    </Badge>
-                                )}
-                                {customActions}
-                            </div>
-                        </div>
+                    {item.status && (
+                        <Badge variant={item.status === 'Active' ? 'default' : 'secondary'} className="text-xs">
+                            {item.status}
+                        </Badge>
+                    )}
+                </div>
 
-                        <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-                            <div className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-muted-foreground" />
-                                <span className="truncate">{item.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4 text-muted-foreground" />
-                                <span>{item.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <MapPin className="h-4 w-4 text-muted-foreground" />
-                                <span>{item.city}</span>
-                            </div>
-                            {item.salary && (
-                                <div className="flex items-center gap-2">
-                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                                    <span>${item.salary.toLocaleString()}</span>
-                                </div>
-                            )}
-                            <div className="flex items-center gap-2">
-                                <Calendar className="h-4 w-4 text-muted-foreground" />
-                                <span>{item.joinDate?.toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Package className="h-4 w-4 text-muted-foreground" />
-                                <span>{item.projects} projects</span>
-                            </div>
-                        </div>
-
-                        {item.bio && (
-                            <p className="text-sm text-muted-foreground mb-3">{item.bio}</p>
-                        )}
-
-                        {item.skills && (
-                            <div className="flex flex-wrap gap-1">
-                                {item.skills.slice(0, 5).map((skill: string) => (
-                                    <Badge key={skill} variant="outline" className="text-xs">
-                                        {skill}
-                                    </Badge>
-                                ))}
-                                {item.skills.length > 5 && (
-                                    <Badge variant="outline" className="text-xs">
-                                        +{item.skills.length - 5} more
-                                    </Badge>
+                {item.rating && (
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                        {Array.from({ length: 5 }, (_, i) => (
+                            <Star
+                                key={i}
+                                className={cn(
+                                    "h-3 w-3",
+                                    i < item.rating ? "text-yellow-500 fill-current" : "text-muted-foreground"
                                 )}
-                            </div>
-                        )}
+                            />
+                        ))}
                     </div>
+                )}
+
+                <div className="text-xs text-muted-foreground space-y-1">
+                    <div className="flex items-center justify-center gap-1">
+                        <Mail className="h-3 w-3" />
+                        <span className="truncate">{item.email}</span>
+                    </div>
+                    {item.projects && (
+                        <div className="flex items-center justify-center gap-1">
+                            <Package className="h-3 w-3" />
+                            <span>{item.projects} projects</span>
+                        </div>
+                    )}
                 </div>
             </div>
-        ),
-        itemHeight: 220,
-        spacing: 'loose'
-    }
-];
+        </div>
+    </Card>
+);
 
 const ListView = <T extends ListItem>({
     data = [],
     columns = [],
-    templates,
     loading = false,
     selectable = true,
     multiSelect = true,
@@ -231,29 +199,32 @@ const ListView = <T extends ListItem>({
     filterable = true,
     sortable = true,
     pagination = true,
+    exportable = false,
     pageSize = 20,
     pageSizeOptions = [10, 20, 50, 100],
-    exportable = false,
-    emptyMessage = "No items found",
-    emptyDescription = "Try adjusting your search or filter criteria",
-    className,
-    itemClassName,
     density = 'normal',
-    layout = 'list',
     defaultTemplate = 'default',
-    virtualScrolling = false,
+    className,
     groupBy,
     showGroupHeaders = true,
-    stickyHeaders = false,
+    collapsibleGroups = true,
+    emptyMessage = "No items found",
+    emptyDescription = "Try adjusting your search or filter criteria",
+    quickFilters = [],
+    bulkActions = [],
     onItemClick,
-    onItemDoubleClick,
     onSelectionChange,
     onSortChange,
     onFilterChange,
     onPageChange,
+    onSearchChange,
     onEdit,
     onDelete,
+    onDuplicate,
+    onBookmark,
+    onShare,
     onExport,
+    onRefresh,
     customToolbar,
     customActions,
     getItemId = (item) => item.id
@@ -268,17 +239,39 @@ const ListView = <T extends ListItem>({
     const [currentTemplate, setCurrentTemplate] = useState(defaultTemplate);
     const [showFilters, setShowFilters] = useState(false);
     const [groupExpanded, setGroupExpanded] = useState<Record<string, boolean>>({});
+    const [activeQuickFilters, setActiveQuickFilters] = useState<string[]>([]);
 
-    // Refs
-    const containerRef = useRef<HTMLDivElement>(null);
+    // Available templates
+    const templates = [
+        { id: 'default', name: 'List View', icon: <List className="h-4 w-4" /> },
+        { id: 'card', name: 'Card View', icon: <Grid3X3 className="h-4 w-4" /> }
+    ];
 
-    // Get templates
-    const allTemplates = useMemo(() => {
-        const builtInTemplates = getBuiltInTemplates<T>();
-        return templates ? [...builtInTemplates, ...templates] : builtInTemplates;
-    }, [templates]);
+    // Filter application function (moved before usage)
+    const applyFilter = useCallback((value: any, filter: FilterConfig): boolean => {
+        if (filter.value === '' || filter.value == null) return true;
 
-    const activeTemplate = allTemplates.find(t => t.id === currentTemplate) || allTemplates[0];
+        switch (filter.operator) {
+            case 'equals':
+                return value === filter.value;
+            case 'contains':
+                return String(value).toLowerCase().includes(String(filter.value).toLowerCase());
+            case 'startsWith':
+                return String(value).toLowerCase().startsWith(String(filter.value).toLowerCase());
+            case 'endsWith':
+                return String(value).toLowerCase().endsWith(String(filter.value).toLowerCase());
+            case 'gt':
+                return Number(value) > Number(filter.value);
+            case 'lt':
+                return Number(value) < Number(filter.value);
+            case 'gte':
+                return Number(value) >= Number(filter.value);
+            case 'lte':
+                return Number(value) <= Number(filter.value);
+            default:
+                return true;
+        }
+    }, []);
 
     // Data processing
     const processedData = useMemo(() => {
@@ -288,19 +281,32 @@ const ListView = <T extends ListItem>({
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
             result = result.filter(item =>
-                columns.some(col => {
-                    if (!col.searchable && col.searchable !== undefined) return false;
-                    const value = String(item[col.field] || '').toLowerCase();
-                    return value.includes(query);
-                }) ||
-                // Fallback to searching all string fields
                 Object.values(item).some(value =>
                     typeof value === 'string' && value.toLowerCase().includes(query)
                 )
             );
         }
 
-        // Apply filters
+        // Apply quick filters
+        activeQuickFilters.forEach(filterId => {
+            const quickFilter = quickFilters.find(f => f.id === filterId);
+            if (quickFilter) {
+                result = result.filter(item => {
+                    const value = item[quickFilter.field];
+                    // Handle different operators for quick filters
+                    switch (quickFilter.operator) {
+                        case 'gte':
+                            return Number(value) >= Number(quickFilter.value);
+                        case 'contains':
+                            return String(value).toLowerCase().includes(String(quickFilter.value).toLowerCase());
+                        default:
+                            return value === quickFilter.value;
+                    }
+                });
+            }
+        });
+
+        // Apply advanced filters
         filters.forEach(filter => {
             result = result.filter(item => {
                 const value = item[filter.field];
@@ -337,7 +343,7 @@ const ListView = <T extends ListItem>({
         }
 
         return result;
-    }, [data, searchQuery, filters, sorting, columns]);
+    }, [data, searchQuery, filters, sorting, activeQuickFilters, quickFilters, applyFilter]);
 
     // Grouping
     const groupedData = useMemo(() => {
@@ -364,48 +370,7 @@ const ListView = <T extends ListItem>({
 
     const totalPages = Math.ceil(processedData.length / currentPageSize);
 
-    // Filter application
-    const applyFilter = (value: any, filter: FilterConfig): boolean => {
-        if (filter.value === '' || filter.value == null) return true;
-
-        switch (filter.operator) {
-            case 'equals':
-                return value === filter.value;
-            case 'contains':
-                return String(value).toLowerCase().includes(String(filter.value).toLowerCase());
-            case 'startsWith':
-                return String(value).toLowerCase().startsWith(String(filter.value).toLowerCase());
-            case 'endsWith':
-                return String(value).toLowerCase().endsWith(String(filter.value).toLowerCase());
-            case 'gt':
-                return Number(value) > Number(filter.value);
-            case 'lt':
-                return Number(value) < Number(filter.value);
-            case 'gte':
-                return Number(value) >= Number(filter.value);
-            case 'lte':
-                return Number(value) <= Number(filter.value);
-            default:
-                return true;
-        }
-    };
-
     // Event handlers
-    const handleSort = useCallback((field: string) => {
-        setSorting(prev => {
-            const existingSort = prev.find(s => s.field === field);
-            if (existingSort) {
-                if (existingSort.direction === 'asc') {
-                    return prev.map(s => s.field === field ? { ...s, direction: 'desc' as const } : s);
-                } else {
-                    return prev.filter(s => s.field !== field);
-                }
-            } else {
-                return [{ field, direction: 'asc' as const }];
-            }
-        });
-    }, []);
-
     const handleItemSelection = useCallback((itemId: string | number, selected: boolean) => {
         setSelectedItems(prev => {
             const newSet = new Set(prev);
@@ -439,58 +404,96 @@ const ListView = <T extends ListItem>({
         }
     }, [pagination, paginatedData, processedData, selectedItems, getItemId]);
 
-    const handleExport = useCallback((format: 'csv' | 'excel' | 'json') => {
-        const exportData = selectedItems.size > 0
-            ? data.filter(item => selectedItems.has(getItemId(item)))
-            : processedData;
+    const handleQuickFilterToggle = useCallback((filterId: string) => {
+        setActiveQuickFilters(prev =>
+            prev.includes(filterId)
+                ? prev.filter(id => id !== filterId)
+                : [...prev, filterId]
+        );
+    }, []);
 
-        onExport?.(format, exportData);
-    }, [data, selectedItems, processedData, onExport, getItemId]);
+    const handleSearchChange = useCallback((query: string) => {
+        setSearchQuery(query);
+        setCurrentPage(1);
+        onSearchChange?.(query);
+    }, [onSearchChange]);
 
     // Render functions
     const renderItem = useCallback((item: T, index: number) => {
         const itemId = getItemId(item);
         const isSelected = selectedItems.has(itemId);
 
-        const itemProps: ListItemProps<T> = {
-            item,
-            index,
-            isSelected,
-            isHighlighted: false,
-            onSelect: (selected) => handleItemSelection(itemId, selected),
-            onEdit: () => onEdit?.(item),
-            onDelete: () => onDelete?.(item),
-            onClick: (event) => onItemClick?.(item, event),
-            onDoubleClick: (event) => onItemDoubleClick?.(item, event),
-            template: activeTemplate,
-            columns,
-            customActions: customActions?.(item)
-        };
-
-        return (
-            <div
-                key={itemId}
-                className={cn(
-                    "transition-colors",
-                    itemClassName,
-                    density === 'compact' && "py-1",
-                    density === 'comfortable' && "py-2"
-                )}
-            >
-                <activeTemplate.component {...itemProps} />
+        const itemActions = (
+            <div className="flex items-center gap-1">
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(item);
+                }}>
+                    <Edit2 className="h-3 w-3" />
+                </Button>
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => {
+                    e.stopPropagation();
+                    onDuplicate?.(item);
+                }}>
+                    <Copy className="h-3 w-3" />
+                </Button>
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => {
+                    e.stopPropagation();
+                    onBookmark?.(item);
+                }}>
+                    <Bookmark className="h-3 w-3" />
+                </Button>
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={(e) => {
+                    e.stopPropagation();
+                    onShare?.(item);
+                }}>
+                    <Share className="h-3 w-3" />
+                </Button>
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-destructive" onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete?.(item);
+                }}>
+                    <Trash2 className="h-3 w-3" />
+                </Button>
+                {customActions?.(item)}
             </div>
         );
+
+        const commonProps = {
+            item,
+            isSelected,
+            onSelect: (selected: boolean) => handleItemSelection(itemId, selected),
+            onClick: (event: React.MouseEvent) => onItemClick?.(item, event),
+            customActions: itemActions
+        };
+
+        if (currentTemplate === 'card') {
+            return (
+                <CardTemplate
+                    key={itemId}
+                    {...commonProps}
+                />
+            );
+        }
+
+        return (
+            <DefaultTemplate
+                key={itemId}
+                density={density}
+                {...commonProps}
+            />
+        );
     }, [
-        activeTemplate,
         selectedItems,
-        columns,
-        itemClassName,
+        currentTemplate,
         density,
         handleItemSelection,
+        onItemClick,
         onEdit,
         onDelete,
-        onItemClick,
-        onItemDoubleClick,
+        onDuplicate,
+        onBookmark,
+        onShare,
         customActions,
         getItemId
     ]);
@@ -506,35 +509,44 @@ const ListView = <T extends ListItem>({
             const groupCount = groupItems.length;
 
             return (
-                <div key={groupName}>
+                <div key={groupName} className="space-y-2">
                     {showGroupHeaders && (
                         <div
                             className={cn(
-                                "flex items-center justify-between p-3 bg-muted/50 border-b cursor-pointer",
-                                stickyHeaders && "sticky top-0 z-10"
+                                "flex items-center justify-between p-4 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors",
+                                collapsibleGroups && "cursor-pointer"
                             )}
-                            onClick={() => setGroupExpanded(prev => ({
+                            onClick={() => collapsibleGroups && setGroupExpanded(prev => ({
                                 ...prev,
                                 [groupName]: !isExpanded
                             }))}
                         >
-                            <div className="flex items-center gap-2">
-                                <ChevronDown
-                                    className={cn(
-                                        "h-4 w-4 transition-transform",
-                                        !isExpanded && "-rotate-90"
-                                    )}
-                                />
-                                <h3 className="font-medium">{groupName}</h3>
-                                <Badge variant="outline" className="text-xs">
-                                    {groupCount}
-                                </Badge>
+                            <div className="flex items-center gap-3">
+                                {collapsibleGroups && (
+                                    <ChevronDown
+                                        className={cn(
+                                            "h-4 w-4 transition-transform",
+                                            !isExpanded && "-rotate-90"
+                                        )}
+                                    />
+                                )}
+                                <div className="flex items-center gap-2">
+                                    <Building className="h-4 w-4 text-muted-foreground" />
+                                    <h3 className="font-semibold">{groupName}</h3>
+                                </div>
                             </div>
+                            <Badge variant="outline" className="text-xs">
+                                {groupCount} {groupCount === 1 ? 'item' : 'items'}
+                            </Badge>
                         </div>
                     )}
 
                     {isExpanded && (
-                        <div>
+                        <div className={cn(
+                            currentTemplate === 'card'
+                                ? "grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                                : "space-y-0 border rounded-lg bg-card overflow-hidden"
+                        )}>
                             {groupItems.map((item, index) => renderItem(item, index))}
                         </div>
                     )}
@@ -548,15 +560,15 @@ const ListView = <T extends ListItem>({
         return (
             <div className={cn("space-y-4", className)}>
                 <div className="flex items-center justify-between">
-                    <Skeleton className="h-8 w-64" />
+                    <div className="h-8 w-64 bg-muted rounded animate-pulse" />
                     <div className="flex gap-2">
-                        <Skeleton className="h-8 w-20" />
-                        <Skeleton className="h-8 w-32" />
+                        <div className="h-8 w-20 bg-muted rounded animate-pulse" />
+                        <div className="h-8 w-32 bg-muted rounded animate-pulse" />
                     </div>
                 </div>
                 <div className="space-y-3">
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <Skeleton key={i} className="h-16 w-full" />
+                        <div key={i} className="h-16 w-full bg-muted rounded animate-pulse" />
                     ))}
                 </div>
             </div>
@@ -564,19 +576,29 @@ const ListView = <T extends ListItem>({
     }
 
     return (
-        <div className={cn("flex flex-col space-y-4", className)}>
-            {/* Toolbar */}
+        <div className={cn("flex flex-col space-y-6", className)}>
+            {/* Enhanced Toolbar */}
             <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center flex-1">
                     {searchable && (
-                        <div className="relative flex-1 max-w-sm">
+                        <div className="relative flex-1 max-w-md">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search items..."
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10"
+                                onChange={(e) => handleSearchChange(e.target.value)}
+                                className="pl-10 pr-4"
                             />
+                            {searchQuery && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                                    onClick={() => handleSearchChange('')}
+                                >
+                                    <X className="h-3 w-3" />
+                                </Button>
+                            )}
                         </div>
                     )}
 
@@ -590,19 +612,22 @@ const ListView = <T extends ListItem>({
                             >
                                 <Filter className="h-4 w-4" />
                                 Filters
-                                {filters.length > 0 && (
+                                {(filters.length > 0 || activeQuickFilters.length > 0) && (
                                     <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
-                                        {filters.length}
+                                        {filters.length + activeQuickFilters.length}
                                     </Badge>
                                 )}
                             </Button>
                         )}
 
-                        {filters.length > 0 && (
+                        {(filters.length > 0 || activeQuickFilters.length > 0) && (
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => setFilters([])}
+                                onClick={() => {
+                                    setFilters([]);
+                                    setActiveQuickFilters([]);
+                                }}
                                 className="flex items-center gap-2 text-destructive hover:text-destructive"
                             >
                                 <FilterX className="h-4 w-4" />
@@ -611,7 +636,7 @@ const ListView = <T extends ListItem>({
                         )}
 
                         {selectedItems.size > 0 && (
-                            <Badge variant="secondary" className="px-3 py-1">
+                            <Badge variant="secondary" className="px-3 py-1 text-sm">
                                 {selectedItems.size} selected
                             </Badge>
                         )}
@@ -621,22 +646,41 @@ const ListView = <T extends ListItem>({
                 <div className="flex items-center gap-2 flex-wrap">
                     {customToolbar}
 
+                    {onRefresh && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={onRefresh}
+                            className="flex items-center gap-2"
+                        >
+                            <RefreshCw className="h-4 w-4" />
+                        </Button>
+                    )}
+
                     {/* Template Selector */}
                     <Select value={currentTemplate} onValueChange={setCurrentTemplate}>
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="w-max">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            {allTemplates.map(template => (
+                            {templates.map(template => (
                                 <SelectItem key={template.id} value={template.id}>
-                                    {template.name}
+                                    <div className="flex items-center gap-2">
+                                        {template.icon}
+                                        {template.name}
+                                    </div>
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
 
                     {exportable && (
-                        <Select onValueChange={handleExport}>
+                        <Select onValueChange={(format: any) => {
+                            const exportData = selectedItems.size > 0
+                                ? data.filter(item => selectedItems.has(getItemId(item)))
+                                : processedData;
+                            onExport?.(format, exportData);
+                        }}>
                             <SelectTrigger className="w-max">
                                 <Download className="h-4 w-4 mr-2" />
                             </SelectTrigger>
@@ -644,6 +688,7 @@ const ListView = <T extends ListItem>({
                                 <SelectItem value="csv">Export CSV</SelectItem>
                                 <SelectItem value="excel">Export Excel</SelectItem>
                                 <SelectItem value="json">Export JSON</SelectItem>
+                                <SelectItem value="pdf">Export PDF</SelectItem>
                             </SelectContent>
                         </Select>
                     )}
@@ -665,191 +710,211 @@ const ListView = <T extends ListItem>({
                 </div>
             </div>
 
+            {/* Quick Filters */}
+            {quickFilters.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {quickFilters.map((filter) => (
+                        <Button
+                            key={filter.id}
+                            variant={activeQuickFilters.includes(filter.id) ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleQuickFilterToggle(filter.id)}
+                            className="flex items-center gap-2"
+                        >
+                            {filter.icon}
+                            {filter.label}
+                        </Button>
+                    ))}
+                </div>
+            )}
+
             {/* Advanced Filters Panel */}
             {showFilters && filterable && (
-                <Card>
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="text-sm">Advanced Filters</CardTitle>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowFilters(false)}
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
+                <Card className="border-2 border-dashed">
+                    <CardHeader className="flex flex-row items-center justify-between pb-3">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                            <Filter className="h-5 w-5" />
+                            Advanced Filters
+                        </CardTitle>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowFilters(false)}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
                     </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                            {columns.filter(col => col.filterable !== false).map(column => {
-                                const currentFilter = filters.find(f => f.field === column.field);
+                    <CardContent className="space-y-4">
+                        {filters.map((filter, index) => (
+                            <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-muted/20">
+                                <Select
+                                    value={filter.field}
+                                    onValueChange={(value) => {
+                                        const newFilters = [...filters];
+                                        newFilters[index] = { ...filter, field: value };
+                                        setFilters(newFilters);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-40">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {columns.filter(col => col.filterable !== false).map((column) => (
+                                            <SelectItem key={column.id} value={column.field as string}>
+                                                {column.title}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
-                                return (
-                                    <div key={column.id} className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <label className="text-sm font-medium">{column.title}</label>
-                                            {currentFilter && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => setFilters(prev => prev.filter(f => f.field !== column.field))}
-                                                    className="h-6 w-6 p-0"
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </Button>
-                                            )}
-                                        </div>
+                                <Select
+                                    value={filter.operator}
+                                    onValueChange={(value: any) => {
+                                        const newFilters = [...filters];
+                                        newFilters[index] = { ...filter, operator: value };
+                                        setFilters(newFilters);
+                                    }}
+                                >
+                                    <SelectTrigger className="w-32">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="contains">Contains</SelectItem>
+                                        <SelectItem value="equals">Equals</SelectItem>
+                                        <SelectItem value="startsWith">Starts with</SelectItem>
+                                        <SelectItem value="endsWith">Ends with</SelectItem>
+                                        <SelectItem value="gt">Greater than</SelectItem>
+                                        <SelectItem value="lt">Less than</SelectItem>
+                                        <SelectItem value="gte">≥</SelectItem>
+                                        <SelectItem value="lte">≤</SelectItem>
+                                    </SelectContent>
+                                </Select>
 
-                                        <div className="flex gap-2">
-                                            <Select
-                                                value={currentFilter?.operator || 'contains'}
-                                                onValueChange={(operator: any) => {
-                                                    setFilters(prev => {
-                                                        const otherFilters = prev.filter(f => f.field !== column.field);
-                                                        return [...otherFilters, {
-                                                            field: column.field,
-                                                            operator,
-                                                            value: currentFilter?.value || ''
-                                                        }];
-                                                    });
-                                                }}
-                                            >
-                                                <SelectTrigger className="w-28">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="contains">Contains</SelectItem>
-                                                    <SelectItem value="equals">Equals</SelectItem>
-                                                    <SelectItem value="startsWith">Starts with</SelectItem>
-                                                    <SelectItem value="endsWith">Ends with</SelectItem>
-                                                    {column.type === 'number' && (
-                                                        <>
-                                                            <SelectItem value="gt">Greater than</SelectItem>
-                                                            <SelectItem value="lt">Less than</SelectItem>
-                                                            <SelectItem value="gte">Greater or equal</SelectItem>
-                                                            <SelectItem value="lte">Less or equal</SelectItem>
-                                                        </>
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                <Input
+                                    value={filter.value}
+                                    onChange={(e) => {
+                                        const newFilters = [...filters];
+                                        newFilters[index] = { ...filter, value: e.target.value };
+                                        setFilters(newFilters);
+                                    }}
+                                    placeholder="Filter value..."
+                                    className="flex-1"
+                                />
 
-                                            <Input
-                                                placeholder={`Filter ${column.title}...`}
-                                                value={currentFilter?.value || ''}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    setFilters(prev => {
-                                                        const otherFilters = prev.filter(f => f.field !== column.field);
-                                                        if (value === '') return otherFilters;
-                                                        return [...otherFilters, {
-                                                            field: column.field,
-                                                            operator: currentFilter?.operator || 'contains',
-                                                            value
-                                                        }];
-                                                    });
-                                                }}
-                                                type={column.type === 'number' ? 'number' : 'text'}
-                                                className="flex-1"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setFilters(filters.filter((_, i) => i !== index))}
+                                    className="text-destructive hover:text-destructive"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        ))}
+
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setFilters([...filters, {
+                                    field: columns[0]?.field as string || 'name',
+                                    operator: 'contains',
+                                    value: ''
+                                }])}
+                                className="flex-1"
+                            >
+                                <Plus className="h-4 w-4 mr-2" />
+                                Add Filter
+                            </Button>
+                            {filters.length > 0 && (
+                                <Button variant="outline" onClick={() => setFilters([])}>
+                                    <FilterX className="h-4 w-4 mr-2" />
+                                    Clear All
+                                </Button>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
             )}
 
-            {/* Table Headers for table template */}
-            {currentTemplate === 'table' && columns.length > 0 && (
-                <div className="border-b bg-muted/30">
-                    <div
-                        className="grid gap-4 p-3 font-medium text-sm"
-                        style={{ gridTemplateColumns: `auto ${columns.map(col => col.width || '1fr').join(' ')} auto` }}
-                    >
-                        <div>{/* Checkbox column */}</div>
-                        {columns.map(column => (
-                            <div
-                                key={column.id}
-                                className={cn(
-                                    "flex items-center gap-2",
-                                    column.align === 'center' && 'justify-center',
-                                    column.align === 'right' && 'justify-end',
-                                    sortable && column.sortable !== false && 'cursor-pointer hover:text-primary'
-                                )}
-                                onClick={() => column.sortable !== false && handleSort(column.field)}
-                            >
-                                <span>{column.title}</span>
-                                {sortable && column.sortable !== false && (
-                                    <div className="flex flex-col">
-                                        {(() => {
-                                            const sort = sorting.find(s => s.field === column.field);
-                                            if (!sort) return <ArrowUpDown className="h-3 w-3 opacity-50" />;
-                                            return sort.direction === 'asc'
-                                                ? <SortAsc className="h-3 w-3 text-primary" />
-                                                : <SortDesc className="h-3 w-3 text-primary" />;
-                                        })()}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                        <div>Actions</div>
-                    </div>
-                </div>
-            )}
-
             {/* Main Content */}
-            <div
-                ref={containerRef}
-                className={cn(
-                    "flex-1",
-                    currentTemplate === 'card' && `grid gap-4 grid-cols-1 ${activeTemplate.gridCols === 2 ? 'md:grid-cols-2' :
-                        activeTemplate.gridCols === 3 ? 'md:grid-cols-2 lg:grid-cols-3' :
-                            activeTemplate.gridCols === 4 ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' :
-                                'md:grid-cols-2 lg:grid-cols-3'
-                    }`,
-                    activeTemplate.spacing === 'tight' && 'space-y-1',
-                    activeTemplate.spacing === 'loose' && 'space-y-6',
-                    !currentTemplate.includes('card') && 'space-y-0'
-                )}
-            >
+            <div className="flex-1">
                 {processedData.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                            <Search className="h-8 w-8 text-muted-foreground" />
+                    <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-muted rounded-lg">
+                        <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+                            <Search className="h-10 w-10 text-muted-foreground" />
                         </div>
-                        <h3 className="text-lg font-semibold mb-2">{emptyMessage}</h3>
-                        <p className="text-muted-foreground max-w-sm">{emptyDescription}</p>
-                        {(searchQuery || filters.length > 0) && (
+                        <h3 className="text-xl font-semibold mb-3">{emptyMessage}</h3>
+                        <p className="text-muted-foreground max-w-md mb-6">{emptyDescription}</p>
+
+                        {(searchQuery || filters.length > 0 || activeQuickFilters.length > 0) && (
                             <Button
                                 variant="outline"
-                                className="mt-4"
                                 onClick={() => {
                                     setSearchQuery('');
                                     setFilters([]);
+                                    setActiveQuickFilters([]);
                                 }}
+                                className="mt-4"
                             >
+                                <X className="h-4 w-4 mr-2" />
                                 Clear Search & Filters
                             </Button>
                         )}
                     </div>
                 ) : (
-                    <div className={cn(
-                        currentTemplate !== 'card' && "border rounded-lg bg-card overflow-hidden"
-                    )}>
+                    <div className="space-y-4">
                         {renderGroupedContent()}
                     </div>
                 )}
             </div>
 
-            {/* Pagination */}
+            {/* Bulk Actions Bar */}
+            {selectedItems.size > 0 && bulkActions.length > 0 && (
+                <Card className="bg-primary/5 border-primary/20 transition-all duration-200">
+                    <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                                <span className="font-medium">
+                                    {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''} selected
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {bulkActions.map((action) => (
+                                    <Button
+                                        key={action.id}
+                                        variant={action.variant || 'outline'}
+                                        size="sm"
+                                        onClick={() => {
+                                            const selectedData = data.filter(item => selectedItems.has(getItemId(item)));
+                                            action.action(selectedData);
+                                        }}
+                                        className="flex items-center gap-2"
+                                    >
+                                        {action.icon}
+                                        {action.label}
+                                    </Button>
+                                ))}
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setSelectedItems(new Set())}
+                                >
+                                    Clear Selection
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Enhanced Pagination */}
             {pagination && processedData.length > 0 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                     <div className="text-sm text-muted-foreground">
                         Showing {((currentPage - 1) * currentPageSize) + 1} to{' '}
                         {Math.min(currentPage * currentPageSize, processedData.length)} of{' '}
-                        {processedData.length} items
+                        {processedData.length.toLocaleString()} items
                         {selectedItems.size > 0 && (
                             <span className="ml-2 text-primary font-medium">
                                 • {selectedItems.size} selected
@@ -857,41 +922,45 @@ const ListView = <T extends ListItem>({
                         )}
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <Select
-                            value={String(currentPageSize)}
-                            onValueChange={(value) => {
-                                setCurrentPageSize(Number(value));
-                                setCurrentPage(1);
-                                onPageChange?.(1, Number(value));
-                            }}
-                        >
-                            <SelectTrigger className="w-20">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {pageSizeOptions.map(size => (
-                                    <SelectItem key={size} value={String(size)}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const newPage = Math.max(1, currentPage - 1);
-                                setCurrentPage(newPage);
-                                onPageChange?.(newPage, currentPageSize);
-                            }}
-                            disabled={currentPage === 1}
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">Rows per page:</span>
+                            <Select
+                                value={String(currentPageSize)}
+                                onValueChange={(value) => {
+                                    const newPageSize = Number(value);
+                                    setCurrentPageSize(newPageSize);
+                                    setCurrentPage(1);
+                                    onPageChange?.(1, newPageSize);
+                                }}
+                            >
+                                <SelectTrigger className="w-20">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {pageSizeOptions.map(size => (
+                                        <SelectItem key={size} value={String(size)}>
+                                            {size}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
                         <div className="flex items-center gap-1">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    const newPage = Math.max(1, currentPage - 1);
+                                    setCurrentPage(newPage);
+                                    onPageChange?.(newPage, currentPageSize);
+                                }}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+
                             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                                 let page;
                                 if (totalPages <= 5) {
@@ -913,74 +982,28 @@ const ListView = <T extends ListItem>({
                                             setCurrentPage(page);
                                             onPageChange?.(page, currentPageSize);
                                         }}
-                                        className="w-10 h-8"
+                                        className="min-w-[2.5rem]"
                                     >
                                         {page}
                                     </Button>
                                 );
                             })}
-                        </div>
 
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const newPage = Math.min(totalPages, currentPage + 1);
-                                setCurrentPage(newPage);
-                                onPageChange?.(newPage, currentPageSize);
-                            }}
-                            disabled={currentPage === totalPages}
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    const newPage = Math.min(totalPages, currentPage + 1);
+                                    setCurrentPage(newPage);
+                                    onPageChange?.(newPage, currentPageSize);
+                                }}
+                                disabled={currentPage === totalPages}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
-            )}
-
-            {/* Bulk Actions Bar */}
-            {selectedItems.size > 0 && (
-                <Card className="bg-primary/5 border-primary/20">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-2 h-2 bg-primary rounded-full" />
-                                <span className="text-sm font-medium">
-                                    {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''} selected
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {exportable && (
-                                    <Select onValueChange={handleExport}>
-                                        <SelectTrigger className="w-40">
-                                            <Download className="h-4 w-4 mr-2" />
-                                            <SelectValue placeholder="Export Selected" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="csv">Export CSV</SelectItem>
-                                            <SelectItem value="excel">Export Excel</SelectItem>
-                                            <SelectItem value="json">Export JSON</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                                <Button variant="outline" size="sm">
-                                    <Edit2 className="h-4 w-4 mr-1" />
-                                    Bulk Edit
-                                </Button>
-                                <Button variant="outline" size="sm" className="text-destructive">
-                                    <Trash2 className="h-4 w-4 mr-1" />
-                                    Delete Selected
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setSelectedItems(new Set())}
-                                >
-                                    Clear Selection
-                                </Button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
             )}
         </div>
     );

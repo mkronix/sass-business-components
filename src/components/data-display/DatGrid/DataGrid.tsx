@@ -163,17 +163,31 @@ const DataGrid = <T extends Record<string, any>>({
         return () => document.removeEventListener('keydown', handleKeyboard);
     }, [undoHistory]);
 
-    // Click outside context menu
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (contextMenuRef.current && !contextMenuRef.current.contains(event.target as Node)) {
+            if (contextMenu && contextMenuRef.current && !contextMenuRef.current.contains(event.target as Node)) {
                 setContextMenu(null);
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+        const handleEscapeKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && contextMenu) {
+                setContextMenu(null);
+            }
+        };
+
+        if (contextMenu) {
+            // Use capture phase to ensure we catch the event before other handlers
+            document.addEventListener('mousedown', handleClickOutside, true);
+            document.addEventListener('keydown', handleEscapeKey, true);
+
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside, true);
+                document.removeEventListener('keydown', handleEscapeKey, true);
+            };
+        }
+    }, [contextMenu]);
+
 
     // Auto-hide undo notification
     useEffect(() => {
@@ -562,50 +576,21 @@ const DataGrid = <T extends Record<string, any>>({
         e.preventDefault();
         e.stopPropagation();
 
-        const card = e.currentTarget as HTMLElement;
-        const cardRect = card.getBoundingClientRect();
+        // Get the mouse position relative to the viewport
+        const x = e.clientX;
+        const y = e.clientY;
 
-        // Calculate position relative to the card and mouse position
-        let x = e.clientX;
-        let y = e.clientY;
-
-        // Ensure context menu stays within viewport and close to click
-        const menuWidth = 200;
-        const menuHeight = 250;
-
-        // Adjust horizontal position
-        if (x + menuWidth > window.innerWidth) {
-            x = x - menuWidth;
-        }
-        if (x < 0) {
-            x = 10;
-        }
-
-        // Adjust vertical position
-        if (y + menuHeight > window.innerHeight) {
-            y = y - menuHeight;
-        }
-        if (y < 0) {
-            y = 10;
-        }
-
-        // Ensure context menu is within card bounds for better UX
-        const cardLeft = cardRect.left;
-        const cardRight = cardRect.right;
-        const cardTop = cardRect.top;
-        const cardBottom = cardRect.bottom;
-
-        // Clamp position to card boundaries
-        x = Math.max(cardLeft + 10, Math.min(cardRight - menuWidth - 10, x));
-        y = Math.max(cardTop + 10, Math.min(cardBottom - menuHeight - 10, y));
+        // Store the reference to the clicked card
+        const cardElement = e.currentTarget as HTMLElement;
 
         setContextMenu({
             x,
             y,
             row: item,
-            cardRef: card
+            cardRef: cardElement
         });
     }, [enableContextMenu]);
+
 
     // Grid API
     const gridApi: GridApi<T> = useMemo(() => ({
@@ -662,7 +647,7 @@ const DataGrid = <T extends Record<string, any>>({
     }
 
     return (
-        <div className={cn("bg-black overflow-hidden", className)}>
+        <div className={cn("bg-black overflow-hidden", className)} data-grid-container>
             {/* Undo Notification */}
             <UndoNotification
                 show={showUndoNotification}
@@ -779,7 +764,7 @@ const DataGrid = <T extends Record<string, any>>({
             )}
 
             {/* Grid Container */}
-            <div ref={gridRef} className="">
+            <div ref={gridRef} className="" data-grid-container>
                 {/* Stats Bar */}
                 <StatsBar
                     totalItems={Object.values(groupedData).flat().length}
@@ -944,26 +929,27 @@ const DataGrid = <T extends Record<string, any>>({
                 onClose={() => setShowKeyboardHelp(false)}
             />
 
-            {/* Context Menu */}
-            <ContextMenu
-                contextMenu={contextMenu}
-                contextMenuRef={contextMenuRef}
-                favorites={favorites}
-                pinnedItems={pinnedItems}
-                enableInlineEditing={enableInlineEditing}
-                getRowId={getRowId}
-                onClose={() => setContextMenu(null)}
-                onPreview={(item) => {
-                    setPreviewItem(item);
-                    setShowPreview(true);
-                }}
-                onCopyData={(item) => {
-                    navigator.clipboard.writeText(JSON.stringify(item, null, 2));
-                }}
-                onToggleFavorite={handleToggleFavorite}
-                onPinItem={handlePinItem}
-                onDeleteItem={handleDeleteItem}
-            />
+            {contextMenu && (
+                <ContextMenu
+                    contextMenu={contextMenu}
+                    contextMenuRef={contextMenuRef}
+                    favorites={favorites}
+                    pinnedItems={pinnedItems}
+                    enableInlineEditing={enableInlineEditing}
+                    getRowId={getRowId}
+                    onClose={() => setContextMenu(null)}
+                    onPreview={(item) => {
+                        setPreviewItem(item);
+                        setShowPreview(true);
+                    }}
+                    onCopyData={(item) => {
+                        navigator.clipboard.writeText(JSON.stringify(item, null, 2));
+                    }}
+                    onToggleFavorite={handleToggleFavorite}
+                    onPinItem={handlePinItem}
+                    onDeleteItem={handleDeleteItem}
+                />
+            )}
 
             {customFooter}
         </div>
