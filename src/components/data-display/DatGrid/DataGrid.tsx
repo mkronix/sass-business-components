@@ -4,20 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
-    AlertTriangle,
     Building,
     Calendar,
-    CheckCircle,
-    Clock,
-    FilterX,
     Hash,
     Search,
     Shield,
     SortAsc,
     SortDesc,
     Tags,
-    X,
-    XCircle
+    X
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGridProps, FilterConfig, GridApi, SortConfig } from './types';
@@ -667,7 +662,7 @@ const DataGrid = <T extends Record<string, any>>({
     }
 
     return (
-        <div className={cn("bg-black border border-white/10 rounded-xl overflow-hidden", className)}>
+        <div className={cn("bg-black overflow-hidden", className)}>
             {/* Undo Notification */}
             <UndoNotification
                 show={showUndoNotification}
@@ -700,7 +695,7 @@ const DataGrid = <T extends Record<string, any>>({
 
             {/* Active Filters Display */}
             {(Object.keys(filters).length > 0 || sorting.length > 0 || selectedTags.length > 0 || selectedStatuses.length > 0) && (
-                <div className="px-6 py-3 border-t border-white/10 bg-[#171717]/20">
+                <div className="py-3 border-t border-white/10 bg-[#171717]/20">
                     <div className="flex items-center gap-3 flex-wrap">
                         {selectedTags.length > 0 && (
                             <div className="flex items-center gap-2">
@@ -784,7 +779,7 @@ const DataGrid = <T extends Record<string, any>>({
             )}
 
             {/* Grid Container */}
-            <div ref={gridRef} className="p-6">
+            <div ref={gridRef} className="">
                 {/* Stats Bar */}
                 <StatsBar
                     totalItems={Object.values(groupedData).flat().length}
@@ -879,6 +874,7 @@ const DataGrid = <T extends Record<string, any>>({
                                             }}
                                             onContextMenu={(e) => handleContextMenu(e, item)}
                                             onHover={setHoveredCard}
+
                                         />
                                     ))}
                                 </div>

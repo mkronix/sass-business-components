@@ -2,11 +2,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Keyboard, 
-  Search, 
-  Filter, 
-  Eye, 
+import {
+  Keyboard,
+  Search,
+  Filter,
+  Eye,
   RotateCcw,
   Grid3X3,
   List,
@@ -24,7 +24,7 @@ const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({
   isOpen,
   onClose
 }) => {
-  
+
   const shortcuts = [
     {
       category: 'Navigation',
@@ -102,28 +102,28 @@ const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({
                   <Icon className="h-4 w-4 text-white/60" />
                   <h3 className="text-lg font-semibold text-white">{category.category}</h3>
                 </div>
-                
+
                 <div className="space-y-2">
                   {category.items.map((item, itemIndex) => (
                     <div key={itemIndex} className="flex items-center justify-between p-3 bg-[#171717] rounded-lg border border-white/10">
                       <span className="text-white/80">{item.description}</span>
                       <div className="flex items-center gap-1">
                         {formatKey(item.key, item.mac).split('+').map((key, keyIndex) => (
-                          <React.Fragment key={keyIndex}>
+                          <div key={keyIndex}>
                             {keyIndex > 0 && <span className="text-white/40 mx-1">+</span>}
-                            <Badge 
-                              variant="outline" 
+                            <Badge
+                              variant="outline"
                               className="bg-[#0A0A0A] border-white/30 text-white font-mono text-xs px-2 py-1"
                             >
                               {key}
                             </Badge>
-                          </React.Fragment>
+                          </div>
                         ))}
                       </div>
                     </div>
                   ))}
                 </div>
-                
+
                 {index < shortcuts.length - 1 && <Separator className="bg-white/10 mt-6" />}
               </div>
             );
@@ -136,7 +136,7 @@ const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({
             <div>
               <h4 className="text-white font-medium mb-1">Pro Tip</h4>
               <p className="text-sm text-white/60">
-                You can combine multiple shortcuts for faster navigation. For example, press "1" followed by "G" 
+                You can combine multiple shortcuts for faster navigation. For example, press "1" followed by "G"
                 to switch to grid view and group by department.
               </p>
             </div>

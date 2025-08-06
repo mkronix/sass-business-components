@@ -111,28 +111,25 @@ const DataGridDemo = () => {
     );
 
     return (
-        <div className="bg-black">
-            <DataGrid
-                data={data}
-                columns={columns}
-                loading={loading}
-                enableRowSelection={true}
-                enableMultiSelect={true}
-                enableInlineEditing={true}
-                enableBulkOperations={true}
-                enableExport={true}
-                enableContextMenu={true}
-                pagination={true}
-                pageSize={50}
-                density="standard"
-                onCellEdit={handleCellEdit}
-                onSelectionChange={(rows) => console.log('Selection changed:', rows.length)}
-                onRowClick={(row) => console.log('Row clicked:', row)}
-                onRowDoubleClick={(row) => console.log('Row double clicked:', row)}
-                customFooter={customFooter}
-                className="shadow-2xl"
-            />
-        </div>
+        <DataGrid
+            data={data}
+            columns={columns}
+            loading={loading}
+            enableRowSelection={true}
+            enableMultiSelect={true}
+            enableInlineEditing={true}
+            enableBulkOperations={true}
+            enableExport={true}
+            enableContextMenu={true}
+            pagination={true}
+            pageSize={50}
+            density="standard"
+            onCellEdit={handleCellEdit}
+            onSelectionChange={(rows) => console.log('Selection changed:', rows.length)}
+            onRowClick={(row) => console.log('Row clicked:', row)}
+            onRowDoubleClick={(row) => console.log('Row double clicked:', row)}
+            customFooter={customFooter}
+        />
     );
 };
 

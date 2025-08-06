@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { 
-  ChevronFirst, 
-  ChevronLast, 
-  ChevronLeft, 
-  ChevronRight 
+import {
+  ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import React from 'react';
 
@@ -67,7 +67,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <span className="text-sm text-white/60">
           Showing {startItem}-{endItem} of {totalItems} items
         </span>
-        
+
         {/* Page size selector */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-white/60">Show:</span>
@@ -113,7 +113,7 @@ const Pagination: React.FC<PaginationProps> = ({
         {/* Page numbers */}
         <div className="flex items-center gap-1">
           {visiblePages.map((page, index) => (
-            <React.Fragment key={index}>
+            <div key={index}>
               {page === '...' ? (
                 <span className="px-2 py-1 text-white/40 text-sm">...</span>
               ) : (
@@ -131,7 +131,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   {page}
                 </Button>
               )}
-            </React.Fragment>
+            </div>
           ))}
         </div>
 

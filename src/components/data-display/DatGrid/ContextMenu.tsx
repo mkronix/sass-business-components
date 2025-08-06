@@ -60,7 +60,7 @@ const ContextMenu = <T extends Record<string, any>>({
   return (
     <div
       ref={contextMenuRef}
-      className="fixed z-50 min-w-[200px] max-w-[100px] bg-[#0A0A0A] border border-white/20 rounded-lg shadow-xl shadow-black/50 backdrop-blur-sm"
+      className="absolute z-50 min-w-[200px] max-w-[250px] bg-[#0A0A0A] border border-white/20 rounded-lg shadow-xl shadow-black/50 backdrop-blur-sm"
       style={{
         left: contextMenu.x,
         top: contextMenu.y,

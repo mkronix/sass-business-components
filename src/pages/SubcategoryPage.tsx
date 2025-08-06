@@ -107,12 +107,9 @@ export default function EnhancedSubcategoryPage() {
       </div>
 
       {isReady && (componentItem as any).component ? (
-        <Card className="border-primary/20 shadow-lg">
+        <Card className="border-none shadow-lg">
           <CardContent className="p-0">
-            <div className="p-6">
-              {/* Render the component directly from COMPONENTS data */}
-              {(componentItem as any).component}
-            </div>
+            {(componentItem as any).component}
           </CardContent>
         </Card>
       ) : (
