@@ -161,7 +161,7 @@ export const DataGrid = <T extends Record<string, any>>({
                 <AnimatePresence>
                     {paginatedData.map((item, index) => (
                         <DataGridCard
-                            key={item.id || index}
+                            key={(item as any).id || index}
                             item={item}
                             index={startIndex + index}
                             columns={columns}

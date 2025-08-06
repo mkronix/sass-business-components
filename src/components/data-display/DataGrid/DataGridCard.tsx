@@ -48,7 +48,7 @@ export const DataGridCard = <T extends Record<string, any>>({
             y: 0,
             transition: {
                 duration: 0.3,
-                ease: [0.23, 1, 0.32, 1]
+                ease: "easeOut"
             }
         },
         hover: { 
