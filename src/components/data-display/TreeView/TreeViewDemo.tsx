@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TreeView from "./TreeView";
 import { TreeNode } from "./types";
+import { Input } from "@/components/ui/input";
 
 const TreeViewDemo = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -99,21 +100,18 @@ const TreeViewDemo = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 p-6 space-y-6">
+        <div className="min-h-screen p-6 space-y-6">
             <div className="flex gap-4 items-center">
-                <input
+                <Input
                     type="text"
                     placeholder="Search files..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="px-3 py-2 w-72 border border-secondary/30 rounded-lg p-4 bg-secondary"
                 />
-                <span className="text-sm text-gray-400">
-                    Right-click nodes for context menu
-                </span>
             </div>
 
-            <div className="border border-gray-700 rounded-lg p-4 bg-gray-800/50 overflow-hidden">
+            <div className="border border-secondary/30 rounded-lg p-4 bg-secondary overflow-hidden">
                 <TreeView
                     data={treeData}
                     onNodeClick={(node) => console.log('Clicked:', node.name)}

@@ -104,8 +104,8 @@ const TreeView: React.FC<TreeViewProps> = ({
 
             {contextMenu && (
                 <ContextMenu
-                    x={contextMenu.x}
-                    y={contextMenu.y}
+                    x={contextMenu.x - 50}
+                    y={contextMenu.y + 150}
                     node={findNodeById(data, contextMenu.nodeId)}
                     onClose={() => setContextMenu(null)}
                     onRename={() => handleContextMenuAction('rename')}

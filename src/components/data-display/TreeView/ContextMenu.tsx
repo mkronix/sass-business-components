@@ -35,7 +35,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     return (
         <div
             ref={menuRef}
-            className="fixed z-50 bg-gray-900 border border-gray-700 rounded-lg shadow-xl py-1 min-w-[140px]"
+            className="fixed z-50 bg-secondary border border-primary/10 rounded-lg  min-w-[140px]"
             style={{ left: x, top: y }}
         >
             {menuItems.map((item, index) => (
@@ -45,9 +45,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                         item.action();
                         onClose();
                     }}
-                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${item.dangerous
+                    className={`w-full flex items-center rounded-t-lg gap-2 px-3 py-2 text-sm transition-colors ${item.dangerous
                         ? 'text-red-400 hover:bg-red-900/30 hover:text-red-300'
-                        : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
+                        : 'text-gray-300 hover:bg-primary/20 hover:text-white'
                         }`}
                 >
                     <item.icon className="w-4 h-4" />

@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 
 
@@ -32,14 +33,14 @@ const RenameInput: React.FC<{
 
     return (
         <div className="flex items-center gap-1">
-            <input
+            <Input
                 ref={inputRef}
                 type="text"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onBlur={handleSubmit}
-                className="flex-1 px-2 py-1 text-sm bg-gray-800 border border-gray-600 rounded text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
+                className="flex-1 bg-secondary rounded text-gray-100"
             />
         </div>
     );
