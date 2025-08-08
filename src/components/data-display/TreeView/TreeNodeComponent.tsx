@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useEffect } from "react";
 import DefaultNodeRenderer from "./DefaultNodeRenderer";
+import InlineAddInput from "./InlineAddInput";
 import { NodeContext, TreeNode } from "./types";
 import { shouldShowNode } from "./utils";
-
 
 const TreeNodeComponent: React.FC<{
     node: TreeNode;
@@ -30,6 +30,9 @@ const TreeNodeComponent: React.FC<{
     setContextMenu: (menu: { nodeId: string; x: number; y: number } | null) => void;
     renamingNodeId: string | null;
     setRenamingNodeId: (nodeId: string | null) => void;
+    addingToNode: { parentNodeId: string; type: 'file' | 'folder' } | null;
+    onAddConfirm: (name: string) => void;
+    onAddCancel: () => void;
 }> = memo(({
     node,
     level,
@@ -55,7 +58,10 @@ const TreeNodeComponent: React.FC<{
     contextMenu,
     setContextMenu,
     renamingNodeId,
-    setRenamingNodeId
+    setRenamingNodeId,
+    addingToNode,
+    onAddConfirm,
+    onAddCancel
 }) => {
     const isExpanded = expandedNodes.has(node.id);
     const isSelected = selectedNodes.has(node.id);
@@ -64,6 +70,7 @@ const TreeNodeComponent: React.FC<{
     const hasChildren = node.children && node.children.length > 0;
     const currentPath = [...path, node.id];
     const isRenaming = renamingNodeId === node.id;
+    const isAddingToThis = addingToNode?.parentNodeId === node.id;
 
     const searchResult = shouldShowNode(node, searchTerm);
     const { showNode, hasMatchingDescendants } = searchResult;
@@ -150,6 +157,16 @@ const TreeNodeComponent: React.FC<{
                 />
             )}
 
+            {/* Inline Add Input - shows right after the parent node when adding */}
+            {isAddingToThis && (
+                <InlineAddInput
+                    type={addingToNode.type}
+                    level={level + 1}
+                    onSave={onAddConfirm}
+                    onCancel={onAddCancel}
+                />
+            )}
+
             {/* Children */}
             {isExpanded && hasChildren && (
                 <div className="ml-0">
@@ -181,6 +198,9 @@ const TreeNodeComponent: React.FC<{
                             setContextMenu={setContextMenu}
                             renamingNodeId={renamingNodeId}
                             setRenamingNodeId={setRenamingNodeId}
+                            addingToNode={addingToNode}
+                            onAddConfirm={onAddConfirm}
+                            onAddCancel={onAddCancel}
                         />
                     ))}
                 </div>
@@ -188,6 +208,5 @@ const TreeNodeComponent: React.FC<{
         </div>
     );
 });
-
 
 export default TreeNodeComponent;

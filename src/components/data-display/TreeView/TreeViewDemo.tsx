@@ -17,6 +17,13 @@ const TreeViewDemo = () => {
                     name: 'src',
                     type: 'folder',
                     children: [
+                        {
+                            id: 'pages', name: 'pages', type: 'folder',
+                            children: [
+                                { id: 'index.tsx', name: 'index.tsx', type: 'file' },
+                                { id: 'about.tsx', name: 'about.tsx', type: 'file' }
+                            ]
+                        },
                         { id: 'app.tsx', name: 'App.tsx', type: 'file' },
                         { id: 'index.tsx', name: 'index.tsx', type: 'file' },
                         {
@@ -60,7 +67,7 @@ const TreeViewDemo = () => {
 
     const handleAdd = (parentNode: TreeNode, name: string, type: string) => {
         const newNode: TreeNode = {
-            id: `${parentNode.id}-${Date.now()}`,
+            id: `${parentNode.id}-${Date.now()}-${Math.random()}`,
             name,
             type,
             children: type === 'folder' ? [] : undefined
@@ -95,23 +102,27 @@ const TreeViewDemo = () => {
     };
 
     const handleCopy = (node: TreeNode) => {
-        console.log('Copied node:', node.name);
-        // You could implement actual clipboard functionality here
+        // Simple copy to clipboard functionality
+        navigator.clipboard.writeText(node.name).then(() => {
+            console.log(`Copied "${node.name}" to clipboard`);
+        }).catch(() => {
+            console.log('Failed to copy to clipboard');
+        });
     };
 
     return (
-        <div className="min-h-screen p-6 space-y-6">
+        <div className="min-h-screen p-6 space-y-6 bg-background">
             <div className="flex gap-4 items-center">
                 <Input
                     type="text"
-                    placeholder="Search files..."
+                    placeholder="Search files and folders..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-3 py-2 w-72 border border-secondary/30 rounded-lg p-4 bg-secondary"
+                    className="px-3 py-2 w-72 border border-secondary/30 rounded-lg bg-secondary text-white placeholder:text-gray-400"
                 />
             </div>
 
-            <div className="border border-secondary/30 rounded-lg p-4 bg-secondary overflow-hidden">
+            <div className="p-4 rounded-lg bg-secondary overflow-hidden max-w-md border border-primary/10">
                 <TreeView
                     data={treeData}
                     onNodeClick={(node) => console.log('Clicked:', node.name)}

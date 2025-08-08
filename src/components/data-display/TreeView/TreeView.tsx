@@ -5,7 +5,6 @@ import { TreeViewProps } from './types';
 import useTreeState from './useTreeState';
 import { findNodeById } from './utils';
 
-
 const TreeView: React.FC<TreeViewProps> = ({
     data,
     renderNode,
@@ -35,6 +34,7 @@ const TreeView: React.FC<TreeViewProps> = ({
 
     const [contextMenu, setContextMenu] = useState<{ nodeId: string; x: number; y: number } | null>(null);
     const [renamingNodeId, setRenamingNodeId] = useState<string | null>(null);
+    const [addingToNode, setAddingToNode] = useState<{ parentNodeId: string; type: 'file' | 'folder' } | null>(null);
 
     const handleNodeSelect = useCallback((nodeId: string) => {
         selectNode(nodeId);
@@ -53,20 +53,37 @@ const TreeView: React.FC<TreeViewProps> = ({
         switch (action) {
             case 'rename':
                 setRenamingNodeId(node.id);
+                setContextMenu(null);
                 break;
             case 'add':
                 if (type && onAdd) {
-                    const newName = type === 'folder' ? 'New Folder' : 'New File';
-                    onAdd(node, newName, type);
+                    // Ensure the parent node is expanded when adding
+                    if (!expandedNodes.has(node.id)) {
+                        toggleNode(node.id);
+                    }
+                    setAddingToNode({ parentNodeId: node.id, type: type as 'file' | 'folder' });
                 }
+                setContextMenu(null);
                 break;
             case 'delete':
                 onDelete?.(node);
+                setContextMenu(null);
                 break;
             case 'copy':
                 onCopy?.(node);
+                setContextMenu(null);
                 break;
         }
+    };
+
+    const handleAddConfirm = (name: string) => {
+        if (!addingToNode || !onAdd) return;
+
+        const parentNode = findNodeById(data, addingToNode.parentNodeId);
+        if (parentNode) {
+            onAdd(parentNode, name, addingToNode.type);
+        }
+        setAddingToNode(null);
     };
 
     return (
@@ -99,13 +116,16 @@ const TreeView: React.FC<TreeViewProps> = ({
                     setContextMenu={setContextMenu}
                     renamingNodeId={renamingNodeId}
                     setRenamingNodeId={setRenamingNodeId}
+                    addingToNode={addingToNode}
+                    onAddConfirm={handleAddConfirm}
+                    onAddCancel={() => setAddingToNode(null)}
                 />
             ))}
 
             {contextMenu && (
                 <ContextMenu
-                    x={contextMenu.x - 50}
-                    y={contextMenu.y + 150}
+                    x={contextMenu.x}
+                    y={contextMenu.y}
                     node={findNodeById(data, contextMenu.nodeId)}
                     onClose={() => setContextMenu(null)}
                     onRename={() => handleContextMenuAction('rename')}
@@ -118,5 +138,4 @@ const TreeView: React.FC<TreeViewProps> = ({
     );
 };
 
-
-export default TreeView
+export default TreeView;
