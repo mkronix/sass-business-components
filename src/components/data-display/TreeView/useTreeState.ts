@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { TreeNode } from "./types";
 
-function useTreeState(initailData: TreeNode[], allowMultiSelect = false) {
+function useTreeState(initialData: TreeNode[], allowMultiSelect = false) {
     const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
     const [selectedNodes, setSelectedNodes] = useState<Set<string>>(new Set());
     const [hoveredNode, setHoveredNode] = useState<string | null>(null);
@@ -18,6 +18,7 @@ function useTreeState(initailData: TreeNode[], allowMultiSelect = false) {
             return newSet;
         });
     }, []);
+
     const selectNode = useCallback((nodeId: string) => {
         setSelectedNodes(prev => {
             if (allowMultiSelect) {

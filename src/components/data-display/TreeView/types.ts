@@ -7,20 +7,6 @@ interface TreeNode {
     isLoading?: boolean;
 }
 
-interface TreeViewProps {
-    data: TreeNode[];
-    renderNode?: (node: TreeNode, context: NodeContext) => React.ReactNode;
-    onNodeClick?: (node: TreeNode) => void;
-    onNodeToggle?: (node: TreeNode, isExpanded: boolean) => void;
-    onNodeSelect?: (node: TreeNode) => void;
-    onLoadChildren?: (node: TreeNode) => Promise<TreeNode[]>;
-    className?: string;
-    allowMultiSelect?: boolean;
-    showConnectors?: boolean;
-    animated?: boolean;
-    searchTerm?: string;
-}
-
 interface NodeContext {
     isExpanded: boolean;
     isSelected: boolean;
@@ -31,4 +17,33 @@ interface NodeContext {
     path: string[];
 }
 
-export type { TreeNode, TreeViewProps, NodeContext };
+interface TreeViewProps {
+    data: TreeNode[];
+    renderNode?: (node: TreeNode, context: NodeContext) => React.ReactNode;
+    onNodeClick?: (node: TreeNode) => void;
+    onNodeToggle?: (node: TreeNode, isExpanded: boolean) => void;
+    onNodeSelect?: (node: TreeNode) => void;
+    onLoadChildren?: (node: TreeNode) => Promise<TreeNode[]>;
+    onRename?: (node: TreeNode, newName: string) => void;
+    onAdd?: (parentNode: TreeNode, name: string, type: string) => void;
+    onDelete?: (node: TreeNode) => void;
+    onCopy?: (node: TreeNode) => void;
+    className?: string;
+    allowMultiSelect?: boolean;
+    showConnectors?: boolean;
+    searchTerm?: string;
+}
+
+interface ContextMenuProps {
+    x: number;
+    y: number;
+    node: TreeNode;
+    onClose: () => void;
+    onRename: () => void;
+    onAdd: (type: string) => void;
+    onDelete: () => void;
+    onCopy: () => void;
+}
+
+
+export type { TreeNode, NodeContext, TreeViewProps, ContextMenuProps };

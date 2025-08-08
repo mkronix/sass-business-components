@@ -1,14 +1,10 @@
 import { useState } from "react";
 import TreeView from "./TreeView";
 import { TreeNode } from "./types";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
-const TreeViewDemo: React.FC = () => {
+const TreeViewDemo = () => {
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Sample data for different use cases
-    const fileSystemData: TreeNode[] = [
+    const [treeData, setTreeData] = useState([
         {
             id: 'root',
             name: 'Project Root',
@@ -44,82 +40,91 @@ const TreeViewDemo: React.FC = () => {
                 { id: 'package.json', name: 'package.json', type: 'file' }
             ]
         }
-    ];
+    ]);
 
-    const productData: TreeNode[] = [
-        {
-            id: 'electronics',
-            name: 'Electronics',
-            type: 'category',
-            metadata: { badge: '24 items' },
-            children: [
-                {
-                    id: 'phones',
-                    name: 'Mobile Phones',
-                    type: 'category',
-                    metadata: { badge: '12 items' },
-                    children: [
-                        { id: 'iphone', name: 'iPhone 15', type: 'product', metadata: { price: '$999' } },
-                        { id: 'samsung', name: 'Galaxy S24', type: 'product', metadata: { price: '$899' } }
-                    ]
-                },
-                {
-                    id: 'laptops',
-                    name: 'Laptops',
-                    type: 'category',
-                    metadata: { badge: '8 items' },
-                    children: [
-                        { id: 'macbook', name: 'MacBook Pro', type: 'product', metadata: { price: '$1999' } },
-                        { id: 'dell', name: 'Dell XPS', type: 'product', metadata: { price: '$1299' } }
-                    ]
+    const handleRename = (node: TreeNode, newName: string) => {
+        const updateNode = (nodes: TreeNode[]): TreeNode[] => {
+            return nodes.map(n => {
+                if (n.id === node.id) {
+                    return { ...n, name: newName };
                 }
-            ]
-        }
-    ];
+                if (n.children) {
+                    return { ...n, children: updateNode(n.children) };
+                }
+                return n;
+            });
+        };
+        setTreeData(updateNode(treeData));
+    };
 
-    const [currentData, setCurrentData] = useState(fileSystemData);
-    const [currentMode, setCurrentMode] = useState('filesystem');
+    const handleAdd = (parentNode: TreeNode, name: string, type: string) => {
+        const newNode: TreeNode = {
+            id: `${parentNode.id}-${Date.now()}`,
+            name,
+            type,
+            children: type === 'folder' ? [] : undefined
+        };
 
-    const handleModeChange = (mode: string) => {
-        setCurrentMode(mode);
-        setCurrentData(mode === 'filesystem' ? fileSystemData : productData);
+        const addToNode = (nodes: TreeNode[]): TreeNode[] => {
+            return nodes.map(n => {
+                if (n.id === parentNode.id) {
+                    return {
+                        ...n,
+                        children: [...(n.children || []), newNode]
+                    };
+                }
+                if (n.children) {
+                    return { ...n, children: addToNode(n.children) };
+                }
+                return n;
+            });
+        };
+
+        setTreeData(addToNode(treeData));
+    };
+
+    const handleDelete = (node: TreeNode) => {
+        const removeNode = (nodes: TreeNode[]): TreeNode[] => {
+            return nodes.filter(n => n.id !== node.id).map(n => ({
+                ...n,
+                children: n.children ? removeNode(n.children) : undefined
+            }));
+        };
+        setTreeData(removeNode(treeData));
+    };
+
+    const handleCopy = (node: TreeNode) => {
+        console.log('Copied node:', node.name);
+        // You could implement actual clipboard functionality here
     };
 
     return (
-        <div className="space-y-6">
-            {/* Controls */}
-            <div className="grid grid-cols-2 gap-3">
-                <div className="flex gap-2">
-                    <Button className={`w-full ${currentMode === 'filesystem' ? 'accent-primary-custom' : 'accent-secondary-custom'} accent-primary-custom hover-secondary-custom transition-colors`}
-                        onClick={() => handleModeChange('filesystem')}
-
-                    >
-                        File System
-                    </Button>
-                    <Button className={`w-full ${currentMode === 'products' ? 'accent-primary-custom' : 'accent-secondary-custom'} accent-primary-custom hover-secondary-custom transition-colors`}
-                        onClick={() => handleModeChange('products')}
-                    >
-                        Product Catalog
-                    </Button>
-                </div>
-                <Input
+        <div className="min-h-screen bg-gray-900 p-6 space-y-6">
+            <div className="flex gap-4 items-center">
+                <input
                     type="text"
-                    placeholder="Search nodes..."
+                    placeholder="Search files..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+                <span className="text-sm text-gray-400">
+                    Right-click nodes for context menu
+                </span>
             </div>
 
-            <div className="space-y-4">
-                <div className="border border-primary-custom rounded-lg p-4 w-full">
-                    <TreeView
-                        data={currentData}
-                        onNodeClick={(node) => console.log('Clicked:', node.name)}
-                        onNodeSelect={(node) => console.log('Selected:', node.name)}
-                        searchTerm={searchTerm}
-                        animated={true}
-                    />
-                </div>
+            <div className="border border-gray-700 rounded-lg p-4 bg-gray-800/50 overflow-hidden">
+                <TreeView
+                    data={treeData}
+                    onNodeClick={(node) => console.log('Clicked:', node.name)}
+                    onNodeSelect={(node) => console.log('Selected:', node.name)}
+                    onRename={handleRename}
+                    onAdd={handleAdd}
+                    onDelete={handleDelete}
+                    onCopy={handleCopy}
+                    searchTerm={searchTerm}
+                    showConnectors={true}
+                />
             </div>
         </div>
     );
