@@ -179,6 +179,7 @@ import OptimizationTools from '@/components/performance/OptimizationTools/Optimi
 import PerformanceMonitor from '@/components/performance/PerformanceMonitor/PerformanceMonitor';
 import SystemHealth from '@/components/performance/SystemHealth/SystemHealth';
 import UsageAnalytics from '@/components/performance/UsageAnalytics/UsageAnalytics';
+import TimelineDemo from '@/components/data-display/Timeline/TimelineDemo';
 
 const COMPONENTS = [
     {
@@ -225,7 +226,7 @@ const COMPONENTS = [
                 "name": 'Timeline',
                 "description": 'A timeline component with sorting, filtering, pagination, and export functionality. Fully responsive with mobile card view.',
                 "status": 'ready',
-                "component": <TimeLine />
+                "component": <TimelineDemo />
             }
         ]
     },

@@ -62,6 +62,10 @@
   }
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Scrollbar styling for the simple theme */
 ::-webkit-scrollbar {
   width: 8px;
