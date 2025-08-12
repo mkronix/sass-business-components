@@ -18,7 +18,6 @@ export default {
 		},
 		extend: {
 			colors: {
-				// Simple 3-color system
 				background: '#000000', // Black background
 				foreground: '#ffffff', // White text
 				accent: '#171717', // Charcoal for accents

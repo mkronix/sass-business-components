@@ -1,11 +1,9 @@
 import { DataTableDemo } from '@/components/data-display/DataTable/DataTableDemo';
 import DataGridDemo from '@/components/data-display/DatGrid/DataGridDemo';
 import ListViewDemo from '@/components/data-display/ListView/ListViewDemo';
-import TimeLine from '@/components/data-display/Timeline/TimeLine';
 
 // Form Components
 import DatePicker from '@/components/form/DatePicker/DatePicker';
-import DynamicForm from '@/components/form/DynamicForm/DynamicForm';
 import FileUpload from '@/components/form/FileUpload/FileUpload';
 import FormField from '@/components/form/FormField/FormField';
 import LocationPicker from '@/components/form/LocationPicker/LocationPicker';
@@ -172,14 +170,15 @@ import RegionalCompliance from '@/components/accessibility/RegionalCompliance/Re
 import ScreenReader from '@/components/accessibility/ScreenReader/ScreenReader';
 
 // Performance Components
+import TimelineDemo from '@/components/data-display/Timeline/TimelineDemo';
 import TreeViewDemo from '@/components/data-display/TreeView/TreeViewDemo';
+import DynamicFormDemo from '@/components/form/DynamicForm/DynamicFormDemo';
 import ErrorTracking from '@/components/performance/ErrorTracking/ErrorTracking';
 import LoadTesting from '@/components/performance/LoadTesting/LoadTesting';
 import OptimizationTools from '@/components/performance/OptimizationTools/OptimizationTools';
 import PerformanceMonitor from '@/components/performance/PerformanceMonitor/PerformanceMonitor';
 import SystemHealth from '@/components/performance/SystemHealth/SystemHealth';
 import UsageAnalytics from '@/components/performance/UsageAnalytics/UsageAnalytics';
-import TimelineDemo from '@/components/data-display/Timeline/TimelineDemo';
 
 const COMPONENTS = [
     {
@@ -241,15 +240,7 @@ const COMPONENTS = [
                 "name": "DynamicForm",
                 "description": "A dynamic form component that can generate forms from configuration objects.",
                 "status": "ready",
-                "component": <DynamicForm />
-            },
-            {
-                "title": "FormField",
-                "url": "/category/form/form-field",
-                "name": "FormField",
-                "description": "A flexible form field component with validation and various input types.",
-                "status": "ready",
-                "component": <FormField />
+                "component": <DynamicFormDemo />
             },
             {
                 "title": "SearchBar",
